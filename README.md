@@ -2,7 +2,7 @@
 
 **Ph.D. in Computational Condensed Matter Physics**
 
-📍 Bordeaux, France | ✉️ [alpesh-rasikbhai.sheth@u-bordeaux.fr](mailto:alpesh-rasikbhai.sheth@u-bordeaux.fr) / [alpeshsheth.phy@gmail.com](mailto:alpeshsheth.phy@gmail.com) | 📞 +33-(0)7-45-50-20-07
+📍 Bordeaux, France | ✉️ [alpeshsheth.phy@gmail.com](mailto:alpeshsheth.phy@gmail.com)
 
 ---
 
