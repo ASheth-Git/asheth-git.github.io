@@ -946,6 +946,21 @@ const COUNTRY_POS = {
 };
 const COUNTER_API = "https://abacus.jasoncameron.dev";
 
+/* leading centres of condensed matter research, marked as static rings
+   on the telemetry map [lon, lat]; city-level points for precision */
+const RESEARCH_HUBS = [
+  [-71.09, 42.36],   // Boston–Cambridge, United States
+  [11.58, 48.14],    // Munich, Germany
+  [0.12, 52.21],     // Cambridge, United Kingdom
+  [2.35, 48.85],     // Paris, France
+  [8.55, 47.37],     // Zurich, Switzerland
+  [4.36, 52.01],     // Delft, Netherlands
+  [139.77, 35.68],   // Tokyo, Japan
+  [116.40, 39.90],   // Beijing, China
+  [126.98, 37.57],   // Seoul, South Korea
+  [72.88, 19.08],    // Mumbai, India
+];
+
 function initTelemetry() {
   const canvas = document.getElementById("mapCanvas");
   const ctx = canvas.getContext("2d");
@@ -977,6 +992,19 @@ function initTelemetry() {
           bctx.arc((i + 0.5) * sx, (j + 0.5) * sy, r, 0, 6.2832);
           bctx.fill();
         }
+    /* research hubs: static cyan rings */
+    for (const [lon, lat] of RESEARCH_HUBS) {
+      const [hx, hy] = lonLatToXY(lon, lat, W, H);
+      bctx.strokeStyle = "rgba(33, 230, 214, 0.55)";
+      bctx.lineWidth = dpr;
+      bctx.beginPath();
+      bctx.arc(hx, hy, r * 1.7, 0, 6.2832);
+      bctx.stroke();
+      bctx.fillStyle = "rgba(33, 230, 214, 0.8)";
+      bctx.beginPath();
+      bctx.arc(hx, hy, Math.max(1, 0.35 * r), 0, 6.2832);
+      bctx.fill();
+    }
     /* every country that has ever visited: orange, scaled by count */
     for (const { code, count } of countries) {
       const pos = COUNTRY_POS[code];

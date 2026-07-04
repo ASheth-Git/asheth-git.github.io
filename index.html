@@ -345,7 +345,19 @@
       </div>
       <div class="tpane" id="pane-education" role="tabpanel">
         <div class="edu-entry">
-          <span class="edu-crest" aria-hidden="true"><img src="assets/edu-bordeaux.png" alt="" loading="lazy" onerror="this.remove()"><span class="crest-mono">UB</span></span>
+          <span class="edu-crest" aria-hidden="true">
+            <svg viewBox="0 0 100 100">
+              <defs><path id="rimUB" d="M 50,50 m -33,0 a 33,33 0 1,1 66,0 a 33,33 0 1,1 -66,0"/></defs>
+              <circle cx="50" cy="50" r="48" fill="#dfe7ee" stroke="#2b4258" stroke-width="2"/>
+              <circle cx="50" cy="50" r="41" fill="none" stroke="#55677a" stroke-width="1" stroke-dasharray="1.5 3"/>
+              <text font-size="10" letter-spacing="1.6" fill="#22303d" font-family="Computer Modern Serif, Georgia, serif">
+                <textPath href="#rimUB" startOffset="2%">UNIVERSITÉ · DE · BORDEAUX ·</textPath>
+              </text>
+              <text x="50" y="57" text-anchor="middle" font-size="24" fill="#22303d" font-family="Computer Modern Serif, Georgia, serif">UB</text>
+              <text x="50" y="70" text-anchor="middle" font-size="8.5" letter-spacing="1" fill="#55677a" font-family="Computer Modern Serif, Georgia, serif">1441</text>
+            </svg>
+            <img src="assets/edu-bordeaux.png" alt="" loading="lazy" onerror="this.remove()">
+          </span>
           <span class="entry">
             <span class="entry-key">2021 – 2025 · Doctorate</span>
             <span class="entry-title">PhD in Material Science, Université de Bordeaux</span>
@@ -353,7 +365,19 @@
           </span>
         </div>
         <div class="edu-entry">
-          <span class="edu-crest" aria-hidden="true"><img src="assets/edu-msu.png" alt="" loading="lazy" onerror="this.remove()"><span class="crest-mono">MSU</span></span>
+          <span class="edu-crest" aria-hidden="true">
+            <svg viewBox="0 0 100 100">
+              <defs><path id="rimMSU1" d="M 50,50 m -33,0 a 33,33 0 1,1 66,0 a 33,33 0 1,1 -66,0"/></defs>
+              <circle cx="50" cy="50" r="48" fill="#dfe7ee" stroke="#2b4258" stroke-width="2"/>
+              <circle cx="50" cy="50" r="41" fill="none" stroke="#55677a" stroke-width="1" stroke-dasharray="1.5 3"/>
+              <text font-size="8.6" letter-spacing="0.9" fill="#22303d" font-family="Computer Modern Serif, Georgia, serif">
+                <textPath href="#rimMSU1" startOffset="1%">M.S. UNIVERSITY · OF BARODA ·</textPath>
+              </text>
+              <text x="50" y="57" text-anchor="middle" font-size="21" fill="#22303d" font-family="Computer Modern Serif, Georgia, serif">MSU</text>
+              <text x="50" y="70" text-anchor="middle" font-size="8.5" letter-spacing="1" fill="#55677a" font-family="Computer Modern Serif, Georgia, serif">1949</text>
+            </svg>
+            <img src="assets/edu-msu.png" alt="" loading="lazy" onerror="this.remove()">
+          </span>
           <span class="entry">
             <span class="entry-key">2018 – 2020 · Master's</span>
             <span class="entry-title">MSc in Condensed Matter Physics, The Maharaja Sayajirao University of Baroda</span>
@@ -361,7 +385,19 @@
           </span>
         </div>
         <div class="edu-entry">
-          <span class="edu-crest" aria-hidden="true"><img src="assets/edu-msu.png" alt="" loading="lazy" onerror="this.remove()"><span class="crest-mono">MSU</span></span>
+          <span class="edu-crest" aria-hidden="true">
+            <svg viewBox="0 0 100 100">
+              <defs><path id="rimMSU2" d="M 50,50 m -33,0 a 33,33 0 1,1 66,0 a 33,33 0 1,1 -66,0"/></defs>
+              <circle cx="50" cy="50" r="48" fill="#dfe7ee" stroke="#2b4258" stroke-width="2"/>
+              <circle cx="50" cy="50" r="41" fill="none" stroke="#55677a" stroke-width="1" stroke-dasharray="1.5 3"/>
+              <text font-size="8.6" letter-spacing="0.9" fill="#22303d" font-family="Computer Modern Serif, Georgia, serif">
+                <textPath href="#rimMSU2" startOffset="1%">M.S. UNIVERSITY · OF BARODA ·</textPath>
+              </text>
+              <text x="50" y="57" text-anchor="middle" font-size="21" fill="#22303d" font-family="Computer Modern Serif, Georgia, serif">MSU</text>
+              <text x="50" y="70" text-anchor="middle" font-size="8.5" letter-spacing="1" fill="#55677a" font-family="Computer Modern Serif, Georgia, serif">1949</text>
+            </svg>
+            <img src="assets/edu-msu.png" alt="" loading="lazy" onerror="this.remove()">
+          </span>
           <span class="entry">
             <span class="entry-key">2015 – 2018 · Bachelor's</span>
             <span class="entry-title">BSc in Physics, The Maharaja Sayajirao University of Baroda</span>
@@ -422,7 +458,7 @@
 
   <div class="telemetry" id="telemetry">
     <canvas id="mapCanvas" aria-label="Visitor map"></canvas>
-    <p class="telemetry-line mono">visitors by country</p>
+    <p class="telemetry-line mono">orange: visitors by country · cyan rings: leading centres of condensed matter research</p>
   </div>
 
   <p class="colophon mono">© <span id="year">2026</span> Alpesh Sheth</p>
