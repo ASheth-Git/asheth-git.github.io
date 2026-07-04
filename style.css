@@ -54,7 +54,10 @@ code {
   background: var(--bg-panel); border: 1px solid var(--line);
   padding: 0.1em 0.4em; border-radius: 3px; color: var(--cyan);
 }
-.katex { font-size: 1.05em; }
+.katex { font-size: 1em; }
+/* keep sub/superscripts and inline math from inflating line boxes,
+   which caused visibly uneven line spacing */
+sub, sup { line-height: 0; }
 
 ::selection { background: var(--cyan); color: var(--bg); }
 
@@ -304,6 +307,7 @@ input[type="range"]::-moz-range-thumb {
   background-image: radial-gradient(circle, var(--line) 1px, transparent 1.2px);
   background-size: 7px 3px; background-repeat: repeat-x; background-position: top left;
   color: var(--ink-dim); font-size: 0.9rem;
+  overflow-x: auto;                    /* long equations scroll on narrow screens */
 }
 .module-eq output { color: var(--orange); font-size: 0.78rem; }
 .anneal-run { display: flex; align-items: center; gap: 1rem; margin-top: 0.4rem; }
@@ -525,14 +529,50 @@ input[type="range"]::-moz-range-thumb {
 
 /* ---------------- RESPONSIVE ---------------- */
 @media (max-width: 900px) {
-  .nav-links { display: none; }
+  /* keep navigation usable on mobile: compact, horizontally scrollable */
+  #nav { padding: 0.7rem 1.1rem; gap: 1rem; }
+  .nav-brand { font-size: 0.82rem; }
+  .nav-links {
+    gap: 1rem; overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .nav-links::-webkit-scrollbar { display: none; }
+  .nav-links a { font-size: 0.64rem; white-space: nowrap; }
+
   .abstract-grid, .footer-grid { grid-template-columns: 1fr; }
   .explore-grid { grid-template-columns: 1fr; }
   .talk { grid-template-columns: 1fr; }
   .module-body, .module-flip .module-body { grid-template-columns: 1fr; }
   .module-flip .module-canvas-wrap { order: 0; }
-  .hud { position: static; width: auto; margin: 1.5rem 2rem 5rem; }
+  .hud { position: static; width: auto; margin: 1.4rem 1.2rem 4.5rem; }
   .hero { flex-direction: column; justify-content: center; }
-  .hero-content { margin-left: 0; padding-top: 7rem; }
+  .hero-content { margin-left: 0; padding-top: 6.5rem; }
   .skills-panel { position: static; }
+}
+
+@media (max-width: 560px) {
+  body { font-size: 16px; }
+  .section { padding: 4.2rem 1.1rem 1.8rem; }
+  .section-head { margin-bottom: 2rem; }
+  .hero-content { padding: 6rem 1.1rem 1.5rem; }
+  .hero-sub { font-size: 1.02rem; }
+  .hero-cta { gap: 0.7rem; }
+  .btn { padding: 0.65rem 1.1rem; font-size: 0.72rem; }
+  .module { margin-bottom: 2rem; }
+  .module-body { padding: 1.1rem 0.9rem; gap: 1.4rem; }
+  .module-panel h3 { font-size: 1.3rem; }
+  .module-panel p { font-size: 0.95rem; }
+  .fig-caption { font-size: 0.78rem; }
+  .terminal-tabs {
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .terminal-tabs::-webkit-scrollbar { display: none; }
+  .ttab { padding: 0.55rem 0.95rem; white-space: nowrap; }
+  .terminal-body { padding: 1rem 0.9rem 1.2rem; min-height: 0; }
+  .edu-entry { gap: 0.9rem; }
+  .edu-crest { width: 44px; height: 44px; }
+  .footer-grid { gap: 1.8rem; margin-bottom: 2.5rem; }
+  .telemetry { margin-bottom: 2rem; }
 }

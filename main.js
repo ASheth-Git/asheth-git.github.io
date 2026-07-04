@@ -279,14 +279,23 @@ function initIsing() {
     mouse.cx = x * canvas.width;
     mouse.cy = (1 - y) * canvas.height;
   };
-  canvas.addEventListener("pointermove", rectToGrid);
-  canvas.addEventListener("pointerleave", () => {
+  const clearField = () => {
     mouse.gx = mouse.gy = mouse.cx = mouse.cy = -1e4;
-  });
+  };
+  let touchTimer = null;
+  canvas.addEventListener("pointermove", rectToGrid);
+  canvas.addEventListener("pointerleave", clearField);
   canvas.addEventListener("pointerdown", (e) => {
-    mouse.sign *= -1;
+    /* mouse: click reverses the field sign. touch: a tap plants the field
+       and lets it linger briefly, magnetizing a spot that then relaxes */
+    if (e.pointerType === "mouse") mouse.sign *= -1;
     rectToGrid(e);
+    if (e.pointerType !== "mouse") {
+      clearTimeout(touchTimer);
+      touchTimer = setTimeout(clearField, 900);
+    }
   });
+  canvas.addEventListener("pointercancel", clearField);
 
   const tempSlider = document.getElementById("tempSlider");
   const tempOut = document.getElementById("tempOut");
@@ -317,6 +326,9 @@ function initIsing() {
   let passCount = 0, frameCount = 0, heroVisible = true;
   const PASSES_PER_FRAME = 2;                 // one MC sweep per frame
   const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  /* GPU readback stalls the pipeline; on touch devices poll magnetization
+     less often to keep the simulation smooth */
+  const READ_EVERY = matchMedia("(pointer: coarse)").matches ? 90 : 30;
   let pixels = new Uint8Array(0);
 
   function frame() {
@@ -344,7 +356,7 @@ function initIsing() {
       passCount++;
     }
 
-    if (++frameCount % 30 === 0) {
+    if (++frameCount % READ_EVERY === 0) {
       gl.bindFramebuffer(gl.FRAMEBUFFER, src.fbo);
       if (pixels.length !== gridW * gridH * 4) pixels = new Uint8Array(gridW * gridH * 4);
       gl.readPixels(0, 0, gridW, gridH, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
@@ -1025,22 +1037,54 @@ function initTelemetry() {
     kick();
   });
 
-  /* read back all country counters, so earlier visitors stay visible */
+  /* read back all country counters, so earlier visitors stay visible.
+     Reads are throttled in small batches: a single burst of ~57 parallel
+     requests trips the counter service's rate limiter and silently kills
+     the read-back, which is why dots failed to appear. Results render
+     progressively and are cached locally for instant display next visit. */
   function loadCountries() {
+    const CACHE_KEY = "telemetry-countries-v1";
+    try {
+      const cached = JSON.parse(localStorage.getItem(CACHE_KEY) || "null");
+      if (cached && Date.now() - cached.t < 6 * 3600 * 1000 && Array.isArray(cached.c)) {
+        countries = cached.c;
+        buildBase();
+        kick();
+      }
+    } catch (e) { /* private mode etc. */ }
+
     const codes = Object.keys(COUNTRY_POS);
-    Promise.allSettled(
-      codes.map(c =>
-        fetch(`${COUNTER_API}/get/${DATA_SOURCES.counterNamespace}/c-${c}`)
-          .then(r => (r.ok ? r.json() : null))
-          .then(d => (d && d.value > 0 ? { code: c, count: d.value } : null))
-      )
-    ).then(results => {
-      countries = results
-        .filter(r => r.status === "fulfilled" && r.value)
-        .map(r => r.value);
-      buildBase();
-      kick();
-    });
+    const found = [];
+    const BATCH = 6, GAP_MS = 350;
+    let idx = 0;
+
+    function next() {
+      if (idx >= codes.length) {
+        countries = found.slice();
+        buildBase();
+        kick();
+        try {
+          localStorage.setItem(CACHE_KEY, JSON.stringify({ t: Date.now(), c: found }));
+        } catch (e) {}
+        return;
+      }
+      const batch = codes.slice(idx, idx + BATCH);
+      idx += BATCH;
+      Promise.allSettled(
+        batch.map(c =>
+          fetch(`${COUNTER_API}/get/${DATA_SOURCES.counterNamespace}/c-${c}`)
+            .then(r => (r.ok ? r.json() : null))
+            .then(d => { if (d && d.value > 0) found.push({ code: c, count: d.value }); })
+            .catch(() => {})
+        )
+      ).then(() => {
+        countries = found.slice();   /* progressive: dots appear batch by batch */
+        buildBase();
+        kick();
+        setTimeout(next, GAP_MS);
+      });
+    }
+    next();
   }
 
   /* current visitor: coarse IP-level location, no cookies */
