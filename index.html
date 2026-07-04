@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alpesh Sheth · Computational Condensed Matter Physics</title>
+<meta name="description" content="Alpesh Sheth, PhD. Computational condensed matter physicist: quantum materials, many-body theory, layered nickelates, scientific machine learning.">
+<meta name="author" content="Alpesh Sheth">
+<meta property="og:title" content="Alpesh Sheth · Computational Condensed Matter Physics">
+<meta property="og:description" content="Quantum materials, many-body theory, and the algorithms that resolve them.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,600;1,400&family=Spectral:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/aaaakshat/cm-web-fonts@latest/fonts.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'\\(',right:'\\)',display:false},{left:'\\[',right:'\\]',display:true}]});"></script>
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%2304070c'/><circle cx='16' cy='16' r='7' fill='none' stroke='%2321e6d6' stroke-width='2'/><circle cx='16' cy='16' r='2.5' fill='%23ff9a3c'/></svg>">
+</head>
+<body>
+
+<nav id="nav">
+  <a class="nav-brand" href="#top">ALPESH&nbsp;SHETH</a>
+  <div class="nav-links">
+    <a href="#abstract">Abstract</a>
+    <a href="#models">Simulations</a>
+    <a href="#exploring">Exploring</a>
+    <a href="#cv">CV</a>
+    <a href="#contact">Contact</a>
+  </div>
+</nav>
+
+<!-- Hero background: two-dimensional Ising model, Metropolis dynamics on the
+     GPU, held below the critical temperature. The cursor applies a local
+     magnetic field; a click reverses its sign. -->
+<header class="hero" id="top">
+  <canvas id="isingCanvas" aria-label="Interactive Ising model simulation"></canvas>
+  <div class="hero-fallback" id="heroFallback" hidden></div>
+
+  <div class="hero-content">
+    <p class="hero-kicker mono">Computational Condensed Matter · Many-Body Theory · Scientific Machine Learning</p>
+    <h1 class="hero-name">Alpesh Sheth</h1>
+    <p class="hero-sub">
+      PhD, Université de Bordeaux.
+      I model complex systems, from <em>correlated electrons to financial markets</em>,
+      and build the simulation, optimization, and machine-learning tools that turn
+      theory into results.
+    </p>
+    <div class="hero-cta">
+      <a class="btn btn-primary" href="#models">Explore Simulations</a>
+      <a class="btn btn-ghost" href="Alpesh_Sheth_CV.pdf" download>Download CV</a>
+    </div>
+  </div>
+
+  <aside class="hud mono" id="hud" aria-label="Simulation controls">
+    <div class="hud-title">2D Ising Model · Metropolis · GPU</div>
+    <div class="hud-row">
+      <label for="tempSlider">T&thinsp;/&thinsp;T<sub>c</sub></label>
+      <input type="range" id="tempSlider" min="0.44" max="1.60" step="0.005" value="0.86">
+      <output id="tempOut">0.860</output>
+    </div>
+    <div class="hud-row hud-readouts">
+      <span>magnetization <output id="magOut">+0.00</output></span>
+    </div>
+    <div class="hud-note">cursor applies a local field · click reverses its sign</div>
+  </aside>
+
+  <a class="scroll-cue mono" href="#abstract" aria-label="Scroll down">scroll</a>
+</header>
+
+<main>
+
+<section class="section" id="abstract">
+  <div class="section-head">
+    <h2>Abstract</h2>
+  </div>
+
+  <div class="abstract-grid">
+    <div class="abstract-text">
+      <p class="lede">
+        My doctoral research at the Laboratoire Ondes et Matière d'Aquitaine
+        (UMR 5798, Centre National de la Recherche Scientifique) develops effective
+        multi-orbital models for the electronic structure of infinite-layer and layered
+        nickelates. The models isolate what distinguishes nickelate physics from the
+        cuprate paradigm and identify antiferromagnetic and charge-order instabilities
+        driven by Fermi-surface nesting.
+      </p>
+      <p>
+        One method runs through everything I do: reduce a complex system to a model that
+        keeps its essential physics, compute it rigorously, and validate the outcome
+        against data. The problem sets the machinery, from first-principles simulation
+        to statistical inference, and every step is automated, benchmarked, and
+        reproducible.
+      </p>
+      <p>
+        Academia and industry share my attention on equal terms, because the work is the
+        same in both: quantitative modeling under uncertainty, scientific software that
+        holds up in production, and honest measurement of what an algorithm actually
+        delivers. The simulations below are working implementations of this approach;
+        the directions in Exploring extend it.
+      </p>
+    </div>
+
+    <div class="skills-panel mono" aria-label="Technical skills">
+      <div class="panel-head">Skills</div>
+      <dl>
+        <dt>Languages</dt>
+        <dd>Python · C++ · Fortran · Julia · Bash · MATLAB · LaTeX</dd>
+        <dt>Many-Body Methods</dt>
+        <dd>Green's Functions · Dynamical Mean-Field Theory · Exact Diagonalization · Kubo Formalism</dd>
+        <dt>Electronic Structure and Dynamics</dt>
+        <dd>VASP · Quantum ESPRESSO · LAMMPS · CP2K · TRIQS</dd>
+        <dt>Data and Machine Learning</dt>
+        <dd>Predictive Modeling · Neural-Network Methods · Data Pipelines · Statistical Analysis</dd>
+        <dt>Optimization</dt>
+        <dd>Simulated Annealing · Quantum-Inspired Solvers · Rigorous Benchmarking</dd>
+        <dt>Infrastructure</dt>
+        <dd>High-Performance Computing (Slurm) · Git · Workflow Automation</dd>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="models">
+  <div class="section-head">
+    <h2>Numerical Experiments</h2>
+  </div>
+
+  <article class="module" id="mod-anneal">
+    <div class="module-body">
+      <div class="module-canvas-wrap">
+        <canvas id="spinRing" aria-label="Assets as spins on the Ising coupling graph"></canvas>
+        <canvas id="energyCanvas" width="440" height="170" class="sparkline" aria-label="Energy trace"></canvas>
+        <p id="miniMetrics" class="mini-metrics mono">awaiting optimization</p>
+        <p class="fig-caption"><span class="fig-no mono">Fig. 1</span>
+          Assets as Ising spins on the coupling graph; arc weight \(\propto J_{ij}\),
+          cyan discs are held assets. Below, the energy during the anneal.</p>
+      </div>
+      <div class="module-panel">
+        <h3>Quantum-Inspired Portfolio Optimizer</h3>
+        <p>
+          <span class="para-label">Physics</span>
+          An optimal-portfolio problem is a ground-state problem. Assets map to spins,
+          held or not held; expected returns to local fields \(h_i\); covariances to
+          couplings \(J_{ij}\); the target portfolio size to a constraint term. Risk
+          aversion \(\lambda\) weighs the couplings against the fields, and the optimum
+          is the lowest-energy configuration of the resulting Ising Hamiltonian.
+        </p>
+        <p>
+          <span class="para-label">Simulation</span>
+          At left: ten demonstration assets as spins, flipping under Metropolis dynamics
+          while simulated annealing lowers the temperature. The trace shows the energy
+          relaxing to the ground state, and the converged basket appears with its return,
+          volatility, and Sharpe ratio. Set \(K\) and \(\lambda\), then optimize. The full
+          application adds sector constraints and annealing telemetry; its production
+          constraint encoding stays proprietary.
+        </p>
+        <div class="ctrl mono">
+          <label for="pkSlider">\(K\) · target assets</label>
+          <input type="range" id="pkSlider" min="2" max="8" step="1" value="5">
+          <output id="pkOut">5</output>
+        </div>
+        <div class="ctrl mono">
+          <label for="plSlider">\(\lambda\) · risk aversion</label>
+          <input type="range" id="plSlider" min="0" max="1" step="0.05" value="0.5">
+          <output id="plOut">0.50</output>
+        </div>
+        <div class="anneal-run">
+          <button class="btn btn-primary mono" id="annealBtn">Optimize</button>
+          <span class="mono anneal-status" id="annealStatus">idle</span>
+        </div>
+        <div class="app-launch">
+          <button class="btn btn-ghost mono" id="launchAppBtn">Launch Full Application</button>
+        </div>
+        <p class="module-eq">
+          \(H = -\sum_i h_i s_i + \lambda \sum_{i&lt;j} J_{ij}\, s_i s_j + H_{\mathrm{constraints}}\)
+        </p>
+      </div>
+    </div>
+  </article>
+
+  <article class="module module-flip" id="mod-fermi">
+    <div class="module-body">
+      <div class="module-canvas-wrap">
+        <canvas id="fermiCanvas" width="360" height="360" aria-label="Interactive Fermi surface spectral map"></canvas>
+        <p class="fig-caption"><span class="fig-no mono">Fig. 2</span>
+          Spectral weight \(A(\mathbf{k},0)\) over the Brillouin zone; bright contours
+          are the Fermi surface, with \(\Gamma\), X, M marked.</p>
+      </div>
+      <div class="module-panel">
+        <h3>Nickelate Fermiology</h3>
+        <p>
+          <span class="para-label">Physics</span>
+          Layered nickelates sit next to the cuprate superconductors in composition but not
+          in their physics. In the two-band model from my doctoral research
+          (<a href="https://doi.org/10.1088/1361-648X/ada908" target="_blank" rel="noopener">Journal of Physics: Condensed Matter <b>37</b>, 125703, 2025</a>),
+          an interlayer orbital hybridizes with the Ni \(d_{x^2-y^2}\) band and creates a
+          second Fermi pocket; how that pocket emerges under doping and pressure controls
+          the material's antiferromagnetic and charge-order tendencies.
+        </p>
+        <p>
+          <span class="para-label">Simulation</span>
+          At right: the zero-frequency spectral weight \(A(\mathbf{k},0)\) over the full
+          Brillouin zone. Raise \(\mu\) to pull the interlayer band through
+          the Fermi level and open the electron pocket at \(\Gamma\); increase \(V\) to
+          hybridize the bands and gap their crossings; adjust \(t'\) to reshape the surface.
+        </p>
+        <div class="ctrl mono">
+          <label for="muSlider">\(\mu\) · chemical potential</label>
+          <input type="range" id="muSlider" min="-1.6" max="1.2" step="0.01" value="-0.30">
+          <output id="muOut">−0.30</output>
+        </div>
+        <div class="ctrl mono">
+          <label for="tpSlider">\(t'\) · next-nearest-neighbor hopping</label>
+          <input type="range" id="tpSlider" min="0" max="0.5" step="0.005" value="0.25">
+          <output id="tpOut">0.250</output>
+        </div>
+        <div class="ctrl mono">
+          <label for="vSlider">\(V\) · interlayer hybridization</label>
+          <input type="range" id="vSlider" min="0" max="0.9" step="0.005" value="0.00">
+          <output id="vOut">0.000</output>
+        </div>
+        <p class="module-eq">
+          \(E_{\pm}(\mathbf{k}) = \tfrac{1}{2}(\varepsilon_1+\varepsilon_2)
+          \pm \sqrt{\tfrac{1}{4}(\varepsilon_1-\varepsilon_2)^2 + V^2}\)
+        </p>
+      </div>
+    </div>
+  </article>
+
+  <article class="module" id="mod-moire">
+    <div class="module-body">
+      <div class="module-canvas-wrap">
+        <canvas id="moireCanvas" width="360" height="360" aria-label="Moire pattern from twisted bilayers"></canvas>
+        <p class="fig-caption"><span class="fig-no mono">Fig. 3</span>
+          Two honeycomb lattices with relative twist \(\theta\): cyan fixed, orange
+          rotated. The scale bar marks the moiré period \(\lambda\).</p>
+      </div>
+      <div class="module-panel">
+        <h3>Moiré Interferometer</h3>
+        <p>
+          <span class="para-label">Physics</span>
+          Stacking two atomic lattices with a relative twist \(\theta\) produces a moiré
+          superlattice whose period diverges as \(\theta \to 0\). Near the magic angle of
+          about 1.1° the superlattice flattens the electronic bands, and flat bands mean
+          strong correlations: superconducting and insulating phases in twisted bilayer
+          graphene. My density-functional study of graphene on hexagonal boron nitride
+          examined exactly this band reconstruction.
+        </p>
+        <p>
+          <span class="para-label">Simulation</span>
+          At left: two honeycomb lattices drawn in additive light, cyan for the fixed
+          layer and orange for the twisted one. The beat pattern is the moiré superlattice
+          itself; the scale bar tracks its period \(\lambda\). Adjust \(\theta\) and watch
+          the period diverge as the twist vanishes.
+        </p>
+        <div class="ctrl mono">
+          <label for="twistSlider">\(\theta\) · twist angle</label>
+          <input type="range" id="twistSlider" min="0.5" max="10" step="0.02" value="3.0">
+          <output id="twistOut">3.00°</output>
+        </div>
+        <p class="module-eq">
+          \(\lambda_{\mathrm{moir\acute e}} = \dfrac{a}{2\sin(\theta/2)} = \)
+          <output id="lambdaOut" class="mono"></output>
+        </p>
+      </div>
+    </div>
+  </article>
+</section>
+
+<section class="section" id="exploring">
+  <div class="section-head">
+    <h2>Exploring</h2>
+  </div>
+
+  <div class="explore-grid">
+    <div class="explore-card mono">
+      <div class="explore-status">active</div>
+      <h3 class="explore-title">Neural-Network Quantum States</h3>
+      <p class="explore-text">
+        The direct continuation of my variational many-body work: neural-network ansätze
+        \(|\psi_\theta\rangle\) optimized by variational Monte Carlo with stochastic
+        reconfiguration, validated against exact diagonalization, and extended toward
+        thermal states, dynamics, and neutral-atom experimental platforms.
+      </p>
+    </div>
+    <div class="explore-card mono">
+      <div class="explore-status">validating</div>
+      <h3 class="explore-title">Ab Initio-Informed Electrochemical Modeling</h3>
+      <p class="explore-text">
+        Density functional theory carried across scales: first-principles priors, for
+        example open-circuit voltage curves, lithium site capacities, and migration
+        barriers, propagated into the Doyle&ndash;Fuller&ndash;Newman porous-electrode model and
+        validated against laboratory cell-aging measurements. Structured experiment&ndash;model
+        residuals become the training signal for machine-learned lifetime prediction.
+      </p>
+    </div>
+    <div class="explore-card mono">
+      <div class="explore-status">measuring</div>
+      <h3 class="explore-title">Benchmarking Quantum-Inspired Optimization</h3>
+      <p class="explore-text">
+        Rigor for the optimizer shown above: a solver-agnostic framework in which classical
+        and quantum-inspired solvers are scored by a single metric authority against matched
+        exact baselines, so that measured gaps reflect solver quality rather than convention
+        drift. The public interface runs on this page:
+        <a href="#mod-anneal" id="launchAppLink">launch it here</a>.
+      </p>
+    </div>
+    <div class="explore-card mono">
+      <div class="explore-status">formulating</div>
+      <h3 class="explore-title">Statistical Physics of Market Microstructure</h3>
+      <p class="explore-text">
+        The Ising mapping taken to its noisiest limit: high-frequency order-book and tick
+        data treated as an interacting spin system, whose collective regimes and their
+        transitions are candidate sources of predictive signal in a driven,
+        far-from-equilibrium environment.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="cv">
+  <div class="section-head">
+    <div class="head-row">
+      <h2>Curriculum Vitae</h2>
+      <a class="btn btn-ghost mono" href="Alpesh_Sheth_CV.pdf" download>Download PDF</a>
+    </div>
+  </div>
+
+  <div class="terminal mono">
+    <div class="terminal-bar">
+      <span class="terminal-title">Record of research and training</span>
+    </div>
+    <div class="terminal-tabs" role="tablist">
+      <button class="ttab active" role="tab" data-tab="timeline">Timeline</button>
+      <button class="ttab" role="tab" data-tab="education">Education</button>
+      <button class="ttab" role="tab" data-tab="publications">Publications</button>
+      <button class="ttab" role="tab" data-tab="talks">Talks</button>
+    </div>
+    <div class="terminal-body">
+      <div class="tpane active" id="pane-timeline" role="tabpanel">
+        <div id="timelineList"></div>
+      </div>
+      <div class="tpane" id="pane-education" role="tabpanel">
+        <div class="edu-entry">
+          <span class="edu-crest" aria-hidden="true"><img src="assets/edu-bordeaux.png" alt="" loading="lazy" onerror="this.remove()"><span class="crest-mono">UB</span></span>
+          <span class="entry">
+            <span class="entry-key">2021 – 2025 · Doctorate</span>
+            <span class="entry-title">PhD in Material Science, Université de Bordeaux</span>
+            <span class="entry-sub">Doctoral thesis on the theoretical modelling of infinite-layer nickelates, prepared at the Laboratoire Ondes et Matière d'Aquitaine (UMR 5798, CNRS) · <a href="https://theses.hal.science/tel-05502836" target="_blank" rel="noopener">full text on HAL</a></span>
+          </span>
+        </div>
+        <div class="edu-entry">
+          <span class="edu-crest" aria-hidden="true"><img src="assets/edu-msu.png" alt="" loading="lazy" onerror="this.remove()"><span class="crest-mono">MSU</span></span>
+          <span class="entry">
+            <span class="entry-key">2018 – 2020 · Master's</span>
+            <span class="entry-title">MSc in Condensed Matter Physics, The Maharaja Sayajirao University of Baroda</span>
+            <span class="entry-sub">Department of Physics, Faculty of Science</span>
+          </span>
+        </div>
+        <div class="edu-entry">
+          <span class="edu-crest" aria-hidden="true"><img src="assets/edu-msu.png" alt="" loading="lazy" onerror="this.remove()"><span class="crest-mono">MSU</span></span>
+          <span class="entry">
+            <span class="entry-key">2015 – 2018 · Bachelor's</span>
+            <span class="entry-title">BSc in Physics, The Maharaja Sayajirao University of Baroda</span>
+            <span class="entry-sub">Department of Physics, Faculty of Science</span>
+          </span>
+        </div>
+      </div>
+      <div class="tpane" id="pane-publications" role="tabpanel">
+        <div id="pubList"></div>
+      </div>
+      <div class="tpane" id="pane-talks" role="tabpanel">
+        <a class="talk" href="https://www.youtube.com/live/tUv6uxbzKBw" target="_blank" rel="noopener">
+          <img src="https://i.ytimg.com/vi/tUv6uxbzKBw/hqdefault.jpg" alt="Recording of invited talk" loading="lazy">
+          <span class="entry">
+            <span class="entry-key">2023 · Invited talk</span>
+            <span class="entry-title">Modelling oxygen and rare-earth atomic impurities in nickelates</span>
+            <span class="entry-sub">IIP-Natal WE-Heraeus Workshop on New Frontiers in Emergent Materials · watch the recording</span>
+          </span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="section footer" id="contact">
+  <div class="section-head">
+    <h2>Contact</h2>
+  </div>
+  <div class="footer-grid">
+    <p class="lede">Open to collaborations in computational materials, many-body theory, and scientific machine learning.</p>
+    <ul class="footer-links mono">
+      <li>
+        <a href="mailto:alpeshsheth.phy@gmail.com">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 5.5A1.5 1.5 0 0 1 3.5 4h17A1.5 1.5 0 0 1 22 5.5v13a1.5 1.5 0 0 1-1.5 1.5h-17A1.5 1.5 0 0 1 2 18.5v-13Zm2 .7v12.3h16V6.2l-7.5 6a1 1 0 0 1-1.25 0L4 6.2Zm1.9-.7 6.1 4.9L18.1 5.5H5.9Z"/></svg>
+          alpeshsheth.phy@gmail.com
+        </a>
+      </li>
+      <li>
+        <a href="https://www.linkedin.com/in/alpesh-sheth/" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.225 0z"/></svg>
+          linkedin.com/in/alpesh-sheth
+        </a>
+      </li>
+      <li>
+        <a href="https://github.com/asheth-git" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0C5.37 0 0 5.373 0 12c0 5.303 3.438 9.8 8.205 11.387.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.756-1.333-1.756-1.09-.745.082-.73.082-.73 1.205.084 1.84 1.237 1.84 1.237 1.07 1.834 2.807 1.304 3.492.997.108-.775.418-1.305.762-1.605-2.665-.305-5.467-1.334-5.467-5.93 0-1.31.468-2.38 1.235-3.22-.123-.303-.535-1.523.117-3.176 0 0 1.008-.322 3.3 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.29-1.552 3.297-1.23 3.297-1.23.653 1.653.24 2.873.118 3.176.77.84 1.233 1.91 1.233 3.22 0 4.61-2.807 5.624-5.48 5.92.43.372.814 1.102.814 2.222 0 1.606-.015 2.898-.015 3.293 0 .32.216.694.825.576C20.565 21.796 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
+          github.com/asheth-git
+        </a>
+      </li>
+      <li>
+        <a href="https://scholar.google.com/citations?user=TpDyu0AAAAAJ" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/></svg>
+          Google Scholar
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <div class="telemetry" id="telemetry">
+    <canvas id="mapCanvas" aria-label="Visitor map"></canvas>
+    <p class="telemetry-line mono">visitors by country</p>
+  </div>
+
+  <p class="colophon mono">© <span id="year">2026</span> Alpesh Sheth</p>
+</footer>
+
+</main>
+
+<!-- Quantum Portfolio, launched in place as an instrument window -->
+<div id="appOverlay" hidden>
+  <div class="app-window" role="dialog" aria-modal="true" aria-label="Quantum Portfolio application">
+    <div class="app-window-bar mono">
+      <span class="app-window-title">Quantum Portfolio · demonstration mode</span>
+      <button class="app-window-close" id="appCloseBtn" aria-label="Close application">×</button>
+    </div>
+    <iframe id="appFrame" title="Quantum Portfolio" loading="lazy"></iframe>
+  </div>
+</div>
+
+<script src="main.js"></script>
+</body>
+</html>

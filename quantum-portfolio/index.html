@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quantum Portfolio · Alpesh Sheth</title>
+<meta name="description" content="Portfolio optimization as a ground-state problem: assets mapped onto an Ising Hamiltonian, solved by simulated annealing.">
+<meta name="author" content="Alpesh Sheth">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,600;1,400&family=Spectral:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/aaaakshat/cm-web-fonts@latest/fonts.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'\\(',right:'\\)',display:false},{left:'\\[',right:'\\]',display:true}]});"></script>
+<link rel="stylesheet" href="app.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%2304070c'/><circle cx='16' cy='16' r='7' fill='none' stroke='%2321e6d6' stroke-width='2'/><circle cx='16' cy='16' r='2.5' fill='%23ff9a3c'/></svg>">
+</head>
+<body>
+
+<!-- ============================================================ -->
+<!-- TOP BAR                                                      -->
+<!-- ============================================================ -->
+<header id="topbar">
+  <span class="brand mono">QUANTUM&nbsp;PORTFOLIO</span>
+  <span class="mode-badge mono" id="modeBadge">demo data</span>
+  <span class="topbar-status mono" id="engineStatus">
+    <span class="status-dot" id="statusDot"></span><span id="statusText">idle</span>
+  </span>
+</header>
+
+<div id="layout">
+
+<!-- ============================================================ -->
+<!-- SIDEBAR — instrument rack                                    -->
+<!-- ============================================================ -->
+<aside id="sidebar" class="mono">
+
+  <section class="rack">
+    <div class="rack-head">1 · Preset</div>
+    <div class="chip-row" id="presetRow">
+      <button class="chip active" data-preset="balanced">Balanced</button>
+      <button class="chip" data-preset="growth">Growth</button>
+      <button class="chip" data-preset="conservative">Conservative</button>
+      <button class="chip" data-preset="custom">Custom</button>
+    </div>
+  </section>
+
+  <section class="rack">
+    <div class="rack-head">2 · Asset universe</div>
+    <textarea id="universeInput" rows="3" spellcheck="false">AAPL, TSLA, MSFT, PFE, XOM, V, JNJ, AMZN, JPM, NVDA</textarea>
+    <div class="rack-note" id="universeNote">demo snapshot · live data feed available in production mode</div>
+  </section>
+
+  <section class="rack">
+    <div class="rack-head">3 · Date range</div>
+    <div class="date-row">
+      <input type="date" id="dateFrom" value="2024-01-01">
+      <input type="date" id="dateTo" value="2024-12-31">
+    </div>
+  </section>
+
+  <section class="rack">
+    <div class="rack-head">4 · Hamiltonian parameters</div>
+    <div class="ctrl">
+      <label for="kSlider">target assets \(K\)</label>
+      <input type="range" id="kSlider" min="2" max="10" step="1" value="5">
+      <output id="kOut">5</output>
+    </div>
+    <div class="ctrl">
+      <label for="sectorSlider">max sector exposure</label>
+      <input type="range" id="sectorSlider" min="20" max="100" step="5" value="40">
+      <output id="sectorOut">40%</output>
+    </div>
+    <div class="ctrl">
+      <label for="lambdaSlider">risk aversion \(\lambda\)</label>
+      <input type="range" id="lambdaSlider" min="0" max="1" step="0.05" value="0.5">
+      <output id="lambdaOut">0.50</output>
+    </div>
+    <div class="ctrl">
+      <label for="epochSlider">annealing epochs</label>
+      <input type="range" id="epochSlider" min="100" max="2000" step="100" value="1000">
+      <output id="epochOut">1000</output>
+    </div>
+  </section>
+
+  <button class="btn btn-primary" id="solveBtn">Solve portfolio</button>
+  <button class="btn btn-ghost" id="resetBtn">Reset</button>
+
+  <div class="sidebar-foot">engineered by Alpesh Sheth</div>
+</aside>
+
+<!-- ============================================================ -->
+<!-- MAIN                                                         -->
+<!-- ============================================================ -->
+<main id="main">
+
+  <!-- physics strip: what is actually happening -->
+  <section class="physics-strip">
+    <p class="physics-eq">
+      \(\displaystyle H(\mathbf{s}) \;=\; -\sum_i h_i s_i \;+\; \lambda \sum_{i&lt;j} J_{ij}\, s_i s_j \;+\; H_{\mathrm{constraints}}\)
+    </p>
+    <p class="physics-text">
+      Each asset is a spin \(s_i \in \{0,1\}\): held or not held. Expected returns enter as local
+      fields \(h_i\), the covariance matrix as pair couplings \(J_{ij}\), and portfolio rules
+      (cardinality, sector exposure) as constraint terms. The optimal portfolio is the ground
+      state of this Hamiltonian, located by simulated annealing: the system is cooled through a
+      temperature schedule while the variational free energy is tracked. The constraint encoding
+      and schedule used by the production engine are proprietary.
+    </p>
+  </section>
+
+  <!-- metric cards -->
+  <section class="cards" id="cards">
+    <div class="card"><div class="card-label mono">Selected</div><div class="card-value mono" id="mSelected">–</div><div class="card-sub mono">of universe</div></div>
+    <div class="card"><div class="card-label mono">Expected return</div><div class="card-value mono" id="mReturn">–</div><div class="card-sub mono">annualized proxy</div></div>
+    <div class="card"><div class="card-label mono">Volatility</div><div class="card-value mono" id="mVol">–</div><div class="card-sub mono">annualized risk</div></div>
+    <div class="card"><div class="card-label mono">Sharpe proxy</div><div class="card-value mono" id="mSharpe">–</div><div class="card-sub mono">return / risk</div></div>
+    <div class="card"><div class="card-label mono">Diversification</div><div class="card-value mono" id="mHHI">–</div><div class="card-sub mono">1 − HHI</div></div>
+    <div class="card"><div class="card-label mono">Max sector</div><div class="card-value mono" id="mSector">–</div><div class="card-sub mono">exposure</div></div>
+  </section>
+
+  <!-- annealing dynamics -->
+  <section class="panel">
+    <div class="panel-bar">
+      <span class="panel-title mono">Annealing dynamics</span>
+      <span class="panel-read mono">T-schedule <output id="stepOut">0 / 0</output></span>
+    </div>
+    <div class="schedule-track"><div class="schedule-fill" id="scheduleFill"></div></div>
+    <div class="trace-reads mono">
+      <span>temperature <output id="tempOut">–</output></span>
+      <span>energy per asset <output id="energyOut">–</output></span>
+      <span class="read-best">best found <output id="bestOut">–</output></span>
+    </div>
+    <canvas id="traceCanvas" height="130" aria-label="Energy trace during annealing"></canvas>
+  </section>
+
+  <!-- allocation row -->
+  <div class="panel-row">
+    <section class="panel">
+      <div class="panel-bar"><span class="panel-title mono">Sector allocation</span></div>
+      <div id="sectorBars" class="bars"><p class="empty mono">awaiting solve</p></div>
+    </section>
+    <section class="panel">
+      <div class="panel-bar"><span class="panel-title mono">Selected assets</span></div>
+      <div id="assetTableWrap">
+        <table id="assetTable" class="mono">
+          <thead><tr><th>ticker</th><th>company</th><th>sector</th><th class="num">return</th><th class="num">weight</th></tr></thead>
+          <tbody id="assetRows"><tr><td colspan="5" class="empty">awaiting solve</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <footer id="appfoot" class="mono">
+    physics core: Ising-mapped portfolio selection, simulated annealing ·
+    demo mode runs a textbook single-flip annealer on bundled snapshot data ·
+    production engine and constraint encoding proprietary ·
+    <a href="https://asheth-git.github.io" target="_blank" rel="noopener">asheth-git.github.io</a>
+  </footer>
+
+</main>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

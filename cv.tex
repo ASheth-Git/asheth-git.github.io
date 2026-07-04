@@ -1,0 +1,190 @@
+% ============================================================
+% Alpesh Sheth — Curriculum Vitae
+% XeLaTeX · Latin Modern · dotted rules echoing asheth-git.github.io
+% ============================================================
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[a4paper,margin=1.65cm,bottom=1.8cm]{geometry}
+\usepackage{fontspec}
+\setmainfont{Latin Modern Roman}
+\setmonofont{Latin Modern Mono}
+
+\usepackage{xcolor}
+\definecolor{ink}{HTML}{1B2430}
+\definecolor{dim}{HTML}{55677A}
+\definecolor{teal}{HTML}{0B7A71}
+\definecolor{amber}{HTML}{C96F1A}
+\definecolor{ruledot}{HTML}{9AB0C2}
+
+\usepackage{tikz}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage[hidelinks]{hyperref}
+\hypersetup{colorlinks=true, urlcolor=teal, linkcolor=teal}
+
+\pagestyle{empty}
+\color{ink}
+\setlength{\parindent}{0pt}
+
+% dotted rule, echoing the dot-matrix motif of the website
+\newcommand{\dotrule}{%
+  \tikz{\draw[color=ruledot, line width=1.5pt, line cap=round,
+        dash pattern=on 0pt off 6pt] (0,0) -- (\linewidth,0);}}
+
+\titleformat{\section}
+  {\normalfont\ttfamily\small\bfseries\color{teal}\uppercase}
+  {}{0em}{}[\vspace{2pt}\dotrule]
+\titlespacing*{\section}{0pt}{14pt}{8pt}
+
+% experience entry: role, institution, dates
+\newcommand{\entry}[3]{%
+  \textbf{#1}\hfill{\ttfamily\footnotesize\color{dim}#3}\\
+  {\itshape\color{dim}#2}\vspace{2pt}}
+
+\setlist[itemize]{leftmargin=1.1em, itemsep=1.5pt, topsep=3pt,
+  label={\textcolor{amber}{\footnotesize\textbullet}}}
+
+\begin{document}
+
+% ------------------------------------------------------------ header
+{\fontsize{27}{30}\selectfont Alpesh Sheth}\hfill
+\begin{tabular}[b]{@{}r@{}}
+  {\ttfamily\footnotesize \href{mailto:alpeshsheth.phy@gmail.com}{alpeshsheth.phy@gmail.com}}\\[1pt]
+  {\ttfamily\footnotesize \href{https://www.linkedin.com/in/alpesh-sheth/}{linkedin.com/in/alpesh-sheth}}\\[1pt]
+  {\ttfamily\footnotesize \href{https://asheth-git.github.io}{asheth-git.github.io}}
+\end{tabular}
+
+\vspace{4pt}
+{\ttfamily\small\color{amber}PhD · Computational Condensed Matter Physics}
+
+\vspace{6pt}
+\dotrule
+
+\vspace{8pt}
+Computational physicist working on the electronic structure of quantum materials.
+I construct effective multi-orbital models for correlated-electron systems, compute them
+with many-body and first-principles methods on high-performance computing infrastructure,
+and transfer the same modeling discipline to applied problems in machine learning and
+optimization.
+
+% ------------------------------------------------------------ experience
+\section{Experience}
+
+\entry{Doctoral Researcher}
+      {Laboratoire Ondes et Matière d'Aquitaine (UMR 5798, CNRS), Université de Bordeaux}
+      {Dec 2021–Nov 2025}
+\begin{itemize}
+  \item Constructed effective multi-orbital models separating the electronic physics of
+        infinite-layer nickelates (RNiO\textsubscript{2}) from high-T\textsubscript{c} cuprates.
+  \item Identified robust antiferromagnetic and charge-order tendencies driven by
+        Fermi-surface nesting.
+  \item Developed and optimized Python and Fortran modules for quantum-material simulation;
+        workflow automation on high-performance computing clusters reduced compute time by
+        approximately 35\,\%.
+  \item Designed scalable frameworks to validate theoretical predictions against
+        experimental data for complex material properties.
+\end{itemize}
+
+\entry{Research Intern, Data Science}
+      {Uresearcher}
+      {Jun 2022–Nov 2022}
+\begin{itemize}
+  \item Automated data-extraction pipelines through public interfaces, reducing manual
+        pre-processing by approximately 70\,\%.
+  \item Applied predictive machine-learning models to drug-design datasets, improving
+        hit-prediction accuracy by approximately 15\,\%.
+  \item Mined open-source molecular databases to identify candidate molecules for
+        targeted applications.
+\end{itemize}
+
+\entry{Research Fellow}
+      {The Maharaja Sayajirao University of Baroda}
+      {Apr 2020–Nov 2021}
+\begin{itemize}
+  \item Performed density functional theory and molecular dynamics simulations of
+        boron-based nanomaterials for radiation shielding.
+  \item Designed modular high-performance computing workflows across more than twenty
+        structural parameter sets, accelerating design cycles by approximately 50\,\%.
+  \item Presented a density-functional study of twisted graphene and hexagonal boron
+        nitride moiré heterostructures at ICAFMOD 2020.
+\end{itemize}
+
+\entry{Research Intern}
+      {Physical Research Laboratory}
+      {Jun 2018–Nov 2021}
+\begin{itemize}
+  \item Computed the non-linear alternating-current admittance of materials, improving
+        predictive reliability by approximately 40\,\% over prior approaches.
+  \item Analyzed transport properties through the density of states using second-order
+        perturbation theory and the Kubo formalism.
+  \item Determined critical size thresholds for superconducting nanoparticles used in
+        magnetic sensor design.
+\end{itemize}
+
+% ------------------------------------------------------------ education
+\section{Education}
+
+\entry{PhD in Material Science}{Université de Bordeaux}{2021–2025}
+
+\vspace{5pt}
+\entry{MSc in Condensed Matter Physics}{The Maharaja Sayajirao University of Baroda}{2018–2020}
+
+\vspace{5pt}
+\entry{BSc in Physics}{The Maharaja Sayajirao University of Baroda}{2015–2018}
+
+% ------------------------------------------------------------ publications
+\section{Publications}
+
+\begin{itemize}
+  \item \textbf{A. Sheth} et al., \emph{Emergence and tunability of Fermi-pocket and
+        electronic instabilities in layered Nickelates},
+        Journal of Physics: Condensed Matter \textbf{37}, 125703 (2025).
+        \href{https://doi.org/10.1088/1361-648X/ada908}{doi:10.1088/1361-648X/ada908}
+  \item \textbf{A. Sheth}, \emph{Theoretical modelling of infinite-layer nickelates},
+        PhD thesis, Université de Bordeaux (2025).
+        \href{https://theses.hal.science/tel-05502836}{theses.hal.science/tel-05502836}
+  \item B. Devanarayanan, A. Sharma, \textbf{A. Sheth} et al.,
+        \emph{Background for the Self Consistent Renormalisation (SCR) Theory},
+        \href{https://arxiv.org/abs/2108.12683}{arXiv:2108.12683} (2021).
+\end{itemize}
+
+% ------------------------------------------------------------ talks
+\section{Invited Talks}
+
+\begin{itemize}
+  \item \emph{Modelling oxygen and rare-earth atomic impurities in nickelates},
+        IIP-Natal WE-Heraeus Workshop on New Frontiers in Emergent Materials (2023).
+        \href{https://www.youtube.com/live/tUv6uxbzKBw}{Recording available}.
+\end{itemize}
+
+% ------------------------------------------------------------ projects
+\section{Selected Projects}
+
+\begin{itemize}
+  \item \textbf{Quantum Portfolio.} Full-stack application for portfolio optimization
+        mapped onto the Ising model: live market data ingestion, constraint penalties for
+        sector exposure and cardinality, a tunable risk-aversion parameter, and simulated
+        annealing with variational free-energy tracking.
+  \item \textbf{Graphene heterostructures.} Electronic properties of twisted graphene and
+        hexagonal boron nitride bilayers from density functional theory, including moiré
+        superlattice effects.
+\end{itemize}
+
+% ------------------------------------------------------------ skills
+\section{Technical Skills}
+
+\begin{tabular}{@{}p{4.2cm}p{12.2cm}@{}}
+  {\ttfamily\footnotesize\color{dim}Languages} &
+    Python, C++, Fortran, Julia, Bash, MATLAB, \LaTeX\\[3pt]
+  {\ttfamily\footnotesize\color{dim}Many-body methods} &
+    Green's functions, dynamical mean-field theory, exact diagonalization,
+    second-order perturbation theory, Kubo formalism\\[3pt]
+  {\ttfamily\footnotesize\color{dim}Simulation packages} &
+    VASP, Quantum ESPRESSO, LAMMPS, CP2K, TRIQS\\[3pt]
+  {\ttfamily\footnotesize\color{dim}Data and machine learning} &
+    predictive modeling, statistical analysis, automated data pipelines\\[3pt]
+  {\ttfamily\footnotesize\color{dim}Infrastructure} &
+    high-performance computing (Slurm), Git, workflow automation
+\end{tabular}
+
+\end{document}
