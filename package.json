@@ -1,0 +1,12 @@
+{
+  "name": "alpesh-sheth-portfolio",
+  "version": "1.0.0",
+  "description": "Computational condensed matter physicist portfolio with live telemetry",
+  "private": true,
+  "scripts": {
+    "dev": "vercel dev"
+  },
+  "dependencies": {
+    "@vercel/kv": "^0.2.1"
+  }
+}

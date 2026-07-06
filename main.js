@@ -13,13 +13,10 @@
    DATA_SOURCES — plug endpoints here.
    publicationsURL / timelineURL : JSON files or API proxies; when
      null the inline PROFILE below is used.
-   counterNamespace : namespace for the anonymous per-country visit
-     counters that feed the telemetry map (abacus.jasoncameron.dev).
    ================================================================ */
 const DATA_SOURCES = {
   publicationsURL: null,
   timelineURL: null,
-  counterNamespace: "asheth-github-io",
 };
 
 const PROFILE = {
@@ -903,16 +900,14 @@ function initTabs() {
 }
 
 /* ================================================================
-   TELEMETRY — dot-matrix visitor map
+   TELEMETRY — dot-matrix visitor map (Vercel KV backend)
    Land mask: 128×56 grid, equirectangular, lat +72 → −56,
    precomputed from a public land dataset and packed as hex.
 
-   Persistence across visitors on a static host: each visit
-   increments one key-value counter per country (free, anonymous,
-   no cookies). On load, all country counters are read back and
-   every country that has ever visited is drawn as an orange point,
-   scaled by its visit count. The current visitor appears as the
-   single cyan point at coarse IP-level position.
+   Live-updating: polls /api/telemetry every 30 seconds to fetch:
+     - All past visitors by country (orange dots, scaled by count)
+     - Current visitor location (cyan dot with pulsing halo)
+   Data persisted in Vercel KV (free tier).
    ================================================================ */
 const LAND_HEX = "00C003E2FC03FF00000010FBFFFDFD8087FFFE61A707FC0007F90FEFFFFFFFFF65FFFFFF83C7F00007F5FFFFFFFFFFFF01FFFFFF6383C0C00EFBFFFFFFFFFFFF07FFFFFE0C0180003CFFFFFFFFFFFF7C0383FFFC0E0000003E7FFFFFFFFFFA4000407FFF07C000021E7FFFFFFFFF80C004007FFFEFE0000701FFFFFFFFFF01C000003FFFEFF00005BFFFFFFFFFFFE00000001FFFFFE000007FFFFFFFFFFFC000000007FFFF180003FFFFFFFFFFFFC00000000FFFFFE00000FFE7FFFFFFFF800000000FFFFE0000058BC3FFFFFFFF300000000FFFFC00000785F9FFFFFFFC000000000FFFF8000007813FFFFFFFCC0000000007FFF80000007037FFFFFFE44000000003FFF0000003F007FFFFFFE08000000003FFE0000007F98FFFFFFFE20000000000FF2000000FFFFFBFFFFFE00000000001780000001FFFF79FFFFFE00000000000F80000001FFFF7C0FFFFC00000000000383000003FFFFBF87FFF800000000000188000003FFFFBF83E7C0000000000001D8A80003FFFFDF03C3C000000000000050000003FFFFDE0385C00000000000000C000003FFFFF80181E100000000000004100003FFFFE0010061800000000000035C0001FFFFFC01814000000000000000FE0000FFFFFC008104800000000000007FC00043FFF800028400000000000000FFC00001FFF000018C00000000000010FFC00001FFE000019C00000000000001FFF00001FFC000009A0C000000000001FFFE0000FFC00000400F000000000000FFFF00007FC000007007000000000000FFFE00007FC000000082800000000000FFFE00007FC0000000202000000000007FFC0000FFC4000000320000000000003FFC0000FFCC000000FB0100000000001FFC0000FF8C000001FF0000000000001FFC00007F08000003FF8200000000001FF800007F9800000FFFC000000000001FE000007F0800000FFFE000000000001FE000007F00000007FFC000000000001FC000003E00000007FFE000000000001FC000001C00000007DFC000000000003F800000100000000407C000000000003F0000000000000000038000000000003E0000000000000000000020000000003C000000000000000001806000000000380000000000000000000080000000007000000000000000000001800000000078000000000000000000000000000000300000000000000000000000000000000000000000000000000000000000000018000000000000000000000";
 const MAP_W = 128, MAP_H = 56, LAT_TOP = 72, LAT_BOT = -56;
@@ -944,7 +939,6 @@ const COUNTRY_POS = {
   SA: [45, 24], AE: [54, 24], IL: [35, 31.5], PK: [70, 30], BD: [90, 24],
   LK: [80.7, 7.5], TW: [121, 23.7], HK: [114.2, 22.3],
 };
-const COUNTER_API = "https://abacus.jasoncameron.dev";
 
 /* leading centres of condensed matter research, marked as static rings
    on the telemetry map [lon, lat]; city-level points for precision */
@@ -967,8 +961,7 @@ function initTelemetry() {
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
 
   let visitor = null;                 // current visitor [x, y] in map px
-  let countries = [];                 // [{code, count}] for all past visitors
-  let geo = null;
+  let countries = [];                 // [{code, count}] from backend
   let W = 0, H = 0;
 
   const base = document.createElement("canvas");
@@ -1048,8 +1041,10 @@ function initTelemetry() {
   function kick() {
     if (!rafId) rafId = requestAnimationFrame(drawFrame);
   }
-  function relocate() {
-    if (geo) visitor = lonLatToXY(geo.lon, geo.lat, W, H);
+  function relocate(geo) {
+    if (geo && Number.isFinite(geo.lon) && Number.isFinite(geo.lat)) {
+      visitor = lonLatToXY(geo.lon, geo.lat, W, H);
+    }
   }
 
   new IntersectionObserver((en) => {
@@ -1061,80 +1056,31 @@ function initTelemetry() {
   kick();
   window.addEventListener("resize", () => {
     buildBase();
-    relocate();
     kick();
   });
 
-  /* read back all country counters, so earlier visitors stay visible.
-     Reads are throttled in small batches: a single burst of ~57 parallel
-     requests trips the counter service's rate limiter and silently kills
-     the read-back, which is why dots failed to appear. Results render
-     progressively and are cached locally for instant display next visit. */
-  function loadCountries() {
-    const CACHE_KEY = "telemetry-countries-v1";
+  /* Poll Vercel backend every 30 seconds for live updates */
+  async function fetchTelemetry() {
     try {
-      const cached = JSON.parse(localStorage.getItem(CACHE_KEY) || "null");
-      if (cached && Date.now() - cached.t < 6 * 3600 * 1000 && Array.isArray(cached.c)) {
-        countries = cached.c;
+      const res = await fetch("/api/telemetry");
+      const data = await res.json();
+      if (data.countries && Array.isArray(data.countries)) {
+        countries = data.countries;
         buildBase();
         kick();
       }
-    } catch (e) { /* private mode etc. */ }
-
-    const codes = Object.keys(COUNTRY_POS);
-    const found = [];
-    const BATCH = 6, GAP_MS = 350;
-    let idx = 0;
-
-    function next() {
-      if (idx >= codes.length) {
-        countries = found.slice();
-        buildBase();
+      if (data.current) {
+        relocate(data.current);
         kick();
-        try {
-          localStorage.setItem(CACHE_KEY, JSON.stringify({ t: Date.now(), c: found }));
-        } catch (e) {}
-        return;
       }
-      const batch = codes.slice(idx, idx + BATCH);
-      idx += BATCH;
-      Promise.allSettled(
-        batch.map(c =>
-          fetch(`${COUNTER_API}/get/${DATA_SOURCES.counterNamespace}/c-${c}`)
-            .then(r => (r.ok ? r.json() : null))
-            .then(d => { if (d && d.value > 0) found.push({ code: c, count: d.value }); })
-            .catch(() => {})
-        )
-      ).then(() => {
-        countries = found.slice();   /* progressive: dots appear batch by batch */
-        buildBase();
-        kick();
-        setTimeout(next, GAP_MS);
-      });
+    } catch (e) {
+      console.warn("Telemetry fetch failed:", e);
     }
-    next();
   }
 
-  /* current visitor: coarse IP-level location, no cookies */
-  fetch("https://get.geojs.io/v1/ip/geo.json")
-    .then(r => r.json())
-    .then(g => {
-      geo = { lon: parseFloat(g.longitude), lat: parseFloat(g.latitude) };
-      if (Number.isFinite(geo.lon) && Number.isFinite(geo.lat)) {
-        relocate();
-        kick();
-      }
-      const cc = (g.country_code || "").toUpperCase();
-      if (/^[A-Z]{2}$/.test(cc)) {
-        /* register this country, then load the full set */
-        fetch(`${COUNTER_API}/hit/${DATA_SOURCES.counterNamespace}/c-${cc}`)
-          .catch(() => {})
-          .finally(loadCountries);
-      } else {
-        loadCountries();
-      }
-    })
-    .catch(loadCountries);
+  /* Initial fetch + poll every 30 seconds */
+  fetchTelemetry();
+  setInterval(fetchTelemetry, 30000);
 }
 
 /* ================================================================
