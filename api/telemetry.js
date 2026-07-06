@@ -1,18 +1,53 @@
 /* ================================================================
    VERCEL TELEMETRY ENDPOINT
-   Logs visitor IP, fetches geolocation, increments country counter,
-   and returns aggregated visitor data for the live map.
+   Logs visitor IP, fetches geolocation, increments country counter
+   in a JSON file, and returns aggregated visitor data for the live map.
 
    Endpoint: /api/telemetry
    Method: GET
    Returns: {countries: [{code, count}, ...], current: {lon, lat}}
    ================================================================ */
 
-import { kv } from "@vercel/kv";
+import fs from "fs";
+import path from "path";
+
+const DATA_FILE = path.join(process.cwd(), "data", "telemetry.json");
+
+// Ensure data directory exists
+function ensureDataDir() {
+  const dir = path.dirname(DATA_FILE);
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+}
+
+// Read telemetry data from JSON file
+function readData() {
+  try {
+    ensureDataDir();
+    if (fs.existsSync(DATA_FILE)) {
+      const raw = fs.readFileSync(DATA_FILE, "utf-8");
+      return JSON.parse(raw);
+    }
+  } catch (e) {
+    console.warn("Failed to read telemetry data:", e);
+  }
+  return {}; // empty data
+}
+
+// Write telemetry data to JSON file
+function writeData(data) {
+  try {
+    ensureDataDir();
+    fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2), "utf-8");
+  } catch (e) {
+    console.warn("Failed to write telemetry data:", e);
+  }
+}
 
 export default async function handler(req, res) {
   try {
-    // Get visitor IP from Vercel headers (most reliable)
+    // Get visitor IP from Vercel headers
     const ip =
       req.headers["x-forwarded-for"]?.split(",")[0] ||
       req.headers["cf-connecting-ip"] ||
@@ -33,25 +68,22 @@ export default async function handler(req, res) {
       });
     }
 
-    // Increment counter for this country in Vercel KV
-    // Key format: "telemetry:c-US", value: visit count
-    const counterKey = `telemetry:c-${countryCode}`;
-    const currentCount = (await kv.get(counterKey)) || 0;
-    await kv.set(counterKey, currentCount + 1);
+    // Read current data
+    const data = readData();
 
-    // Fetch all country data from KV
-    // This is fast because we only store ~195 countries
-    const allCountries = [];
-    const keys = await kv.keys("telemetry:c-*");
-
-    for (const key of keys) {
-      const code = key.replace("telemetry:c-", "");
-      const count = await kv.get(key);
-      if (count > 0) allCountries.push({ code, count });
+    // Increment counter for this country
+    if (!data[countryCode]) {
+      data[countryCode] = 0;
     }
+    data[countryCode]++;
 
-    // Sort by count descending (most visited first)
-    allCountries.sort((a, b) => b.count - a.count);
+    // Write updated data back
+    writeData(data);
+
+    // Format countries array
+    const allCountries = Object.entries(data)
+      .map(([code, count]) => ({ code, count }))
+      .sort((a, b) => b.count - a.count);
 
     // Return aggregated data
     res.status(200).json({
