@@ -275,7 +275,7 @@ function drawTrace(trace) {
     const yp = pad + (1 - (trace[i] - lo) / (hi - lo)) * (hgt - 2 * pad);
     i === 0 ? ctx.moveTo(xp, yp) : ctx.lineTo(xp, yp);
   }
-  ctx.strokeStyle = "#ff9a3c";
+  ctx.strokeStyle = "#2fb8ab";
   ctx.lineWidth = 1.3 * dpr;
   ctx.stroke();
 }

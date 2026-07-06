@@ -674,10 +674,10 @@ function initPortfolio() {
     const X = i => (i / (hist.length - 1)) * W;
     const Y = E => 8 + (1 - (E - lo) / (hi - lo)) * (H - 20);
 
-    /* single-hue gradient fill under the curve (deep teal) */
+    /* gradient fill under the curve */
     const grad = eCtx.createLinearGradient(0, 0, 0, H);
-    grad.addColorStop(0, "rgba(47, 184, 171, 0.24)");
-    grad.addColorStop(1, "rgba(47, 184, 171, 0)");
+    grad.addColorStop(0, "rgba(255, 154, 60, 0.25)");
+    grad.addColorStop(1, "rgba(255, 154, 60, 0)");
     eCtx.beginPath();
     hist.forEach((E, i) => { i === 0 ? eCtx.moveTo(X(i), Y(E)) : eCtx.lineTo(X(i), Y(E)); });
     eCtx.lineTo(W, H); eCtx.lineTo(0, H); eCtx.closePath();
@@ -687,23 +687,23 @@ function initPortfolio() {
     /* curve */
     eCtx.beginPath();
     hist.forEach((E, i) => { i === 0 ? eCtx.moveTo(X(i), Y(E)) : eCtx.lineTo(X(i), Y(E)); });
-    eCtx.strokeStyle = "#2fb8ab";
-    eCtx.lineWidth = 1.5;
+    eCtx.strokeStyle = "#ff9a3c";
+    eCtx.lineWidth = 1.4;
     eCtx.stroke();
 
-    /* best-energy marker: lighter shade of the same hue */
+    /* best-energy marker */
     if (bestE !== undefined) {
       const by = Math.max(Y(bestE), 24);
       eCtx.setLineDash([3, 4]);
-      eCtx.strokeStyle = "rgba(106, 220, 208, 0.55)";
+      eCtx.strokeStyle = "rgba(33, 230, 214, 0.55)";
       eCtx.lineWidth = 1;
       eCtx.beginPath(); eCtx.moveTo(0, by); eCtx.lineTo(W, by); eCtx.stroke();
       eCtx.setLineDash([]);
-      eCtx.fillStyle = "rgba(106, 220, 208, 0.9)";
+      eCtx.fillStyle = "rgba(33, 230, 214, 0.85)";
       eCtx.fillText("best " + bestE.toFixed(3), W - 86, by - 5);
     }
     /* current-point dot + labels at fixed, non-colliding corners */
-    eCtx.fillStyle = "#6adcd0";
+    eCtx.fillStyle = "#ff9a3c";
     eCtx.beginPath();
     eCtx.arc(W - 2, Y(hist[hist.length - 1]), 2.5, 0, 6.2832);
     eCtx.fill();
