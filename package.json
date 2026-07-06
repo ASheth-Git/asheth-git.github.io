@@ -1,4 +1,7 @@
 {
+    "engines": {
+    "node": "24.x"
+  }
   "name": "alpesh-sheth-portfolio",
   "version": "1.0.0",
   "description": "Computational condensed matter physicist portfolio with live telemetry",
