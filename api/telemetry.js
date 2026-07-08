@@ -35,6 +35,17 @@ function redisEnv() {
     process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
   if (url && token) return { url, token };
 
+  /* Vercel's Upstash integration lets users set a custom env-var
+     prefix, producing names like <PREFIX>_KV_REST_API_URL. Scan for
+     any URL/token pair sharing a prefix — works for any prefix. */
+  for (const [key, value] of Object.entries(process.env)) {
+    if (key.endsWith("KV_REST_API_URL") && value) {
+      const prefix = key.slice(0, -"KV_REST_API_URL".length);
+      const pairedToken = process.env[prefix + "KV_REST_API_TOKEN"];
+      if (pairedToken) return { url: value, token: pairedToken };
+    }
+  }
+
   /* Fallback: derive REST credentials from the TCP connection string
      (rediss://default:PASSWORD@HOST:6379). Upstash's REST endpoint is
      https://HOST and the REST token equals the default-user password. */
