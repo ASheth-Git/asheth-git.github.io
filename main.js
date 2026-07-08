@@ -904,10 +904,10 @@ function initTabs() {
    Land mask: 128×56 grid, equirectangular, lat +72 → −56,
    precomputed from a public land dataset and packed as hex.
 
-   Live-updating: polls /api/telemetry every 30 seconds to fetch:
-     - All past visitors by country (orange dots, scaled by count)
+   Live-updating: polls the Vercel endpoint every 30 seconds to fetch:
+     - Visitor counts per country (glowing orange count badges)
      - Current visitor location (cyan dot with pulsing halo)
-   Data persisted in Vercel KV (free tier).
+   Data persisted in Upstash Redis via the Vercel integration.
    ================================================================ */
 const TELEMETRY_ENDPOINT = "https://asheth-github-io.vercel.app/api/telemetry";
 
@@ -942,21 +942,6 @@ const COUNTRY_POS = {
   LK: [80.7, 7.5], TW: [121, 23.7], HK: [114.2, 22.3],
 };
 
-/* leading centres of condensed matter research, marked as static rings
-   on the telemetry map [lon, lat]; city-level points for precision */
-const RESEARCH_HUBS = [
-  [-71.09, 42.36],   // Boston–Cambridge, United States
-  [11.58, 48.14],    // Munich, Germany
-  [0.12, 52.21],     // Cambridge, United Kingdom
-  [2.35, 48.85],     // Paris, France
-  [8.55, 47.37],     // Zurich, Switzerland
-  [4.36, 52.01],     // Delft, Netherlands
-  [139.77, 35.68],   // Tokyo, Japan
-  [116.40, 39.90],   // Beijing, China
-  [126.98, 37.57],   // Seoul, South Korea
-  [72.88, 19.08],    // Mumbai, India
-];
-
 function initTelemetry() {
   const canvas = document.getElementById("mapCanvas");
   const ctx = canvas.getContext("2d");
@@ -987,34 +972,46 @@ function initTelemetry() {
           bctx.arc((i + 0.5) * sx, (j + 0.5) * sy, r, 0, 6.2832);
           bctx.fill();
         }
-    /* research hubs: static cyan rings */
-    for (const [lon, lat] of RESEARCH_HUBS) {
-      const [hx, hy] = lonLatToXY(lon, lat, W, H);
-      bctx.strokeStyle = "rgba(33, 230, 214, 0.55)";
-      bctx.lineWidth = dpr;
-      bctx.beginPath();
-      bctx.arc(hx, hy, r * 1.7, 0, 6.2832);
-      bctx.stroke();
-      bctx.fillStyle = "rgba(33, 230, 214, 0.8)";
-      bctx.beginPath();
-      bctx.arc(hx, hy, Math.max(1, 0.35 * r), 0, 6.2832);
-      bctx.fill();
-    }
-    /* every country that has ever visited: orange, scaled by count */
+    /* every country that has ever visited: glowing badge with the
+       visitor count. Radius grows ~log(count) so 1 and 500 both read;
+       drawn into the static base so the RAF loop stays cheap. */
     for (const { code, count } of countries) {
       const pos = COUNTRY_POS[code];
       if (!pos) continue;
       const [cx, cy] = lonLatToXY(pos[0], pos[1], W, H);
-      const rr = r * (1.3 + 0.8 * Math.log10(1 + count));
-      bctx.fillStyle = "rgba(255, 154, 60, 0.55)";
+      const label = count > 999 ? "1k+" : String(count);
+      const br = sx * (1.15 + 0.45 * Math.log10(1 + count));
+
+      /* halo */
+      bctx.save();
+      bctx.shadowColor = "rgba(255, 154, 60, 0.9)";
+      bctx.shadowBlur = br * 1.4;
+
+      /* dark disc so the number stays legible over land dots */
+      bctx.fillStyle = "rgba(8, 14, 22, 0.92)";
       bctx.beginPath();
-      bctx.arc(cx, cy, rr, 0, 6.2832);
+      bctx.arc(cx, cy, br, 0, 6.2832);
       bctx.fill();
-      bctx.strokeStyle = "rgba(255, 154, 60, 0.25)";
-      bctx.lineWidth = dpr;
+
+      /* glowing ring */
+      bctx.strokeStyle = "rgba(255, 154, 60, 0.95)";
+      bctx.lineWidth = Math.max(1, 0.14 * br);
       bctx.beginPath();
-      bctx.arc(cx, cy, rr + 2.5 * dpr, 0, 6.2832);
+      bctx.arc(cx, cy, br, 0, 6.2832);
       bctx.stroke();
+      bctx.restore();
+
+      /* count, centred; shrink for 3+ digits */
+      const fs = br * (label.length > 2 ? 0.85 : 1.1);
+      bctx.font = `600 ${fs}px "Red Hat Mono", monospace`;
+      bctx.textAlign = "center";
+      bctx.textBaseline = "middle";
+      bctx.save();
+      bctx.shadowColor = "rgba(255, 154, 60, 0.7)";
+      bctx.shadowBlur = 0.5 * br;
+      bctx.fillStyle = "#ffb35f";
+      bctx.fillText(label, cx, cy + 0.05 * fs);
+      bctx.restore();
     }
   }
 
