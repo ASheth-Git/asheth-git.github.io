@@ -21,7 +21,7 @@
 const HASH_KEY = "visitors:countries";
 
 const ALLOWED_ORIGINS = [
-  "https://asheth.github.io",
+  "https://asheth-git.github.io",
   "https://asheth-github-io.vercel.app",
   "http://localhost:3000",
   "http://localhost:8080",

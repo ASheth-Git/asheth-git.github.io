@@ -11,13 +11,13 @@ Upstash Redis →  persistent visitor counts (via Vercel Marketplace)
 GitHub Pages cannot run server code or persist data — that is why the
 map never updated on Pages alone. The frontend polls the Vercel
 endpoint (`TELEMETRY_ENDPOINT` in `main.js`) cross-origin; the endpoint
-sets CORS headers to allow `https://asheth.github.io`.
+sets CORS headers to allow `https://asheth-git.github.io`.
 
 ---
 
 ## Step 1: Connect the repo to Vercel
 
-1. https://vercel.com → **Add New → Project** → import `asheth.github.io`
+1. https://vercel.com → **Add New → Project** → import `asheth-git.github.io`
 2. Framework preset: **Other**. Deploy.
 3. Confirm the deployment URL is `https://asheth-github-io.vercel.app`.
    If Vercel assigns a different URL, update `TELEMETRY_ENDPOINT` in
@@ -39,17 +39,17 @@ provisioned through Upstash:
 
 - Open `https://asheth-github-io.vercel.app/api/telemetry` — you should
   see JSON with `countries` and `current`.
-- Open `https://asheth.github.io` with DevTools → Network: the
+- Open `https://asheth-git.github.io` with DevTools → Network: the
   `telemetry` request must return 200 with
-  `access-control-allow-origin: https://asheth.github.io`.
+  `access-control-allow-origin: https://asheth-git.github.io`.
 - One `POST` fires per browser session; `GET` polls every 30 s and
   never increments (open a private window to register a fresh hit).
 
 ## Step 4: SEO — one-time registration
 
 1. **Google Search Console**: https://search.google.com/search-console
-   → add property `asheth.github.io` → verify (HTML tag method) →
-   submit `https://asheth.github.io/sitemap.xml`.
+   → add property `asheth-git.github.io` → verify (HTML tag method) →
+   submit `https://asheth-git.github.io/sitemap.xml`.
 2. **Bing Webmaster Tools** (optional): can import from Search Console.
 3. Ranking beyond your own name is driven by content and inbound links
    (publications, ORCID, Google Scholar profile, university page
