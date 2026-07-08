@@ -33,7 +33,25 @@ function redisEnv() {
     process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL;
   const token =
     process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
-  return url && token ? { url, token } : null;
+  if (url && token) return { url, token };
+
+  /* Fallback: derive REST credentials from the TCP connection string
+     (rediss://default:PASSWORD@HOST:6379). Upstash's REST endpoint is
+     https://HOST and the REST token equals the default-user password. */
+  if (process.env.REDIS_URL) {
+    try {
+      const u = new URL(process.env.REDIS_URL);
+      if (u.hostname && u.password) {
+        return {
+          url: `https://${u.hostname}`,
+          token: decodeURIComponent(u.password),
+        };
+      }
+    } catch {
+      /* malformed URL — fall through */
+    }
+  }
+  return null;
 }
 
 /* Single-command Upstash REST call, e.g. redis(["HGETALL", key]) */
