@@ -1,105 +1,136 @@
 /* ================================================================
-   VERCEL TELEMETRY ENDPOINT
-   Logs visitor IP, fetches geolocation, increments country counter
-   in a JSON file, and returns aggregated visitor data for the live map.
+   VERCEL TELEMETRY ENDPOINT — Upstash Redis backed
 
-   Endpoint: /api/telemetry
-   Method: GET
-   Returns: {countries: [{code, count}, ...], current: {lon, lat}}
+   POST /api/telemetry  → count this visitor (once per session,
+                          client enforces via sessionStorage) and
+                          return aggregated data
+   GET  /api/telemetry  → read-only: aggregated counts + caller's
+                          geolocation (for the cyan "you are here"
+                          dot). Safe to poll — never increments.
+
+   Storage: Upstash Redis hash `visitors:countries` {CC: count}.
+   Geolocation: Vercel edge headers (x-vercel-ip-*), with a
+   geojs.io fallback for local `vercel dev`.
+
+   Required env vars (auto-injected by the Vercel Marketplace
+   Upstash integration):
+     UPSTASH_REDIS_REST_URL / UPSTASH_REDIS_REST_TOKEN
+     (legacy names KV_REST_API_URL / KV_REST_API_TOKEN also work)
    ================================================================ */
 
-import fs from "fs";
-import path from "path";
+const HASH_KEY = "visitors:countries";
 
-const DATA_FILE = path.join(process.cwd(), "data", "telemetry.json");
+const ALLOWED_ORIGINS = [
+  "https://asheth.github.io",
+  "https://asheth-github-io.vercel.app",
+  "http://localhost:3000",
+  "http://localhost:8080",
+  "http://127.0.0.1:5500",
+];
 
-// Ensure data directory exists
-function ensureDataDir() {
-  const dir = path.dirname(DATA_FILE);
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
+function redisEnv() {
+  const url =
+    process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL;
+  const token =
+    process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
+  return url && token ? { url, token } : null;
+}
+
+/* Single-command Upstash REST call, e.g. redis(["HGETALL", key]) */
+async function redis(cmd) {
+  const env = redisEnv();
+  if (!env) throw new Error("Redis env vars not configured");
+  const res = await fetch(env.url, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${env.token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(cmd),
+  });
+  if (!res.ok) throw new Error(`Redis HTTP ${res.status}`);
+  const { result, error } = await res.json();
+  if (error) throw new Error(error);
+  return result;
+}
+
+/* Geolocate the caller. Prefer Vercel's edge headers (no extra
+   network hop); fall back to geojs.io when absent (local dev). */
+async function geolocate(req) {
+  const cc = req.headers["x-vercel-ip-country"];
+  if (cc && /^[A-Z]{2}$/i.test(cc)) {
+    return {
+      country: cc.toUpperCase(),
+      lat: parseFloat(req.headers["x-vercel-ip-latitude"]) || 0,
+      lon: parseFloat(req.headers["x-vercel-ip-longitude"]) || 0,
+    };
+  }
+  try {
+    const ip =
+      req.headers["x-forwarded-for"]?.split(",")[0]?.trim() ||
+      req.socket?.remoteAddress ||
+      "";
+    const r = await fetch(
+      `https://get.geojs.io/v1/ip/geo.json${ip ? `?ip=${ip}` : ""}`,
+      { signal: AbortSignal.timeout(4000) }
+    );
+    const g = await r.json();
+    const code = (g.country_code || "").toUpperCase();
+    if (!/^[A-Z]{2}$/.test(code)) return null;
+    return {
+      country: code,
+      lat: parseFloat(g.latitude) || 0,
+      lon: parseFloat(g.longitude) || 0,
+    };
+  } catch {
+    return null;
   }
 }
 
-// Read telemetry data from JSON file
-function readData() {
-  try {
-    ensureDataDir();
-    if (fs.existsSync(DATA_FILE)) {
-      const raw = fs.readFileSync(DATA_FILE, "utf-8");
-      return JSON.parse(raw);
+/* HGETALL returns a flat [field, value, field, value, ...] array */
+function toCountries(flat) {
+  const out = [];
+  if (Array.isArray(flat)) {
+    for (let i = 0; i < flat.length; i += 2) {
+      out.push({ code: flat[i], count: parseInt(flat[i + 1], 10) || 0 });
     }
-  } catch (e) {
-    console.warn("Failed to read telemetry data:", e);
   }
-  return {}; // empty data
-}
-
-// Write telemetry data to JSON file
-function writeData(data) {
-  try {
-    ensureDataDir();
-    fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2), "utf-8");
-  } catch (e) {
-    console.warn("Failed to write telemetry data:", e);
-  }
+  out.sort((a, b) => b.count - a.count);
+  return out;
 }
 
 export default async function handler(req, res) {
+  /* CORS — GitHub Pages and the Vercel deployment are different
+     origins, so the browser blocks the response without these. */
+  const origin = req.headers.origin;
+  res.setHeader(
+    "Access-Control-Allow-Origin",
+    ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0]
+  );
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  res.setHeader("Vary", "Origin");
+  if (req.method === "OPTIONS") return res.status(204).end();
+
   try {
-    // Get visitor IP from Vercel headers
-    const ip =
-      req.headers["x-forwarded-for"]?.split(",")[0] ||
-      req.headers["cf-connecting-ip"] ||
-      req.socket.remoteAddress ||
-      "0.0.0.0";
+    const geo = await geolocate(req);
 
-    // Fetch geolocation from geojs.io (free, reliable, no API key)
-    const geoRes = await fetch(`https://get.geojs.io/v1/ip/geo.json?ip=${ip}`);
-    const geo = await geoRes.json();
-    const countryCode = (geo.country_code || "XX").toUpperCase();
-
-    // Validate country code format
-    if (!/^[A-Z]{2}$/.test(countryCode)) {
-      return res.status(200).json({
-        countries: [],
-        current: null,
-        error: "Invalid geolocation",
-      });
+    /* POST → register this visit (client sends it once per session) */
+    if (req.method === "POST" && geo) {
+      await redis(["HINCRBY", HASH_KEY, geo.country, "1"]);
     }
 
-    // Read current data
-    const data = readData();
+    const flat = await redis(["HGETALL", HASH_KEY]);
 
-    // Increment counter for this country
-    if (!data[countryCode]) {
-      data[countryCode] = 0;
-    }
-    data[countryCode]++;
-
-    // Write updated data back
-    writeData(data);
-
-    // Format countries array
-    const allCountries = Object.entries(data)
-      .map(([code, count]) => ({ code, count }))
-      .sort((a, b) => b.count - a.count);
-
-    // Return aggregated data
-    res.status(200).json({
-      countries: allCountries,
-      current: {
-        lon: parseFloat(geo.longitude) || 0,
-        lat: parseFloat(geo.latitude) || 0,
-        country: countryCode,
-      },
+    return res.status(200).json({
+      countries: toCountries(flat),
+      current: geo
+        ? { lon: geo.lon, lat: geo.lat, country: geo.country }
+        : null,
     });
   } catch (error) {
     console.error("Telemetry error:", error);
-    res.status(200).json({
-      countries: [],
-      current: null,
-      error: error.message,
-    });
+    return res
+      .status(200)
+      .json({ countries: [], current: null, error: error.message });
   }
 }

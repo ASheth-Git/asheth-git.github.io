@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+# Old site versions — kept for reference, hidden from search
+# to avoid duplicate-content dilution of the main page
+Disallow: /v1/
+Disallow: /v2/
+Disallow: /data/
+
+Sitemap: https://asheth.github.io/sitemap.xml
