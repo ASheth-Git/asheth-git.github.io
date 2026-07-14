@@ -196,6 +196,58 @@
         <canvas id="spinRing" aria-label="Assets as spins on the Ising coupling graph"></canvas>
         <canvas id="energyCanvas" width="440" height="170" class="sparkline" aria-label="Energy trace"></canvas>
         <p id="miniMetrics" class="mini-metrics mono">awaiting optimization</p>
+        <p class="fig-caption"><span class="fig-no mono">Fig. 1</span>
+          Assets as Ising spins on the coupling graph; arc weight \(\propto J_{ij}\),
+          cyan discs are held assets. Below, the energy during the anneal.</p>
+      </div>
+      <div class="module-panel">
+        <h3>Quantum-Inspired Portfolio Optimizer</h3>
+        <div class="mtabs mono" role="tablist">
+          <button class="mtab active" data-pane="bg" role="tab">Background</button>
+          <button class="mtab" data-pane="sim" role="tab">Simulation</button>
+          <button class="mtab" data-pane="try" role="tab">Explore</button>
+          <button class="mtab" data-pane="th" role="tab">Theory</button>
+        </div>
+        <div class="mpanes">
+          <div class="mpane active" data-pane="bg"><p>
+            Portfolio selection and finding the resting state of a magnet are,
+            mathematically, the same problem. Each asset is represented by a small magnet
+            that points <em>up</em> (held) or <em>down</em> (not held). An asset's expected
+            return acts as a field pulling its magnet up, and the way two assets rise and
+            fall together acts as a force between their magnets, so assets that crash
+            together are discouraged from being held together. Every candidate portfolio
+            then carries an energy, and the optimal portfolio is the configuration with
+            the lowest one.
+          </p></div>
+          <div class="mpane" data-pane="sim"><p>
+            Ten demonstration assets occupy the ring, flipping under Metropolis dynamics
+            while
+            <span class="term" tabindex="0" data-def="Start the system hot and random, then cool it slowly so it settles into a low-energy arrangement, the same trick metallurgists use to remove defects from metal.">simulated annealing</span>
+            lowers the temperature: the search begins hot and random, then cools until only
+            improvements survive. The lower trace shows the energy falling as the system
+            settles, and the converged basket is reported with its expected return,
+            volatility, and
+            <span class="term" tabindex="0" data-def="Return earned per unit of risk taken, which is the standard single-number score for a portfolio.">Sharpe ratio</span>.
+          </p></div>
+          <div class="mpane" data-pane="try"><p>
+            Set the portfolio size \(K\) and the risk aversion \(\lambda\), then press
+            <em>Optimize</em>. Large \(\lambda\) makes the couplings dominate, so the
+            optimizer gives up return to avoid assets that move together, while small
+            \(\lambda\) favors return and tolerates the risk.
+          </p></div>
+          <div class="mpane" data-pane="th"><p>
+            Formally this is a ground-state search of an Ising Hamiltonian: spins
+            \(s_i \in \{-1,+1\}\) encode held/not-held, expected returns enter as local
+            fields \(h_i\), the covariance matrix supplies the couplings \(J_{ij}\), and
+            the cardinality target \(K\) is enforced by a quadratic penalty. Spins flip
+            under Metropolis dynamics while the temperature follows an annealing schedule.
+            The full application adds sector-exposure penalties and live market data,
+            though its production constraint encoding stays proprietary.
+          </p>
+          <p class="module-eq">
+            \(H = -\sum_i h_i s_i + \lambda \sum_{i&lt;j} J_{ij}\, s_i s_j + H_{\mathrm{constraints}}\)
+          </p></div>
+        </div>
         <div class="instrument">
           <div class="ctrl mono">
             <label for="pkSlider">\(K\) · target assets</label>
@@ -212,59 +264,7 @@
             <span class="mono anneal-status" id="annealStatus">idle</span>
             <button class="btn btn-ghost mono" id="launchAppBtn">Full App</button>
           </div>
-          <p class="module-eq">
-            \(H = -\sum_i h_i s_i + \lambda \sum_{i&lt;j} J_{ij}\, s_i s_j + H_{\mathrm{constraints}}\)
-          </p>
         </div>
-        <p class="fig-caption"><span class="fig-no mono">Fig. 1</span>
-          Assets as Ising spins on the coupling graph; arc weight \(\propto J_{ij}\),
-          cyan discs are held assets. Below, the energy during the anneal.</p>
-      </div>
-      <div class="module-panel">
-        <h3>Quantum-Inspired Portfolio Optimizer</h3>
-        <p>
-          <span class="para-label">Background</span>
-          Portfolio selection and finding the resting state of a magnet are,
-          mathematically, the same problem. Each asset is represented by a small magnet
-          that points <em>up</em> (held) or <em>down</em> (not held). An asset's expected
-          return acts as a field pulling its magnet up, and the way two assets rise and
-          fall together acts as a force between their magnets, so assets that crash
-          together are discouraged from being held together. Every candidate portfolio
-          then carries an energy, and the optimal portfolio is the configuration with
-          the lowest one.
-        </p>
-        <p>
-          <span class="para-label">Simulation</span>
-          Ten demonstration assets occupy the ring, flipping under Metropolis dynamics
-          while
-          <span class="term" tabindex="0" data-def="Start the system hot and random, then cool it slowly so it settles into a low-energy arrangement, the same trick metallurgists use to remove defects from metal.">simulated annealing</span>
-          lowers the temperature: the search begins hot and random, then cools until only
-          improvements survive. The lower trace shows the energy falling as the system
-          settles, and the converged basket is reported with its expected return,
-          volatility, and
-          <span class="term" tabindex="0" data-def="Return earned per unit of risk taken, which is the standard single-number score for a portfolio.">Sharpe ratio</span>.
-        </p>
-        <p>
-          <span class="para-label">Explore</span>
-          Set the portfolio size \(K\) and the risk aversion \(\lambda\), then press
-          <em>Optimize</em>. Large \(\lambda\) makes the couplings dominate, so the
-          optimizer gives up return to avoid assets that move together, while small
-          \(\lambda\) favors return and tolerates the risk.
-        </p>
-        <details class="deeper">
-          <summary>Go deeper: the exact mapping</summary>
-          <p>
-            Formally this is a ground-state search of an Ising Hamiltonian: spins
-            \(s_i \in \{-1,+1\}\) encode held/not-held, expected returns enter as local
-            fields \(h_i\), the covariance matrix supplies the couplings \(J_{ij}\), and the
-            cardinality target \(K\) is enforced by a quadratic penalty term
-            \(H_{\mathrm{constraints}} \propto (\sum_i s_i - s_K)^2\). Spins flip under
-            Metropolis dynamics (a proposed flip is accepted with probability
-            \(\min(1, e^{-\Delta E/T})\)) while the temperature follows an annealing
-            schedule. The full application adds sector-exposure penalties and live market
-            data, though its production constraint encoding stays proprietary.
-          </p>
-        </details>
       </div>
     </div>
   </article>
@@ -273,6 +273,66 @@
     <div class="module-body">
       <div class="module-canvas-wrap">
         <canvas id="fermiCanvas" width="360" height="360" aria-label="Interactive Fermi surface spectral map"></canvas>
+        <p class="fig-caption"><span class="fig-no mono">Fig. 2</span>
+          Spectral weight \(A(\mathbf{k},0)\) over the Brillouin zone; bright contours
+          are the Fermi surface, with \(\Gamma\), X, M marked.</p>
+      </div>
+      <div class="module-panel">
+        <h3>Nickelate Fermiology</h3>
+        <div class="mtabs mono" role="tablist">
+          <button class="mtab active" data-pane="bg" role="tab">Background</button>
+          <button class="mtab" data-pane="sim" role="tab">Simulation</button>
+          <button class="mtab" data-pane="try" role="tab">Explore</button>
+          <button class="mtab" data-pane="th" role="tab">Theory</button>
+        </div>
+        <div class="mpanes">
+          <div class="mpane active" data-pane="bg"><p>
+            In 2019 researchers produced superconductivity in a nickel-based material for the
+            first time. Its copper-based cousins, the cuprates, have held the high-temperature
+            superconductivity record since the 1980s, and the mechanism behind them is still
+            debated. If nickelates behaved as copies of cuprates, they would offer a second
+            route into the same problem. My thesis showed the resemblance is only partial:
+            nickelates carry an extra family of electrons that changes their behavior, and
+            this simulation shows where it appears.
+          </p></div>
+          <div class="mpane" data-pane="sim"><p>
+            Electrons in a crystal fill up the available states like water filling a basin. The
+            <span class="term" tabindex="0" data-def="The boundary in momentum space between filled and empty electron states. Nearly everything a metal does (conduct, magnetize, superconduct) happens at this boundary.">Fermi surface</span>
+            is the waterline: the boundary between filled and empty states, where
+            conduction, magnetism, and superconductivity are decided. This map shows that
+            waterline across the crystal's full
+            <span class="term" tabindex="0" data-def="The natural 'map grid' for electrons in a crystal: every possible electron momentum, folded into one repeating tile.">Brillouin zone</span>,
+            and the bright contours mark where electrons sit at zero energy cost. The curve
+            hugging the corners is the familiar cuprate-like band. The pocket that can open
+            at the center (\(\Gamma\)) is the extra population, the focus of my
+            <a href="https://doi.org/10.1088/1361-648X/ada908" target="_blank" rel="noopener">published work</a>.
+          </p></div>
+          <div class="mpane" data-pane="try"><p>
+            Raise the
+            <span class="term" tabindex="0" data-def="Effectively the electron filling level, tuned experimentally by chemical doping or pressure.">chemical potential</span>
+            \(\mu\) slowly and watch a bright island appear at the center of the map: that is
+            a second Fermi pocket opening. This event, absent in cuprates, redirects the
+            material's magnetic and charge tendencies. Then increase \(V\) and watch the two
+            electron families
+            <span class="term" tabindex="0" data-def="When two electronic states mix into hybrid states that repel each other in energy, opening gaps where their bands would cross.">hybridize</span>,
+            opening gaps where their bands cross.
+          </p></div>
+          <div class="mpane" data-pane="th"><p>
+            The map plots zero-frequency spectral weight \(A(\mathbf{k},0)\) for a two-band
+            tight-binding model: a Ni \(d_{x^2-y^2}\) band with hopping \(t, t'\), plus a
+            rare-earth-derived interlayer band, coupled by hybridization \(V\). Fermi-surface
+            <span class="term" tabindex="0" data-def="When large flat sections of the Fermi surface connect by one shared wavevector, electrons respond collectively at that wavevector, seeding magnetic or charge order.">nesting</span>
+            of these sheets produces peaks in the spin and charge susceptibilities that seed
+            the instabilities identified in
+            <a href="https://doi.org/10.1088/1361-648X/ada908" target="_blank" rel="noopener">JPCM <b>37</b>, 125703 (2025)</a>
+            and developed in full in
+            <a href="https://theses.hal.science/tel-05502836" target="_blank" rel="noopener">the thesis</a>.
+          </p>
+          <p class="module-eq">
+            \(E_{\pm}(\mathbf{k}) = \tfrac{1}{2}(\varepsilon_1+\varepsilon_2)
+            \pm \sqrt{\tfrac{1}{4}(\varepsilon_1-\varepsilon_2)^2 + V^2}\)
+          </p></div>
+        </div>
         <div class="instrument">
           <div class="ctrl mono">
             <label for="muSlider">\(\mu\) · chemical potential</label>
@@ -280,74 +340,16 @@
             <output id="muOut">−0.30</output>
           </div>
           <div class="ctrl mono">
-            <label for="tpSlider">\(t'\) · next-nearest-neighbor hopping</label>
+            <label for="tpSlider">\(t'\) · hopping</label>
             <input type="range" id="tpSlider" min="0" max="0.5" step="0.005" value="0.25">
             <output id="tpOut">0.250</output>
           </div>
           <div class="ctrl mono">
-            <label for="vSlider">\(V\) · interlayer hybridization</label>
+            <label for="vSlider">\(V\) · hybridization</label>
             <input type="range" id="vSlider" min="0" max="0.9" step="0.005" value="0.00">
             <output id="vOut">0.000</output>
           </div>
-          <p class="module-eq">
-            \(E_{\pm}(\mathbf{k}) = \tfrac{1}{2}(\varepsilon_1+\varepsilon_2)
-            \pm \sqrt{\tfrac{1}{4}(\varepsilon_1-\varepsilon_2)^2 + V^2}\)
-          </p>
         </div>
-        <p class="fig-caption"><span class="fig-no mono">Fig. 2</span>
-          Spectral weight \(A(\mathbf{k},0)\) over the Brillouin zone; bright contours
-          are the Fermi surface, with \(\Gamma\), X, M marked.</p>
-      </div>
-      <div class="module-panel">
-        <h3>Nickelate Fermiology</h3>
-        <p>
-          <span class="para-label">Background</span>
-          In 2019 researchers produced superconductivity in a nickel-based material for the
-          first time. Its copper-based cousins, the cuprates, have held the high-temperature
-          superconductivity record since the 1980s, and the mechanism behind them is still
-          debated. If nickelates behaved as copies of cuprates, they would offer a second
-          route into the same problem. My thesis showed the resemblance is only partial:
-          nickelates carry an extra family of electrons that changes their behavior, and
-          this simulation shows where it appears.
-        </p>
-        <p>
-          <span class="para-label">Simulation</span>
-          Electrons in a crystal fill up the available states like water filling a basin. The
-          <span class="term" tabindex="0" data-def="The boundary in momentum space between filled and empty electron states. Nearly everything a metal does (conduct, magnetize, superconduct) happens at this boundary.">Fermi surface</span>
-          is the waterline: the boundary between filled and empty states, where
-          conduction, magnetism, and superconductivity are decided. This map shows that waterline across the crystal's full
-          <span class="term" tabindex="0" data-def="The natural 'map grid' for electrons in a crystal: every possible electron momentum, folded into one repeating tile.">Brillouin zone</span>,
-          and the bright contours mark where electrons sit at zero energy cost. The curve hugging
-          the corners is the familiar cuprate-like band. The pocket that can open at the center
-          (\(\Gamma\)) is the extra population, the focus of my
-          <a href="https://doi.org/10.1088/1361-648X/ada908" target="_blank" rel="noopener">published work</a>.
-        </p>
-        <p>
-          <span class="para-label">Explore</span>
-          Raise the
-          <span class="term" tabindex="0" data-def="Effectively the electron filling level, tuned experimentally by chemical doping or pressure.">chemical potential</span>
-          \(\mu\) slowly and watch a bright island appear at the center of the map: that is a
-          second Fermi pocket opening. This event, absent in cuprates, redirects the
-          material's magnetic and charge tendencies.
-          Then increase \(V\) and watch the two electron families
-          <span class="term" tabindex="0" data-def="When two electronic states mix into hybrid states that repel each other in energy, opening gaps where their bands would cross.">hybridize</span>,
-          opening gaps where their bands cross.
-        </p>
-        <details class="deeper">
-          <summary>Go deeper: the two-band model</summary>
-          <p>
-            The map plots zero-frequency spectral weight \(A(\mathbf{k},0)\) for a two-band
-            tight-binding model: a Ni \(d_{x^2-y^2}\) band with nearest- and
-            next-nearest-neighbor hopping \(t, t'\), plus a rare-earth-derived interlayer
-            band, coupled by hybridization \(V\) (dispersion below). Fermi-surface
-            <span class="term" tabindex="0" data-def="When large flat sections of the Fermi surface connect by one shared wavevector, electrons respond collectively at that wavevector, seeding magnetic or charge order.">nesting</span>
-            of these sheets produces peaks in the spin and charge susceptibilities that seed
-            the antiferromagnetic and charge-order instabilities identified in
-            <a href="https://doi.org/10.1088/1361-648X/ada908" target="_blank" rel="noopener">JPCM <b>37</b>, 125703 (2025)</a>
-            and developed in full in
-            <a href="https://theses.hal.science/tel-05502836" target="_blank" rel="noopener">the thesis</a>.
-          </p>
-        </details>
       </div>
     </div>
   </article>
@@ -356,6 +358,52 @@
     <div class="module-body">
       <div class="module-canvas-wrap">
         <canvas id="moireCanvas" width="360" height="360" aria-label="Moire pattern from twisted bilayers"></canvas>
+        <p class="fig-caption"><span class="fig-no mono">Fig. 3</span>
+          Two honeycomb lattices with relative twist \(\theta\): cyan fixed, orange
+          rotated. The scale bar marks the moiré period \(\lambda\).</p>
+      </div>
+      <div class="module-panel">
+        <h3>Moiré Interferometer</h3>
+        <div class="mtabs mono" role="tablist">
+          <button class="mtab active" data-pane="bg" role="tab">Background</button>
+          <button class="mtab" data-pane="sim" role="tab">Simulation</button>
+          <button class="mtab" data-pane="try" role="tab">Explore</button>
+          <button class="mtab" data-pane="th" role="tab">Theory</button>
+        </div>
+        <div class="mpanes">
+          <div class="mpane active" data-pane="bg"><p>
+            Two window screens overlaid at a slight angle produce large, slowly shifting
+            ripples that exist in neither screen alone. The same happens with two
+            one-atom-thick crystal sheets, where the ripples become a
+            <span class="term" tabindex="0" data-def="A giant repeating pattern, hundreds of atoms wide, created by the interference of two slightly misaligned atomic lattices.">moiré superlattice</span>:
+            a pattern hundreds of atoms wide that the electrons genuinely feel. At a twist
+            near 1.1°, called the magic angle, the pattern slows the electrons down, and
+            slow electrons interact strongly. This is how twisted bilayer graphene was made
+            to superconduct in 2018.
+          </p></div>
+          <div class="mpane" data-pane="sim"><p>
+            Two honeycomb lattices in additive light: cyan fixed, orange twisted by
+            \(\theta\). The glowing beat pattern <em>is</em> the moiré superlattice, and the
+            scale bar tracks its period \(\lambda\). Between my master's and PhD I studied
+            this system, graphene on hexagonal boron nitride, with
+            <span class="term" tabindex="0" data-def="Density Functional Theory: the workhorse quantum-mechanical method for computing electronic structure atom by atom, from first principles.">DFT</span>,
+            watching the superlattice reorganize the electronic bands.
+          </p></div>
+          <div class="mpane" data-pane="try"><p>
+            Drag \(\theta\) toward zero and watch the period grow without bound. It diverges
+            as the twist vanishes, which is why small angles make large patterns. The
+            formula below the slider updates live.
+          </p></div>
+          <div class="mpane" data-pane="th"><p>
+            The moiré period follows \(\lambda = a / 2\sin(\theta/2)\). A superlattice this
+            large folds the Brillouin zone into a mini-zone, and near the magic angle the
+            folded bands flatten: bandwidth \(W\) collapses while the Coulomb energy \(U\)
+            stays fixed, so the correlation ratio \(U/W\) grows large. When interaction
+            dominates kinetic energy, the electron liquid reorganizes: correlated
+            insulators, unconventional superconductivity, and orbital magnetism all emerge
+            from the same flat-band condition.
+          </p></div>
+        </div>
         <div class="instrument">
           <div class="ctrl mono">
             <label for="twistSlider">\(\theta\) · twist angle</label>
@@ -367,50 +415,6 @@
             <output id="lambdaOut" class="mono"></output>
           </p>
         </div>
-        <p class="fig-caption"><span class="fig-no mono">Fig. 3</span>
-          Two honeycomb lattices with relative twist \(\theta\): cyan fixed, orange
-          rotated. The scale bar marks the moiré period \(\lambda\).</p>
-      </div>
-      <div class="module-panel">
-        <h3>Moiré Interferometer</h3>
-        <p>
-          <span class="para-label">Background</span>
-          Two window screens overlaid at a slight angle produce large, slowly shifting
-          ripples that exist in neither screen alone. The same happens with two
-          one-atom-thick crystal sheets, where the ripples become a
-          <span class="term" tabindex="0" data-def="A giant repeating pattern, hundreds of atoms wide, created by the interference of two slightly misaligned atomic lattices.">moiré superlattice</span>:
-          a pattern hundreds of atoms wide that the electrons genuinely feel. At a twist
-          near 1.1°, called the magic angle, the pattern slows the electrons down, and slow
-          electrons interact strongly. This is how twisted bilayer graphene was made to
-          superconduct in 2018.
-        </p>
-        <p>
-          <span class="para-label">Simulation</span>
-          Two honeycomb lattices in additive light: cyan fixed, orange twisted by \(\theta\).
-          The glowing beat pattern <em>is</em> the moiré superlattice, and the scale bar
-          tracks its period \(\lambda\). Between my master's and PhD I studied this
-          system, graphene on hexagonal boron nitride, with
-          <span class="term" tabindex="0" data-def="Density Functional Theory: the workhorse quantum-mechanical method for computing electronic structure atom by atom, from first principles.">DFT</span>,
-          watching the superlattice reorganize the electronic bands.
-        </p>
-        <p>
-          <span class="para-label">Explore</span>
-          Drag \(\theta\) toward zero and watch the period grow without bound. It diverges
-          as the twist vanishes, which is why small angles make large patterns. The formula
-          beside the canvas updates live.
-        </p>
-        <details class="deeper">
-          <summary>Go deeper: why flat bands mean strong correlations</summary>
-          <p>
-            The moiré period follows \(\lambda = a / 2\sin(\theta/2)\). A superlattice this
-            large folds the Brillouin zone into a mini-zone, and near the magic angle the
-            folded bands flatten: bandwidth \(W\) collapses while the Coulomb energy \(U\)
-            stays fixed, so the correlation ratio \(U/W\) grows large. When interaction
-            dominates kinetic energy, the electron liquid reorganizes: correlated insulators,
-            unconventional superconductivity, and orbital magnetism all emerge from the same
-            flat-band condition.
-          </p>
-        </details>
       </div>
     </div>
   </article>

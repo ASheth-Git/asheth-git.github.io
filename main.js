@@ -887,6 +887,22 @@ async function loadHub() {
   renderPublications(pubs);
   renderTimeline(tl);
 }
+/* Module feature-card tabs (Background / Simulation / Explore / Theory).
+   Panes are grid-stacked, so switching never changes the card height. */
+function initModuleTabs() {
+  document.querySelectorAll(".mtabs").forEach(tabbar => {
+    const panel = tabbar.closest(".module-panel");
+    tabbar.addEventListener("click", e => {
+      const btn = e.target.closest(".mtab");
+      if (!btn) return;
+      tabbar.querySelectorAll(".mtab").forEach(b =>
+        b.classList.toggle("active", b === btn));
+      panel.querySelectorAll(".mpane").forEach(p =>
+        p.classList.toggle("active", p.dataset.pane === btn.dataset.pane));
+    });
+  });
+}
+
 function initTabs() {
   const tabs = document.querySelectorAll(".ttab");
   tabs.forEach(tab =>
@@ -1157,6 +1173,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initPortfolio();
   initMoire();
   initTabs();
+  initModuleTabs();
   initReveal();
   loadHub();
   initTelemetry();

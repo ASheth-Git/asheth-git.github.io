@@ -332,55 +332,66 @@ input[type="range"]::-moz-range-thumb {
   border-color: var(--line-2);
   box-shadow: var(--shadow);
 }
-/* Journal layout: figure + instrument as a full-width band on top,
-   prose below in two auto-balanced columns. Multicolumn text always
-   fills evenly, so no column can be left taller than its neighbor. */
+/* Tabbed feature card: figure left, narrative tabs + compact controls
+   right. Panes are stacked in one grid cell, so the card's height is
+   set by the tallest pane and never changes as tabs switch. Both
+   columns are vertically centered, so any residual height difference
+   splits symmetrically instead of pooling at the bottom. */
 .module-body {
-  display: block;
-  padding: 1.6rem 1.8rem;
-}
-.module-canvas-wrap {
   display: grid;
-  grid-template-columns: minmax(260px, 340px) 1fr;
-  gap: 0.5rem 2rem;
-  align-items: start;
-  margin-bottom: 1.6rem;
+  grid-template-columns: minmax(280px, 340px) 1fr;
+  gap: 2rem 2.6rem;
+  padding: 1.7rem 1.9rem;
+  align-items: center;
 }
-.module-canvas-wrap > canvas,
-.module-canvas-wrap .sparkline,
-.module-canvas-wrap .mini-metrics,
-.module-canvas-wrap .fig-caption { grid-column: 1; }
+.module-flip .module-body { grid-template-columns: 1fr minmax(280px, 340px); }
+.module-flip .module-canvas-wrap { order: 2; }
+.module-canvas-wrap { display: block; }
+
+.mtabs { display: flex; gap: 4px; flex-wrap: wrap; margin: 0.1rem 0 0.9rem; }
+.mtab {
+  font-family: var(--ff-mono); font-size: 0.66rem;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 7px 12px;
+  cursor: pointer;
+  transition: color 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+}
+.mtab:hover { color: var(--ink); background: rgba(148, 190, 222, 0.07); }
+.mtab.active {
+  color: var(--accent);
+  background: var(--glass-clear);
+  border-color: var(--glass-border);
+}
+
+.mpanes { display: grid; }
+.mpane {
+  grid-area: 1 / 1;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.mpane.active { visibility: visible; opacity: 1; }
+.mpane p { color: var(--ink-2); font-size: 0.96rem; margin-bottom: 0.9rem; }
+.mpane .module-eq { margin-top: 0.2rem; margin-bottom: 0; }
+
 .instrument {
-  grid-column: 2;
-  grid-row: 1 / span 4;
-  align-self: stretch;
-  display: flex;
-  flex-direction: column;
-  max-width: 560px;
-  margin-top: 0;
-  padding: 1.1rem 1.2rem 1.1rem;
+  margin-top: 1.1rem;
+  padding: 0.95rem 1.1rem 0.35rem;
   border: 1px solid var(--glass-border-soft);
   border-radius: 12px;
   background: var(--glass-clear);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.2rem 1.6rem;
+  align-items: end;
 }
-/* alternate modules mirror the band, keeping the page rhythm */
-.module-flip .module-canvas-wrap { grid-template-columns: 1fr minmax(280px, 380px); }
-.module-flip .module-canvas-wrap > canvas,
-.module-flip .module-canvas-wrap .sparkline,
-.module-flip .module-canvas-wrap .mini-metrics,
-.module-flip .module-canvas-wrap .fig-caption { grid-column: 2; }
-.module-flip .instrument { grid-column: 1; grid-row: 1 / span 4; justify-self: end; }
-/* controls sit at the top, the equation is pinned to the bottom, and
-   the panel border spans the figure's full height, so the band's two
-   sides always terminate at the same line */
-.instrument .module-eq { margin-top: auto; margin-bottom: 0; }
-.instrument .anneal-run { margin-bottom: 1rem; flex-wrap: wrap; }
-.instrument .ctrl { flex: 0 0 auto; }
-
-/* two-column prose, journal style */
-.module-panel { column-count: 2; column-gap: 2.6rem; }
-.module-panel h3 { column-span: all; margin-bottom: 1rem; }
-.module-panel .deeper { column-span: all; margin-bottom: 0.2rem; }
+.instrument .ctrl { margin-bottom: 0.6rem; }
+.instrument .anneal-run { margin: 0 0 0.6rem; flex-wrap: wrap; }
+.instrument .module-eq { margin: 0 0 0.6rem; padding: 0.55rem 0.9rem; }
 .module-canvas-wrap canvas {
   width: 100%; display: block;
   border: 1px solid var(--line);
@@ -748,15 +759,9 @@ input[type="range"]::-moz-range-thumb {
   .abstract-grid, .footer-grid { grid-template-columns: 1fr; }
   .explore-grid { grid-template-columns: 1fr; }
   .talk { grid-template-columns: 1fr; }
-  .module-canvas-wrap, .module-flip .module-canvas-wrap { grid-template-columns: 1fr; }
-  .module-canvas-wrap > canvas, .module-canvas-wrap .sparkline,
-  .module-canvas-wrap .mini-metrics, .module-canvas-wrap .fig-caption,
-  .module-flip .module-canvas-wrap > canvas, .module-flip .module-canvas-wrap .sparkline,
-  .module-flip .module-canvas-wrap .mini-metrics, .module-flip .module-canvas-wrap .fig-caption { grid-column: 1; }
-  .instrument, .module-flip .instrument {
-    grid-column: 1; grid-row: auto; max-width: none; justify-self: stretch;
-  }
-  .module-panel { column-count: 1; }
+  .module-body, .module-flip .module-body { grid-template-columns: 1fr; }
+  .module-flip .module-canvas-wrap { order: 0; }
+  .instrument { grid-template-columns: 1fr; }
   .hud { position: static; width: auto; margin: 1.4rem 1.2rem 4.5rem; }
   .hero { flex-direction: column; justify-content: center; }
   .hero-content { margin-left: 0; padding-top: 6.5rem; }
