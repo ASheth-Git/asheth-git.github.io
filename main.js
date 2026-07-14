@@ -1086,7 +1086,17 @@ function initTelemetry() {
   const alreadyCounted = sessionStorage.getItem(HIT_KEY) === "1";
   if (!alreadyCounted) sessionStorage.setItem(HIT_KEY, "1");
   fetchTelemetry(!alreadyCounted);
-  setInterval(() => fetchTelemetry(false), 30000);
+
+  /* Poll only while the tab is actually visible — background tabs
+     account for most poll-hours and would burn free-tier quota for
+     a map nobody is looking at. On return, refresh immediately
+     rather than waiting up to 30 s for the next tick. */
+  setInterval(() => {
+    if (!document.hidden) fetchTelemetry(false);
+  }, 30000);
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) fetchTelemetry(false);
+  });
 }
 
 /* ================================================================

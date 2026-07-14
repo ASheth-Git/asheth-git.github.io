@@ -332,14 +332,55 @@ input[type="range"]::-moz-range-thumb {
   border-color: var(--line-2);
   box-shadow: var(--shadow);
 }
+/* Journal layout: figure + instrument as a full-width band on top,
+   prose below in two auto-balanced columns. Multicolumn text always
+   fills evenly, so no column can be left taller than its neighbor. */
 .module-body {
-  display: grid; grid-template-columns: 440px 1fr; gap: 2.2rem;
-  padding: 1.8rem 1.8rem 1.8rem 2rem;
-  align-items: center;
+  display: block;
+  padding: 1.6rem 1.8rem;
 }
-.module-flip .module-body { grid-template-columns: 1fr 440px; }
-.module-flip .module-canvas-wrap { order: 2; }
-.module-canvas-wrap { position: relative; }
+.module-canvas-wrap {
+  display: grid;
+  grid-template-columns: minmax(260px, 340px) 1fr;
+  gap: 0.5rem 2rem;
+  align-items: start;
+  margin-bottom: 1.6rem;
+}
+.module-canvas-wrap > canvas,
+.module-canvas-wrap .sparkline,
+.module-canvas-wrap .mini-metrics,
+.module-canvas-wrap .fig-caption { grid-column: 1; }
+.instrument {
+  grid-column: 2;
+  grid-row: 1 / span 4;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  max-width: 560px;
+  margin-top: 0;
+  padding: 1.1rem 1.2rem 1.1rem;
+  border: 1px solid var(--glass-border-soft);
+  border-radius: 12px;
+  background: var(--glass-clear);
+}
+/* alternate modules mirror the band, keeping the page rhythm */
+.module-flip .module-canvas-wrap { grid-template-columns: 1fr minmax(280px, 380px); }
+.module-flip .module-canvas-wrap > canvas,
+.module-flip .module-canvas-wrap .sparkline,
+.module-flip .module-canvas-wrap .mini-metrics,
+.module-flip .module-canvas-wrap .fig-caption { grid-column: 2; }
+.module-flip .instrument { grid-column: 1; grid-row: 1 / span 4; justify-self: end; }
+/* controls sit at the top, the equation is pinned to the bottom, and
+   the panel border spans the figure's full height, so the band's two
+   sides always terminate at the same line */
+.instrument .module-eq { margin-top: auto; margin-bottom: 0; }
+.instrument .anneal-run { margin-bottom: 1rem; flex-wrap: wrap; }
+.instrument .ctrl { flex: 0 0 auto; }
+
+/* two-column prose, journal style */
+.module-panel { column-count: 2; column-gap: 2.6rem; }
+.module-panel h3 { column-span: all; margin-bottom: 1rem; }
+.module-panel .deeper { column-span: all; margin-bottom: 0.2rem; }
 .module-canvas-wrap canvas {
   width: 100%; display: block;
   border: 1px solid var(--line);
@@ -707,8 +748,15 @@ input[type="range"]::-moz-range-thumb {
   .abstract-grid, .footer-grid { grid-template-columns: 1fr; }
   .explore-grid { grid-template-columns: 1fr; }
   .talk { grid-template-columns: 1fr; }
-  .module-body, .module-flip .module-body { grid-template-columns: 1fr; }
-  .module-flip .module-canvas-wrap { order: 0; }
+  .module-canvas-wrap, .module-flip .module-canvas-wrap { grid-template-columns: 1fr; }
+  .module-canvas-wrap > canvas, .module-canvas-wrap .sparkline,
+  .module-canvas-wrap .mini-metrics, .module-canvas-wrap .fig-caption,
+  .module-flip .module-canvas-wrap > canvas, .module-flip .module-canvas-wrap .sparkline,
+  .module-flip .module-canvas-wrap .mini-metrics, .module-flip .module-canvas-wrap .fig-caption { grid-column: 1; }
+  .instrument, .module-flip .instrument {
+    grid-column: 1; grid-row: auto; max-width: none; justify-self: stretch;
+  }
+  .module-panel { column-count: 1; }
   .hud { position: static; width: auto; margin: 1.4rem 1.2rem 4.5rem; }
   .hero { flex-direction: column; justify-content: center; }
   .hero-content { margin-left: 0; padding-top: 6.5rem; }
@@ -744,4 +792,242 @@ input[type="range"]::-moz-range-thumb {
 /* ---------------- ACCESSIBILITY ---------------- */
 a:focus-visible, .btn:focus-visible, .ttab:focus-visible {
   outline: 2px solid var(--accent-hot); outline-offset: 3px; border-radius: 6px;
+}
+
+/* ================================================================
+   LIQUID GLASS SKIN — additive layer, remove this block to revert.
+   Outer panels: frosted (backdrop blur + specular edge).
+   Inner items:  clear glass (translucent, no nested blur — nested
+   backdrop-filters are GPU-expensive and composite poorly).
+   Aurora: fixed gradient orbs, transform-only animation (GPU).
+   ================================================================ */
+:root {
+  --glass-bg: linear-gradient(165deg, rgba(21, 33, 50, 0.60), rgba(9, 15, 25, 0.44));
+  --glass-bg-bar: rgba(16, 26, 40, 0.55);
+  --glass-clear: rgba(148, 190, 222, 0.05);
+  --glass-border: rgba(150, 195, 225, 0.14);
+  --glass-border-soft: rgba(150, 195, 225, 0.09);
+  --glass-edge: rgba(255, 255, 255, 0.10);
+  --glass-blur: 18px;
+  --glass-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.40),
+    0 18px 44px -18px rgba(0, 0, 0, 0.72),
+    inset 0 1px 0 var(--glass-edge);
+}
+@media (max-width: 720px) { :root { --glass-blur: 12px; } }
+
+/* ---- aurora field ---- */
+body::before, body::after {
+  content: ""; position: fixed; z-index: -1; pointer-events: none;
+  width: 62vmax; height: 62vmax; border-radius: 50%;
+  filter: blur(80px);
+  will-change: transform;
+}
+body::before {
+  left: -20vmax; top: -14vmax;
+  background: radial-gradient(closest-side, rgba(47, 184, 171, 0.17), transparent 72%);
+  animation: aurora-a 64s ease-in-out infinite alternate;
+}
+body::after {
+  right: -24vmax; bottom: -20vmax;
+  background: radial-gradient(closest-side, rgba(255, 154, 60, 0.11), transparent 72%);
+  animation: aurora-b 88s ease-in-out infinite alternate;
+}
+html::before {
+  content: ""; position: fixed; z-index: -1; pointer-events: none;
+  width: 48vmax; height: 48vmax; border-radius: 50%;
+  left: 30vw; top: 40vh;
+  background: radial-gradient(closest-side, rgba(64, 120, 220, 0.10), transparent 72%);
+  filter: blur(80px);
+  will-change: transform;
+  animation: aurora-c 76s ease-in-out infinite alternate;
+}
+@keyframes aurora-a {
+  from { transform: translate(0, 0) scale(1); }
+  to   { transform: translate(14vw, 10vh) scale(1.18); }
+}
+@keyframes aurora-b {
+  from { transform: translate(0, 0) scale(1.1); }
+  to   { transform: translate(-12vw, -12vh) scale(0.92); }
+}
+@keyframes aurora-c {
+  from { transform: translate(0, 0) scale(0.95); }
+  to   { transform: translate(-16vw, 12vh) scale(1.15); }
+}
+
+/* ---- frosted outer panels ---- */
+.module, .explore-card, .terminal, .skills-panel,
+.telemetry, .app-window, .hud {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(var(--glass-blur)) saturate(165%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(165%);
+  box-shadow: var(--glass-shadow);
+}
+.terminal-bar { background: var(--glass-bg-bar); border-bottom-color: var(--glass-border-soft); }
+.app-window-bar { background: var(--glass-bg-bar); }
+
+/* nav: thinner, brighter frost */
+#nav {
+  background: rgba(6, 11, 18, 0.52);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid var(--glass-border-soft);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+/* overlay dims + frosts what's behind the app window */
+#appOverlay {
+  background: rgba(3, 6, 10, 0.55);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* ---- clear-glass inner items (no nested blur) ---- */
+.entry, .edu-entry, .talk {
+  background: var(--glass-clear);
+  border: 1px solid var(--glass-border-soft);
+}
+.entry:hover, .edu-entry:hover, .talk:hover {
+  background: rgba(148, 190, 222, 0.08);
+  border-color: var(--glass-border);
+}
+.ttab:hover { background: rgba(148, 190, 222, 0.08); }
+.footer-links a {
+  background: var(--glass-clear);
+  border: 1px solid var(--glass-border-soft);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.footer-links a:hover { border-color: var(--glass-border); background: rgba(148, 190, 222, 0.09); }
+.btn-ghost {
+  background: var(--glass-clear);
+  border-color: var(--glass-border-soft);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* ---- liquid sheen: light band sweeps across on hover ---- */
+.module::after, .explore-card::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(115deg,
+    transparent 32%, rgba(255, 255, 255, 0.045) 45%,
+    rgba(255, 255, 255, 0.10) 50%,
+    rgba(255, 255, 255, 0.045) 55%, transparent 68%);
+  transform: translateX(-130%);
+  transition: transform 0.9s ease;
+}
+.module:hover::after, .explore-card:hover::after { transform: translateX(130%); }
+
+/* ---- no backdrop-filter support: solid fallback ---- */
+@supports not (backdrop-filter: blur(1px)) {
+  .module, .explore-card, .terminal, .skills-panel,
+  .telemetry, .app-window, .hud, #nav {
+    background: var(--surface);
+  }
+}
+
+/* ================================================================
+   CONTENT LAYERS — term tooltips, go-deeper panels, method section
+   ================================================================ */
+
+/* defined terms: dotted underline, plain-word tooltip on hover/focus */
+.term {
+  position: relative;
+  border-bottom: 1px dotted var(--accent);
+  cursor: help;
+  outline: none;
+}
+.term::after {
+  content: attr(data-def);
+  position: absolute;
+  left: 50%; bottom: calc(100% + 10px);
+  transform: translateX(-50%) translateY(4px);
+  width: max-content; max-width: 300px;
+  padding: 0.6rem 0.8rem;
+  font-family: var(--ff-body); font-size: 0.8rem; font-weight: 400;
+  font-style: normal; line-height: 1.5; text-transform: none;
+  letter-spacing: normal; color: var(--ink);
+  background: rgba(14, 23, 36, 0.92);
+  border: 1px solid var(--glass-border);
+  border-radius: 10px;
+  box-shadow: var(--glass-shadow);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  opacity: 0; visibility: hidden;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  pointer-events: none;
+  z-index: 50;
+}
+.term:hover::after, .term:focus::after {
+  opacity: 1; visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+.term:focus { border-bottom-color: var(--accent-hot); }
+
+/* go-deeper: collapsible expert panel */
+.deeper {
+  margin: 1.1rem 0;
+  border: 1px solid var(--glass-border-soft);
+  border-radius: 12px;
+  background: var(--glass-clear);
+  overflow: hidden;
+}
+.deeper summary {
+  cursor: pointer;
+  padding: 0.65rem 1rem;
+  font-family: var(--ff-mono); font-size: 0.74rem;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--accent);
+  list-style: none;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.deeper summary::-webkit-details-marker { display: none; }
+.deeper summary::before {
+  content: "+"; display: inline-block; margin-right: 0.6em;
+  color: var(--accent-hot); font-weight: 600;
+  transition: transform 0.2s ease;
+}
+.deeper[open] summary::before { transform: rotate(45deg); }
+.deeper summary:hover { background: rgba(148, 190, 222, 0.07); color: var(--accent-hot); }
+.deeper p {
+  padding: 0.2rem 1rem 1rem;
+  color: var(--ink-2); font-size: 0.92rem;
+}
+
+/* how-i-work section */
+.method-lede { max-width: 46rem; margin-bottom: 2rem; color: var(--ink); }
+.method-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.1rem;
+}
+.method-step {
+  position: relative;
+  padding: 1.4rem 1.5rem;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(165%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(165%);
+  box-shadow: var(--glass-shadow);
+}
+.method-no {
+  display: block;
+  font-size: 0.7rem; letter-spacing: 0.14em;
+  color: var(--accent); margin-bottom: 0.5rem;
+}
+.method-step h3 { font-size: 1.05rem; margin-bottom: 0.5rem; color: var(--ink); }
+.method-step p { color: var(--ink-2); font-size: 0.88rem; }
+@supports not (backdrop-filter: blur(1px)) {
+  .method-step { background: var(--surface); }
+}
+
+/* keep tooltips on-screen on narrow viewports */
+@media (max-width: 560px) {
+  .term::after {
+    left: 0; transform: translateX(0) translateY(4px);
+    max-width: min(300px, 84vw);
+  }
+  .term:hover::after, .term:focus::after { transform: translateX(0) translateY(0); }
 }

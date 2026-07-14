@@ -74,8 +74,9 @@
 <nav id="nav">
   <a class="nav-brand" href="#top">ALPESH&nbsp;SHETH</a>
   <div class="nav-links">
-    <a href="#abstract">Abstract</a>
+    <a href="#abstract">Overview</a>
     <a href="#models">Simulations</a>
+    <a href="#method">Method</a>
     <a href="#exploring">Currently Exploring</a>
     <a href="#cv">CV</a>
     <a href="#contact">Contact</a>
@@ -93,8 +94,11 @@
     <p class="hero-kicker mono">Computational Condensed Matter · Many-Body Theory · Scientific ML</p>
     <h1 class="hero-name">Alpesh Sheth</h1>
     <p class="hero-sub">
-      PhD, Université de Bordeaux.
-      I model complex systems, from <em>correlated electrons to financial markets</em>, and build the simulation, optimization, and machine-learning tools that turn theory into results.
+      I study how interacting electrons organize themselves in quantum materials.
+      My PhD at the Université de Bordeaux (CNRS, 2025) focused on the electronic
+      structure of <em>nickelate superconductors</em>, and the same many-body methods
+      now carry my work into batteries, optimization, and markets. Every figure on
+      this page is a live simulation running in your browser.
     </p>
     <div class="hero-cta">
       <a class="btn btn-primary" href="#models">Explore Simulations</a>
@@ -122,19 +126,42 @@
 
 <section class="section" id="abstract">
   <div class="section-head">
-    <h2>Abstract</h2>
+    <h2>The Short Version</h2>
   </div>
 
   <div class="abstract-grid">
     <div class="abstract-text">
       <p class="lede">
-        My doctoral research at the Laboratoire Ondes et Matière d'Aquitaine (UMR 5798, CNRS) established effective multi-orbital models for the electronic structure of layered nickelates. By isolating the mechanisms that distinguish nickelate physics from the cuprate paradigm, these models successfully identified antiferromagnetic and charge-order instabilities driven by Fermi-surface nesting.
+        I am a computational condensed matter physicist. I did my doctoral work at the
+        Laboratoire Ondes et Matière d'Aquitaine (CNRS, Université de Bordeaux) on
+        infinite-layer nickelates, a family of materials in which
+        <span class="term" tabindex="0" data-def="Conduction of electricity with exactly zero loss, below a material-specific critical temperature.">superconductivity</span>
+        was first observed in 2019. Nickelates share their crystal structure and nominal
+        electron count with the cuprates, the best-known high-temperature
+        superconductors, yet experiments find clearly different behavior. Explaining
+        that difference was the subject of my thesis.
       </p>
       <p>
-        My core methodology centers on mapping complex, multiscale phenomena onto rigorous, computable mathematical architectures. Whether building physics-informed translation layers that bridge Density Functional Theory (DFT) with continuum solvers, or mapping complex constraints to Ising Hamiltonians for quantum-inspired optimization, the engineering standard remains constant: rigorous mathematical abstraction validated by ground-truth data.
+        The central result: nickelates host a second population of conduction electrons
+        that the cuprates lack, and this extra Fermi pocket drives their
+        antiferromagnetic and charge-order tendencies. I established this by
+        constructing
+        <span class="term" tabindex="0" data-def="A deliberately stripped-down mathematical version of a material that keeps only the ingredients that control the behavior you care about.">effective multi-orbital models</span>,
+        reduced descriptions that keep only the electronic ingredients controlling the
+        physics and treat those exactly. The work is
+        <a href="https://doi.org/10.1088/1361-648X/ada908" target="_blank" rel="noopener">published in <em>J. Phys.: Condensed Matter</em> (2025)</a>,
+        the <a href="https://theses.hal.science/tel-05502836" target="_blank" rel="noopener">full thesis is open access</a>,
+        and <a href="#mod-fermi">the second simulation below</a> reproduces the model,
+        so you can open the pocket yourself.
       </p>
       <p>
-        These computational pipelines are engineered for scale and production. Every layer-from bare-metal optimization of the numerical loops to statistical inference engines-is automated, benchmarked against exact baselines, and strictly reproducible. The numerical simulations below demonstrate working implementations of this framework across both correlated electron physics and algorithmic optimization.
+        Since the thesis, my work has broadened to problems that share the same
+        mathematical structure: neural-network representations of quantum states,
+        physics-based models of battery aging, and optimization methods borrowed from
+        statistical mechanics. The discipline stays constant across all of them: reduce
+        the system to the variables that control it, formulate them precisely, compute
+        them fast, and validate against independent data. The simulations below show
+        that loop in action.
       </p>
     </div>
 
@@ -169,6 +196,26 @@
         <canvas id="spinRing" aria-label="Assets as spins on the Ising coupling graph"></canvas>
         <canvas id="energyCanvas" width="440" height="170" class="sparkline" aria-label="Energy trace"></canvas>
         <p id="miniMetrics" class="mini-metrics mono">awaiting optimization</p>
+        <div class="instrument">
+          <div class="ctrl mono">
+            <label for="pkSlider">\(K\) · target assets</label>
+            <input type="range" id="pkSlider" min="2" max="8" step="1" value="5">
+            <output id="pkOut">5</output>
+          </div>
+          <div class="ctrl mono">
+            <label for="plSlider">\(\lambda\) · risk aversion</label>
+            <input type="range" id="plSlider" min="0" max="1" step="0.05" value="0.5">
+            <output id="plOut">0.50</output>
+          </div>
+          <div class="anneal-run">
+            <button class="btn btn-primary mono" id="annealBtn">Optimize</button>
+            <span class="mono anneal-status" id="annealStatus">idle</span>
+            <button class="btn btn-ghost mono" id="launchAppBtn">Full App</button>
+          </div>
+          <p class="module-eq">
+            \(H = -\sum_i h_i s_i + \lambda \sum_{i&lt;j} J_{ij}\, s_i s_j + H_{\mathrm{constraints}}\)
+          </p>
+        </div>
         <p class="fig-caption"><span class="fig-no mono">Fig. 1</span>
           Assets as Ising spins on the coupling graph; arc weight \(\propto J_{ij}\),
           cyan discs are held assets. Below, the energy during the anneal.</p>
@@ -176,42 +223,48 @@
       <div class="module-panel">
         <h3>Quantum-Inspired Portfolio Optimizer</h3>
         <p>
-          <span class="para-label">Physics</span>
-          An optimal-portfolio problem is a ground-state problem. Assets map to spins,
-          held or not held; expected returns to local fields \(h_i\); covariances to
-          couplings \(J_{ij}\); the target portfolio size to a constraint term. Risk
-          aversion \(\lambda\) weighs the couplings against the fields, and the optimum
-          is the lowest-energy configuration of the resulting Ising Hamiltonian.
+          <span class="para-label">Background</span>
+          Portfolio selection and finding the resting state of a magnet are,
+          mathematically, the same problem. Each asset is represented by a small magnet
+          that points <em>up</em> (held) or <em>down</em> (not held). An asset's expected
+          return acts as a field pulling its magnet up, and the way two assets rise and
+          fall together acts as a force between their magnets, so assets that crash
+          together are discouraged from being held together. Every candidate portfolio
+          then carries an energy, and the optimal portfolio is the configuration with
+          the lowest one.
         </p>
         <p>
           <span class="para-label">Simulation</span>
-          At left: ten demonstration assets as spins, flipping under Metropolis dynamics
-          while simulated annealing lowers the temperature. The trace shows the energy
-          relaxing to the ground state, and the converged basket appears with its return,
-          volatility, and Sharpe ratio. Set \(K\) and \(\lambda\), then optimize. The full
-          application adds sector constraints and annealing telemetry; its production
-          constraint encoding stays proprietary.
+          Ten demonstration assets occupy the ring, flipping under Metropolis dynamics
+          while
+          <span class="term" tabindex="0" data-def="Start the system hot and random, then cool it slowly so it settles into a low-energy arrangement, the same trick metallurgists use to remove defects from metal.">simulated annealing</span>
+          lowers the temperature: the search begins hot and random, then cools until only
+          improvements survive. The lower trace shows the energy falling as the system
+          settles, and the converged basket is reported with its expected return,
+          volatility, and
+          <span class="term" tabindex="0" data-def="Return earned per unit of risk taken, which is the standard single-number score for a portfolio.">Sharpe ratio</span>.
         </p>
-        <div class="ctrl mono">
-          <label for="pkSlider">\(K\) · target assets</label>
-          <input type="range" id="pkSlider" min="2" max="8" step="1" value="5">
-          <output id="pkOut">5</output>
-        </div>
-        <div class="ctrl mono">
-          <label for="plSlider">\(\lambda\) · risk aversion</label>
-          <input type="range" id="plSlider" min="0" max="1" step="0.05" value="0.5">
-          <output id="plOut">0.50</output>
-        </div>
-        <div class="anneal-run">
-          <button class="btn btn-primary mono" id="annealBtn">Optimize</button>
-          <span class="mono anneal-status" id="annealStatus">idle</span>
-        </div>
-        <div class="app-launch">
-          <button class="btn btn-ghost mono" id="launchAppBtn">Launch Full Application</button>
-        </div>
-        <p class="module-eq">
-          \(H = -\sum_i h_i s_i + \lambda \sum_{i&lt;j} J_{ij}\, s_i s_j + H_{\mathrm{constraints}}\)
+        <p>
+          <span class="para-label">Explore</span>
+          Set the portfolio size \(K\) and the risk aversion \(\lambda\), then press
+          <em>Optimize</em>. Large \(\lambda\) makes the couplings dominate, so the
+          optimizer gives up return to avoid assets that move together, while small
+          \(\lambda\) favors return and tolerates the risk.
         </p>
+        <details class="deeper">
+          <summary>Go deeper: the exact mapping</summary>
+          <p>
+            Formally this is a ground-state search of an Ising Hamiltonian: spins
+            \(s_i \in \{-1,+1\}\) encode held/not-held, expected returns enter as local
+            fields \(h_i\), the covariance matrix supplies the couplings \(J_{ij}\), and the
+            cardinality target \(K\) is enforced by a quadratic penalty term
+            \(H_{\mathrm{constraints}} \propto (\sum_i s_i - s_K)^2\). Spins flip under
+            Metropolis dynamics (a proposed flip is accepted with probability
+            \(\min(1, e^{-\Delta E/T})\)) while the temperature follows an annealing
+            schedule. The full application adds sector-exposure penalties and live market
+            data, though its production constraint encoding stays proprietary.
+          </p>
+        </details>
       </div>
     </div>
   </article>
@@ -220,6 +273,27 @@
     <div class="module-body">
       <div class="module-canvas-wrap">
         <canvas id="fermiCanvas" width="360" height="360" aria-label="Interactive Fermi surface spectral map"></canvas>
+        <div class="instrument">
+          <div class="ctrl mono">
+            <label for="muSlider">\(\mu\) · chemical potential</label>
+            <input type="range" id="muSlider" min="-1.6" max="1.2" step="0.01" value="-0.30">
+            <output id="muOut">−0.30</output>
+          </div>
+          <div class="ctrl mono">
+            <label for="tpSlider">\(t'\) · next-nearest-neighbor hopping</label>
+            <input type="range" id="tpSlider" min="0" max="0.5" step="0.005" value="0.25">
+            <output id="tpOut">0.250</output>
+          </div>
+          <div class="ctrl mono">
+            <label for="vSlider">\(V\) · interlayer hybridization</label>
+            <input type="range" id="vSlider" min="0" max="0.9" step="0.005" value="0.00">
+            <output id="vOut">0.000</output>
+          </div>
+          <p class="module-eq">
+            \(E_{\pm}(\mathbf{k}) = \tfrac{1}{2}(\varepsilon_1+\varepsilon_2)
+            \pm \sqrt{\tfrac{1}{4}(\varepsilon_1-\varepsilon_2)^2 + V^2}\)
+          </p>
+        </div>
         <p class="fig-caption"><span class="fig-no mono">Fig. 2</span>
           Spectral weight \(A(\mathbf{k},0)\) over the Brillouin zone; bright contours
           are the Fermi surface, with \(\Gamma\), X, M marked.</p>
@@ -227,40 +301,53 @@
       <div class="module-panel">
         <h3>Nickelate Fermiology</h3>
         <p>
-          <span class="para-label">Physics</span>
-          Layered nickelates sit next to the cuprate superconductors in composition but not
-          in their physics. In the two-band model from my doctoral research
-          (<a href="https://doi.org/10.1088/1361-648X/ada908" target="_blank" rel="noopener">Journal of Physics: Condensed Matter <b>37</b>, 125703, 2025</a>),
-          an interlayer orbital hybridizes with the Ni \(d_{x^2-y^2}\) band and creates a
-          second Fermi pocket; how that pocket emerges under doping and pressure controls
-          the material's antiferromagnetic and charge-order tendencies.
+          <span class="para-label">Background</span>
+          In 2019 researchers produced superconductivity in a nickel-based material for the
+          first time. Its copper-based cousins, the cuprates, have held the high-temperature
+          superconductivity record since the 1980s, and the mechanism behind them is still
+          debated. If nickelates behaved as copies of cuprates, they would offer a second
+          route into the same problem. My thesis showed the resemblance is only partial:
+          nickelates carry an extra family of electrons that changes their behavior, and
+          this simulation shows where it appears.
         </p>
         <p>
           <span class="para-label">Simulation</span>
-          At right: the zero-frequency spectral weight \(A(\mathbf{k},0)\) over the full
-          Brillouin zone. Raise \(\mu\) to pull the interlayer band through
-          the Fermi level and open the electron pocket at \(\Gamma\); increase \(V\) to
-          hybridize the bands and gap their crossings; adjust \(t'\) to reshape the surface.
+          Electrons in a crystal fill up the available states like water filling a basin. The
+          <span class="term" tabindex="0" data-def="The boundary in momentum space between filled and empty electron states. Nearly everything a metal does (conduct, magnetize, superconduct) happens at this boundary.">Fermi surface</span>
+          is the waterline: the boundary between filled and empty states, where
+          conduction, magnetism, and superconductivity are decided. This map shows that waterline across the crystal's full
+          <span class="term" tabindex="0" data-def="The natural 'map grid' for electrons in a crystal: every possible electron momentum, folded into one repeating tile.">Brillouin zone</span>,
+          and the bright contours mark where electrons sit at zero energy cost. The curve hugging
+          the corners is the familiar cuprate-like band. The pocket that can open at the center
+          (\(\Gamma\)) is the extra population, the focus of my
+          <a href="https://doi.org/10.1088/1361-648X/ada908" target="_blank" rel="noopener">published work</a>.
         </p>
-        <div class="ctrl mono">
-          <label for="muSlider">\(\mu\) · chemical potential</label>
-          <input type="range" id="muSlider" min="-1.6" max="1.2" step="0.01" value="-0.30">
-          <output id="muOut">−0.30</output>
-        </div>
-        <div class="ctrl mono">
-          <label for="tpSlider">\(t'\) · next-nearest-neighbor hopping</label>
-          <input type="range" id="tpSlider" min="0" max="0.5" step="0.005" value="0.25">
-          <output id="tpOut">0.250</output>
-        </div>
-        <div class="ctrl mono">
-          <label for="vSlider">\(V\) · interlayer hybridization</label>
-          <input type="range" id="vSlider" min="0" max="0.9" step="0.005" value="0.00">
-          <output id="vOut">0.000</output>
-        </div>
-        <p class="module-eq">
-          \(E_{\pm}(\mathbf{k}) = \tfrac{1}{2}(\varepsilon_1+\varepsilon_2)
-          \pm \sqrt{\tfrac{1}{4}(\varepsilon_1-\varepsilon_2)^2 + V^2}\)
+        <p>
+          <span class="para-label">Explore</span>
+          Raise the
+          <span class="term" tabindex="0" data-def="Effectively the electron filling level, tuned experimentally by chemical doping or pressure.">chemical potential</span>
+          \(\mu\) slowly and watch a bright island appear at the center of the map: that is a
+          second Fermi pocket opening. This event, absent in cuprates, redirects the
+          material's magnetic and charge tendencies.
+          Then increase \(V\) and watch the two electron families
+          <span class="term" tabindex="0" data-def="When two electronic states mix into hybrid states that repel each other in energy, opening gaps where their bands would cross.">hybridize</span>,
+          opening gaps where their bands cross.
         </p>
+        <details class="deeper">
+          <summary>Go deeper: the two-band model</summary>
+          <p>
+            The map plots zero-frequency spectral weight \(A(\mathbf{k},0)\) for a two-band
+            tight-binding model: a Ni \(d_{x^2-y^2}\) band with nearest- and
+            next-nearest-neighbor hopping \(t, t'\), plus a rare-earth-derived interlayer
+            band, coupled by hybridization \(V\) (dispersion below). Fermi-surface
+            <span class="term" tabindex="0" data-def="When large flat sections of the Fermi surface connect by one shared wavevector, electrons respond collectively at that wavevector, seeding magnetic or charge order.">nesting</span>
+            of these sheets produces peaks in the spin and charge susceptibilities that seed
+            the antiferromagnetic and charge-order instabilities identified in
+            <a href="https://doi.org/10.1088/1361-648X/ada908" target="_blank" rel="noopener">JPCM <b>37</b>, 125703 (2025)</a>
+            and developed in full in
+            <a href="https://theses.hal.science/tel-05502836" target="_blank" rel="noopener">the thesis</a>.
+          </p>
+        </details>
       </div>
     </div>
   </article>
@@ -269,6 +356,17 @@
     <div class="module-body">
       <div class="module-canvas-wrap">
         <canvas id="moireCanvas" width="360" height="360" aria-label="Moire pattern from twisted bilayers"></canvas>
+        <div class="instrument">
+          <div class="ctrl mono">
+            <label for="twistSlider">\(\theta\) · twist angle</label>
+            <input type="range" id="twistSlider" min="0.5" max="10" step="0.02" value="3.0">
+            <output id="twistOut">3.00°</output>
+          </div>
+          <p class="module-eq">
+            \(\lambda_{\mathrm{moir\acute e}} = \dfrac{a}{2\sin(\theta/2)} = \)
+            <output id="lambdaOut" class="mono"></output>
+          </p>
+        </div>
         <p class="fig-caption"><span class="fig-no mono">Fig. 3</span>
           Two honeycomb lattices with relative twist \(\theta\): cyan fixed, orange
           rotated. The scale bar marks the moiré period \(\lambda\).</p>
@@ -276,33 +374,86 @@
       <div class="module-panel">
         <h3>Moiré Interferometer</h3>
         <p>
-          <span class="para-label">Physics</span>
-          Stacking two atomic lattices with a relative twist \(\theta\) produces a moiré
-          superlattice whose period diverges as \(\theta \to 0\). Near the magic angle of
-          about 1.1° the superlattice flattens the electronic bands, and flat bands mean
-          strong correlations: superconducting and insulating phases in twisted bilayer
-          graphene. My density-functional study of graphene on hexagonal boron nitride
-          examined exactly this band reconstruction.
+          <span class="para-label">Background</span>
+          Two window screens overlaid at a slight angle produce large, slowly shifting
+          ripples that exist in neither screen alone. The same happens with two
+          one-atom-thick crystal sheets, where the ripples become a
+          <span class="term" tabindex="0" data-def="A giant repeating pattern, hundreds of atoms wide, created by the interference of two slightly misaligned atomic lattices.">moiré superlattice</span>:
+          a pattern hundreds of atoms wide that the electrons genuinely feel. At a twist
+          near 1.1°, called the magic angle, the pattern slows the electrons down, and slow
+          electrons interact strongly. This is how twisted bilayer graphene was made to
+          superconduct in 2018.
         </p>
         <p>
           <span class="para-label">Simulation</span>
-          At left: two honeycomb lattices drawn in additive light, cyan for the fixed
-          layer and orange for the twisted one. The beat pattern is the moiré superlattice
-          itself; the scale bar tracks its period \(\lambda\). Adjust \(\theta\) and watch
-          the period diverge as the twist vanishes.
+          Two honeycomb lattices in additive light: cyan fixed, orange twisted by \(\theta\).
+          The glowing beat pattern <em>is</em> the moiré superlattice, and the scale bar
+          tracks its period \(\lambda\). Between my master's and PhD I studied this
+          system, graphene on hexagonal boron nitride, with
+          <span class="term" tabindex="0" data-def="Density Functional Theory: the workhorse quantum-mechanical method for computing electronic structure atom by atom, from first principles.">DFT</span>,
+          watching the superlattice reorganize the electronic bands.
         </p>
-        <div class="ctrl mono">
-          <label for="twistSlider">\(\theta\) · twist angle</label>
-          <input type="range" id="twistSlider" min="0.5" max="10" step="0.02" value="3.0">
-          <output id="twistOut">3.00°</output>
-        </div>
-        <p class="module-eq">
-          \(\lambda_{\mathrm{moir\acute e}} = \dfrac{a}{2\sin(\theta/2)} = \)
-          <output id="lambdaOut" class="mono"></output>
+        <p>
+          <span class="para-label">Explore</span>
+          Drag \(\theta\) toward zero and watch the period grow without bound. It diverges
+          as the twist vanishes, which is why small angles make large patterns. The formula
+          beside the canvas updates live.
         </p>
+        <details class="deeper">
+          <summary>Go deeper: why flat bands mean strong correlations</summary>
+          <p>
+            The moiré period follows \(\lambda = a / 2\sin(\theta/2)\). A superlattice this
+            large folds the Brillouin zone into a mini-zone, and near the magic angle the
+            folded bands flatten: bandwidth \(W\) collapses while the Coulomb energy \(U\)
+            stays fixed, so the correlation ratio \(U/W\) grows large. When interaction
+            dominates kinetic energy, the electron liquid reorganizes: correlated insulators,
+            unconventional superconductivity, and orbital magnetism all emerge from the same
+            flat-band condition.
+          </p>
+        </details>
       </div>
     </div>
   </article>
+</section>
+
+<section class="section" id="method">
+  <div class="section-head">
+    <h2>How I Work</h2>
+  </div>
+  <p class="lede method-lede">
+    Every project on this page, from nickelates to portfolios, follows the same
+    four-step loop.
+  </p>
+  <div class="method-grid">
+    <div class="method-step">
+      <span class="method-no mono">01</span>
+      <h3>Reduce</h3>
+      <p>Strip the system to the few variables that control it. A material becomes two
+      bands, and a portfolio becomes spins and couplings. If this reduction is wrong,
+      no amount of computation compensates for it.</p>
+    </div>
+    <div class="method-step">
+      <span class="method-no mono">02</span>
+      <h3>Formulate</h3>
+      <p>Cast the reduction into a structure with known machinery: a Hamiltonian, a
+      variational ansatz, an optimization landscape. Solving it then means proving
+      something rather than only running something.</p>
+    </div>
+    <div class="method-step">
+      <span class="method-no mono">03</span>
+      <h3>Compute</h3>
+      <p>Vectorize the loops, move the hot paths onto GPUs or clusters, and benchmark
+      against exact baselines before trusting anything at scale. Speed turns a model
+      from a diagram into an instrument that can be experimented with.</p>
+    </div>
+    <div class="method-step">
+      <span class="method-no mono">04</span>
+      <h3>Validate</h3>
+      <p>Test against experiment, market data, or exact solutions. A model has to
+      survive contact with data it was not built on, and when it fails, the failure
+      points to where the reduction was wrong.</p>
+    </div>
+  </div>
 </section>
 
 <section class="section" id="exploring">
@@ -315,42 +466,49 @@
       <div class="explore-status">active</div>
       <h3 class="explore-title">Neural-Network Quantum States</h3>
       <p class="explore-text">
-        The direct continuation of my variational many-body work: neural-network ansätze
-        \(|\psi_\theta\rangle\) optimized by variational Monte Carlo with stochastic
-        reconfiguration, validated against exact diagonalization, and extended toward
-        thermal states, dynamics, and neutral-atom experimental platforms.
+        Neural networks as compressed representations of quantum many-body states. The
+        memory needed to store such a state doubles with every particle added and
+        outgrows any computer within a few dozen particles, so a network learns a
+        variational representation \(|\psi_\theta\rangle\) instead.
+        I train these by variational Monte Carlo and validate them against
+        <span class="term" tabindex="0" data-def="Solving a small quantum system exactly by brute force, giving the gold-standard answer that everything else gets tested against.">exact diagonalization</span>,
+        with extensions toward thermal states, dynamics, and neutral-atom hardware.
       </p>
     </div>
     <div class="explore-card mono">
       <div class="explore-status">validating</div>
-      <h3 class="explore-title">Ab Initio-Informed Electrochemical Modeling</h3>
+      <h3 class="explore-title">Ab Initio-Informed Battery Modeling</h3>
       <p class="explore-text">
-        Density functional theory carried across scales: first-principles priors, for
-        example open-circuit voltage curves, lithium site capacities, and migration
-        barriers, propagated into the Doyle&ndash;Fuller&ndash;Newman porous-electrode model and
-        validated against laboratory cell-aging measurements. Structured experiment&ndash;model
-        residuals become the training signal for machine-learned lifetime prediction.
+        Connecting first-principles calculations to engineering-scale battery models.
+        Atomistic quantities computed with DFT (lithium migration barriers, site
+        capacities, open-circuit voltages) enter as physical priors into the
+        <span class="term" tabindex="0" data-def="Doyle–Fuller–Newman: the standard engineering model of a full battery cell as porous electrodes plus electrolyte transport.">DFN cell model</span>
+        engineers use. Where model and lab measurements disagree, that structured
+        residual becomes the training signal for machine-learned lifetime prediction.
       </p>
     </div>
     <div class="explore-card mono">
       <div class="explore-status">measuring</div>
       <h3 class="explore-title">Benchmarking Quantum-Inspired Optimization</h3>
       <p class="explore-text">
-        Rigor for the optimizer shown above: a solver-agnostic framework in which classical
-        and quantum-inspired solvers are scored by a single metric authority against matched
-        exact baselines, so that measured gaps reflect solver quality rather than convention
-        drift. The public interface runs on this page:
-        <a href="#mod-anneal" id="launchAppLink">launch it here</a>.
+        Quantum-inspired optimizers are often benchmarked under conventions that favor
+        them. In my framework, classical and quantum-inspired methods face the same
+        problems, the same metric, and the same exact baselines, so a measured gap
+        reflects solver quality rather than a change in convention. The public interface
+        runs on this page: <a href="#mod-anneal" id="launchAppLink">launch it here</a>.
       </p>
     </div>
     <div class="explore-card mono">
       <div class="explore-status">formulating</div>
       <h3 class="explore-title">Statistical Physics of Market Microstructure</h3>
       <p class="explore-text">
-        The Ising mapping taken to its noisiest limit: high-frequency order-book and tick
-        data treated as an interacting spin system, whose collective regimes and their
-        transitions are candidate sources of predictive signal in a driven,
-        far-from-equilibrium environment.
+        Order books as driven spin systems. A market's order book is thousands of agents
+        flipping between buy and sell while influencing their neighbors, which makes it
+        an interacting spin system held far from equilibrium. I am investigating whether
+        its collective regimes, and the moments they switch, carry predictive signal
+        the way
+        <span class="term" tabindex="0" data-def="A system's sudden qualitative change of collective state, like water freezing, driven by many small interactions aligning.">phase transitions</span>
+        do in physics.
       </p>
     </div>
   </div>
@@ -462,7 +620,10 @@
     <h2>Contact</h2>
   </div>
   <div class="footer-grid">
-    <p class="lede">Open to collaborations in computational materials, many-body theory, and scientific machine learning.</p>
+    <p class="lede">I am open to collaborations and positions in computational
+    materials, many-body methods, and scientific machine learning, in academia or
+    industry. If your work overlaps with anything on this page, the fastest way to
+    reach me is email.</p>
     <ul class="footer-links mono">
       <li>
         <a href="mailto:alpeshsheth.phy@gmail.com">
