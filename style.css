@@ -1035,4 +1035,12 @@ html::before {
     max-width: min(300px, 84vw);
   }
   .term:hover::after, .term:focus::after { transform: translateX(0) translateY(0); }
+  /* fit all four module tabs on one row */
+  .mtab { padding: 6px 9px; font-size: 0.6rem; letter-spacing: 0.05em; }
 }
+
+/* Hidden tooltip bubbles are absolutely positioned and laid out even
+   while invisible; near the right edge they widened the document and
+   caused horizontal scrolling on phones. Clip stray overflow at the
+   root — no legitimate content extends past the viewport. */
+html, body { overflow-x: hidden; }
