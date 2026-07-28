@@ -40,6 +40,11 @@
     "@type": "CollegeOrUniversity",
     "name": "Université de Bordeaux"
   },
+  "sameAs": [
+    "https://scholar.google.com/citations?user=TpDyu0AAAAAJ",
+    "https://www.linkedin.com/in/alpesh-sheth/",
+    "https://theses.hal.science/tel-05502836"
+  ],
   "knowsAbout": [
     "Computational Condensed Matter Physics",
     "Many-Body Theory",
@@ -47,6 +52,57 @@
     "Layered Nickelates",
     "Scientific Machine Learning",
     "Monte Carlo Simulation"
+  ]
+}
+</script>
+
+<!-- Publication metadata. The publications list is rendered client-side,
+     so this block is what search engines and citation indexes actually read. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "item": {
+        "@type": "ScholarlyArticle",
+        "name": "Emergence and tunability of Fermi-pocket and electronic instabilities in layered Nickelates",
+        "author": { "@type": "Person", "name": "Alpesh Sheth" },
+        "datePublished": "2025",
+        "isPartOf": {
+          "@type": "Periodical",
+          "name": "Journal of Physics: Condensed Matter"
+        },
+        "identifier": "doi:10.1088/1361-648X/ada908",
+        "sameAs": "https://arxiv.org/abs/2407.16042",
+        "url": "https://doi.org/10.1088/1361-648X/ada908"
+      }
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "item": {
+        "@type": "Thesis",
+        "name": "Theoretical modelling of infinite-layer nickelates",
+        "author": { "@type": "Person", "name": "Alpesh Sheth" },
+        "datePublished": "2025",
+        "inSupportOf": "PhD",
+        "url": "https://theses.hal.science/tel-05502836"
+      }
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "item": {
+        "@type": "ScholarlyArticle",
+        "name": "Background for the Self Consistent Renormalisation (SCR) Theory",
+        "author": { "@type": "Person", "name": "Alpesh Sheth" },
+        "datePublished": "2021",
+        "url": "https://arxiv.org/abs/2108.12683"
+      }
+    }
   ]
 }
 </script>
@@ -87,7 +143,7 @@
      GPU, held below the critical temperature. The cursor applies a local
      magnetic field; a click reverses its sign. -->
 <header class="hero" id="top">
-  <canvas id="isingCanvas" aria-label="Interactive Ising model simulation"></canvas>
+  <canvas role="img" id="isingCanvas" aria-label="Interactive Ising model simulation"></canvas>
   <div class="hero-fallback" id="heroFallback" hidden></div>
 
   <div class="hero-content">
@@ -96,10 +152,10 @@
     <p class="hero-sub">
       I study how interacting electrons organize themselves in quantum materials.
       My PhD at the Université de Bordeaux (CNRS, 2025) focused on the electronic
-      structure of <em>nickelate superconductors</em>, and the same many-body methods
-      now carry my work into batteries, optimization, and markets.
-      
-      Every figure on this page is a live simulation running in your browser.
+      structure of <em>nickelate superconductors</em>, and the same modeling
+      discipline now carries my work into batteries, optimization, and markets.
+      Every figure on this page is computed live in your browser, not a recorded
+      image.
     </p>
     <div class="hero-cta">
       <a class="btn btn-primary" href="#models">Explore Simulations</a>
@@ -118,6 +174,7 @@
       <span>magnetization <output id="magOut">+0.00</output></span>
     </div>
     <div class="hud-note">cursor applies a local field · click reverses its sign</div>
+    <button type="button" class="hud-pause mono" id="heroPause" aria-pressed="false">Pause</button>
   </aside>
 
   <a class="scroll-cue mono" href="#abstract" aria-label="Scroll down">scroll</a>
@@ -150,10 +207,12 @@
         <span class="term" tabindex="0" data-def="A deliberately stripped-down mathematical version of a material that keeps only the ingredients that control the behavior you care about.">effective multi-orbital models</span>,
         reduced descriptions that keep only the electronic ingredients controlling the
         physics and treat those exactly. The work is
-        <a href="https://doi.org/10.1088/1361-648X/ada908" target="_blank" rel="noopener">published in <em>J. Phys.: Condensed Matter</em> (2025)</a>,
+        <a href="https://doi.org/10.1088/1361-648X/ada908" target="_blank" rel="noopener">published in <em>J. Phys.: Condensed Matter</em> (2025)</a>
+        and openly readable as
+        <a href="https://arxiv.org/abs/2407.16042" target="_blank" rel="noopener">arXiv:2407.16042</a>,
         the <a href="https://theses.hal.science/tel-05502836" target="_blank" rel="noopener">full thesis is open access</a>,
-        and <a href="#mod-fermi">the second simulation below</a> reproduces the model,
-        so you can open the pocket yourself.
+        and <a href="#mod-fermi">the second simulation below</a> is a reduced version
+        of that model, enough to open the pocket yourself.
       </p>
       <p>
         Since the thesis, my work has broadened to problems that share the same
@@ -194,8 +253,8 @@
   <article class="module" id="mod-anneal">
     <div class="module-body">
       <div class="module-canvas-wrap">
-        <canvas id="spinRing" aria-label="Assets as spins on the Ising coupling graph"></canvas>
-        <canvas id="energyCanvas" width="440" height="170" class="sparkline" aria-label="Energy trace"></canvas>
+        <canvas role="img" id="spinRing" aria-label="Assets as spins on the Ising coupling graph"></canvas>
+        <canvas role="img" id="energyCanvas" width="440" height="170" class="sparkline" aria-label="Energy trace"></canvas>
         <p id="miniMetrics" class="mini-metrics mono">awaiting optimization</p>
         <p class="fig-caption"><span class="fig-no mono">Fig. 1</span>
           Assets as Ising spins on the coupling graph; arc weight \(\propto J_{ij}\),
@@ -205,7 +264,7 @@
         <h3>Quantum-Inspired Portfolio Optimizer</h3>
         <div class="mtabs mono" role="tablist">
           <button class="mtab active" data-pane="bg" role="tab">Background</button>
-          <button class="mtab" data-pane="sim" role="tab">Simulation</button>
+          <button class="mtab" data-pane="sim" role="tab">Figure</button>
           <button class="mtab" data-pane="try" role="tab">Explore</button>
           <button class="mtab" data-pane="th" role="tab">Theory</button>
         </div>
@@ -242,8 +301,7 @@
             fields \(h_i\), the covariance matrix supplies the couplings \(J_{ij}\), and
             the cardinality target \(K\) is enforced by a quadratic penalty. Spins flip
             under Metropolis dynamics while the temperature follows an annealing schedule.
-            The full application adds sector-exposure penalties and live market data,
-            though its production constraint encoding stays proprietary.
+            The full implementation adds sector-exposure penalties and live market data.
           </p>
           <p class="module-eq">
             \(H = -\sum_i h_i s_i + \lambda \sum_{i&lt;j} J_{ij}\, s_i s_j + H_{\mathrm{constraints}}\)
@@ -273,7 +331,7 @@
   <article class="module module-flip" id="mod-fermi">
     <div class="module-body">
       <div class="module-canvas-wrap">
-        <canvas id="fermiCanvas" width="360" height="360" aria-label="Interactive Fermi surface spectral map"></canvas>
+        <canvas role="img" id="fermiCanvas" width="360" height="360" aria-label="Interactive Fermi surface spectral map"></canvas>
         <p class="fig-caption"><span class="fig-no mono">Fig. 2</span>
           Spectral weight \(A(\mathbf{k},0)\) over the Brillouin zone; bright contours
           are the Fermi surface, with \(\Gamma\), X, M marked.</p>
@@ -282,7 +340,7 @@
         <h3>Nickelate Fermiology</h3>
         <div class="mtabs mono" role="tablist">
           <button class="mtab active" data-pane="bg" role="tab">Background</button>
-          <button class="mtab" data-pane="sim" role="tab">Simulation</button>
+          <button class="mtab" data-pane="sim" role="tab">Figure</button>
           <button class="mtab" data-pane="try" role="tab">Explore</button>
           <button class="mtab" data-pane="th" role="tab">Theory</button>
         </div>
@@ -306,7 +364,8 @@
             and the bright contours mark where electrons sit at zero energy cost. The curve
             hugging the corners is the familiar cuprate-like band. The pocket that can open
             at the center (\(\Gamma\)) is the extra population, the focus of my
-            <a href="https://doi.org/10.1088/1361-648X/ada908" target="_blank" rel="noopener">published work</a>.
+            <a href="https://doi.org/10.1088/1361-648X/ada908" target="_blank" rel="noopener">published work</a>
+            (<a href="https://arxiv.org/abs/2407.16042" target="_blank" rel="noopener">open access: arXiv:2407.16042</a>).
           </p></div>
           <div class="mpane" data-pane="try"><p>
             Raise the
@@ -326,6 +385,7 @@
             of these sheets produces peaks in the spin and charge susceptibilities that seed
             the instabilities identified in
             <a href="https://doi.org/10.1088/1361-648X/ada908" target="_blank" rel="noopener">JPCM <b>37</b>, 125703 (2025)</a>
+            (<a href="https://arxiv.org/abs/2407.16042" target="_blank" rel="noopener">arXiv:2407.16042</a>)
             and developed in full in
             <a href="https://theses.hal.science/tel-05502836" target="_blank" rel="noopener">the thesis</a>.
           </p>
@@ -358,7 +418,7 @@
   <article class="module" id="mod-moire">
     <div class="module-body">
       <div class="module-canvas-wrap">
-        <canvas id="moireCanvas" width="360" height="360" aria-label="Moire pattern from twisted bilayers"></canvas>
+        <canvas role="img" id="moireCanvas" width="360" height="360" aria-label="Moire pattern from twisted bilayers"></canvas>
         <p class="fig-caption"><span class="fig-no mono">Fig. 3</span>
           Two honeycomb lattices with relative twist \(\theta\): cyan fixed, orange
           rotated. The scale bar marks the moiré period \(\lambda\).</p>
@@ -367,7 +427,7 @@
         <h3>Moiré Interferometer</h3>
         <div class="mtabs mono" role="tablist">
           <button class="mtab active" data-pane="bg" role="tab">Background</button>
-          <button class="mtab" data-pane="sim" role="tab">Simulation</button>
+          <button class="mtab" data-pane="sim" role="tab">Figure</button>
           <button class="mtab" data-pane="try" role="tab">Explore</button>
           <button class="mtab" data-pane="th" role="tab">Theory</button>
         </div>
@@ -651,13 +711,13 @@
         </a>
       </li>
       <li>
-        <a href="https://github.com/asheth-git" target="_blank" rel="noopener">
+        <a href="https://theses.hal.science/tel-05502836" target="_blank" rel="noopener">
           <span class="fl-icon">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0C5.37 0 0 5.373 0 12c0 5.303 3.438 9.8 8.205 11.387.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.756-1.333-1.756-1.09-.745.082-.73.082-.73 1.205.084 1.84 1.237 1.84 1.237 1.07 1.834 2.807 1.304 3.492.997.108-.775.418-1.305.762-1.605-2.665-.305-5.467-1.334-5.467-5.93 0-1.31.468-2.38 1.235-3.22-.123-.303-.535-1.523.117-3.176 0 0 1.008-.322 3.3 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.29-1.552 3.297-1.23 3.297-1.23.653 1.653.24 2.873.118 3.176.77.84 1.233 1.91 1.233 3.22 0 4.61-2.807 5.624-5.48 5.92.43.372.814 1.102.814 2.222 0 1.606-.015 2.898-.015 3.293 0 .32.216.694.825.576C20.565 21.796 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2h9l5 5v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1Zm8 1.8V8h4.2L14 3.8ZM8 11h8v1.6H8V11Zm0 3.4h8V16H8v-1.6Zm0 3.4h5.5v1.6H8v-1.6Z"/></svg>
           </span>
           <span class="fl-text">
-            <span class="fl-label">GitHub</span>
-            <span class="fl-value">asheth-git</span>
+            <span class="fl-label">Thesis</span>
+            <span class="fl-value">Open access · HAL</span>
           </span>
         </a>
       </li>
@@ -676,10 +736,14 @@
   </div>
 
   <div class="telemetry" id="telemetry">
-    <canvas id="mapCanvas" aria-label="Visitor map"></canvas>
+    <canvas role="img" id="mapCanvas" aria-label="Visitor map"></canvas>
   </div>
 
-  <p class="colophon mono">© <span id="year">2026</span> Alpesh Sheth</p>
+  <p class="colophon mono">
+    © <span id="year">2026</span> Alpesh Sheth
+    <span class="colophon-sep">·</span>
+    last updated <time id="lastUpdated" datetime="2026-07-28">28 July 2026</time>
+  </p>
 </footer>
 
 </main>

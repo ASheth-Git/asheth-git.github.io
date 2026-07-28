@@ -329,7 +329,9 @@ function initIsing() {
   let pixels = new Uint8Array(0);
 
   function frame() {
-    if (!heroVisible || document.hidden || document.body.classList.contains("app-open")) {
+    if (!heroVisible || document.hidden ||
+        document.body.classList.contains("app-open") ||
+        document.body.classList.contains("sim-paused")) {
       requestAnimationFrame(frame);
       return;
     }
@@ -903,6 +905,36 @@ function initModuleTabs() {
   });
 }
 
+/* Range inputs render their value into an adjacent <output>, which is
+   presentational only — a screen reader announces the raw number ("0.25")
+   with no unit or meaning. Mirroring the rendered text into aria-valuetext
+   makes the announced value match what sighted users actually see. */
+function initSliderA11y() {
+  document.querySelectorAll('input[type="range"]').forEach(input => {
+    const out = input.parentElement.querySelector("output");
+    if (!out) return;
+    const sync = () => input.setAttribute("aria-valuetext", out.textContent.trim());
+    sync();
+    /* the owning module writes the output on input; read on the next
+       frame so we mirror the formatted value, not the stale one */
+    input.addEventListener("input", () => requestAnimationFrame(sync));
+  });
+}
+
+/* Explicit motion control. prefers-reduced-motion is already honored at
+   load, but that is an OS-level setting — a visitor who simply wants the
+   background to stop needs an in-page control. Toggling the class halts
+   the hero's GPU loop at its next frame. */
+function initMotionToggle() {
+  const btn = document.getElementById("heroPause");
+  if (!btn) return;
+  btn.addEventListener("click", () => {
+    const paused = document.body.classList.toggle("sim-paused");
+    btn.setAttribute("aria-pressed", String(paused));
+    btn.textContent = paused ? "Resume" : "Pause";
+  });
+}
+
 function initTabs() {
   const tabs = document.querySelectorAll(".ttab");
   tabs.forEach(tab =>
@@ -1178,4 +1210,6 @@ document.addEventListener("DOMContentLoaded", () => {
   loadHub();
   initTelemetry();
   initAppLaunch();
+  initSliderA11y();
+  initMotionToggle();
 });
