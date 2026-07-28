@@ -627,33 +627,74 @@ input[type="range"]::-moz-range-thumb {
   display: grid; grid-template-columns: 1fr; gap: 1.6rem;
   margin-bottom: 3rem;
 }
-.footer-grid .lede { max-width: 46rem; }
-/* contact cards fill the row edge to edge */
+/* Measure tuned for a short block: wide enough that three sentences
+   settle into ~3 lines rather than fragmenting, and `pretty` stops the
+   last line from dropping a single orphan word. */
+.footer-grid .lede {
+  max-width: 56rem;
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+
+/* Contact cards: icon tile + stacked label/value. The two-line
+   structure is what lets the full email render — the old single-line
+   card had to truncate it with an ellipsis to fit the column. */
 .footer-links {
   list-style: none;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 0.9rem;
+  /* 250px floor is set by the longest value (the 25-char email at
+     0.72rem mono ≈ 173px) plus tile, gap and padding — below this the
+     grid drops to 2 columns rather than clipping the address */
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 0.75rem;
 }
 .footer-links li { margin: 0; }
 .footer-links a {
-  display: flex; align-items: center; justify-content: center; gap: 0.6rem;
-  width: 100%;
-  font-family: var(--ff-mono); font-size: 0.76rem;
+  display: flex; align-items: center; gap: 0.8rem;
+  height: 100%;
+  color: var(--ink);
   background: var(--surface);
-  border: 1px solid var(--line); border-radius: 12px;
-  padding: 14px 16px;
-  box-shadow: var(--shadow-sm);
-  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  border: 1px solid var(--line); border-radius: 14px;
+  padding: 13px 15px;
+  transition: transform 0.16s ease, border-color 0.16s ease,
+              box-shadow 0.16s ease, background 0.16s ease;
 }
 .footer-links a:hover {
-  transform: translateY(-1px); border-color: var(--accent);
-  box-shadow: var(--shadow);
+  transform: translateY(-2px);
+  border-color: var(--accent);
+  box-shadow: 0 10px 24px -14px rgba(0, 0, 0, 0.8);
 }
-.footer-links svg {
-  width: 16px; height: 16px; fill: currentColor;
+
+/* fixed-size tile: the icon can never scale with its container, which
+   is what made the bare SVGs render out of proportion */
+.fl-icon {
   flex: none;
+  width: 36px; height: 36px;
+  display: grid; place-items: center;
+  border-radius: 10px;
+  background: var(--accent-soft);
+  border: 1px solid var(--glass-border-soft);
+  transition: background 0.16s ease;
+}
+.fl-icon svg {
+  width: 17px; height: 17px;
+  fill: var(--accent);
+  display: block;
+}
+.footer-links a:hover .fl-icon { background: rgba(47, 184, 171, 0.18); }
+
+.fl-text { display: flex; flex-direction: column; min-width: 0; line-height: 1.3; }
+.fl-label {
+  font-family: var(--ff-mono);
+  font-size: 0.58rem; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 2px;
+}
+.fl-value {
+  font-family: var(--ff-mono);
+  font-size: 0.72rem;
+  color: var(--ink);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 
 /* telemetry map card */
