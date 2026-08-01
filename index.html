@@ -9,21 +9,29 @@
 <meta name="google-site-verification" content="p0k6a-GRjVV9wR7NRgIxQS4kTclWTeTBIoito35zD_k">
 <link rel="canonical" href="https://asheth-git.github.io/">
 
-<!-- Open Graph -->
-<meta property="og:title" content="Alpesh Sheth · Computational Condensed Matter Physics">
-<meta property="og:description" content="Computational condensed matter physics: infinite-layer nickelates, multi-orbital models, and many-body methods.">
+<!-- Link preview. og:image is an absolute URL and the file name is
+     versioned: Slack, LinkedIn, X and iMessage cache a preview against the
+     image URL, so a changed picture at an unchanged path keeps serving the
+     old card. A new name is what makes them refetch. -->
+<meta property="og:site_name" content="Alpesh Sheth">
 <meta property="og:type" content="website">
+<meta property="og:locale" content="en_GB">
 <meta property="og:url" content="https://asheth-git.github.io/">
-<meta property="og:image" content="https://asheth-git.github.io/assets/og-banner.png">
+<meta property="og:title" content="Alpesh Sheth, PhD · Computational Condensed Matter Physics">
+<meta property="og:description" content="Computational condensed matter physics: infinite-layer nickelates, two-band models, many-body methods and scientific machine learning. Five interactive simulations.">
+<meta property="og:image" content="https://asheth-git.github.io/assets/og-banner-v2.png">
+<meta property="og:image:secure_url" content="https://asheth-git.github.io/assets/og-banner-v2.png">
+<meta property="og:image:type" content="image/png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:site_name" content="Alpesh Sheth">
-
-<!-- Twitter Card -->
+<meta property="og:image:alt" content="Alpesh Sheth, PhD — computational condensed matter physics">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Alpesh Sheth · Computational Condensed Matter Physics">
-<meta name="twitter:description" content="Computational condensed matter physics: infinite-layer nickelates, multi-orbital models, and many-body methods.">
-<meta name="twitter:image" content="https://asheth-git.github.io/assets/og-banner.png">
+<meta name="twitter:title" content="Alpesh Sheth, PhD · Computational Condensed Matter Physics">
+<meta name="twitter:description" content="Computational condensed matter physics: infinite-layer nickelates, two-band models, many-body methods and scientific machine learning. Five interactive simulations.">
+<meta name="twitter:image" content="https://asheth-git.github.io/assets/og-banner-v2.png">
+<meta name="twitter:image:alt" content="Alpesh Sheth, PhD — computational condensed matter physics">
+
+
 
 <!-- Structured data: Person schema for rich search results -->
 <script type="application/ld+json">
@@ -185,7 +193,7 @@
     <p class="sub rise">Computational condensed matter physics · Many-body theory</p>
     <h1 class="split">Alpesh SHETH, PhD</h1>
     <div class="lead rise">
-      <p>I build small physical models of materials and test them against experiment. Most recently: the infinite-layer nickelates, a family of superconductors that look almost identical on paper to the copper-oxide superconductors but behave differently in the lab. I showed the difference comes from a second electronic band the copper oxides do not have. I work in Python, C++ and Fortran, on GPUs and HPC clusters.</p>
+      <p>I build compact, predictive models of materials and test them against experiment. Most recently: the infinite-layer nickelates, a family of superconductors that look almost identical on paper to the copper-oxide superconductors but behave differently in the lab. I showed the difference comes from a second electronic band, unique to the nickelates. I work in Python, C++ and Fortran, on GPUs and HPC clusters.</p>
     </div>
     <div class="meta rise">
       <div>Field<strong>Quantum materials · many-body theory</strong></div>
@@ -206,8 +214,8 @@
     <p class="eyebrow rise"><b>01</b><span>Research</span></p>
     <h2 class="split">Research</h2>
     <div class="lead rise">
-      <p>My PhD, supervised by Sébastien Burdin at the Laboratoire Ondes et Matière d'Aquitaine (CNRS, Université de Bordeaux) and defended on 4 November 2025, is about the infinite-layer nickelates \(R\mathrm{NiO_2}\) — nickel-oxide compounds found to <span class="term" tabindex="0" data-def="Electrical conduction with no resistive loss, below a material-specific critical temperature.">superconduct</span> in 2019. On paper they are near-copies of the copper-oxide superconductors: same layered structure, same nominal electron count. In experiment they are not, and the standard one-band picture does not explain the gap.</p>
-      <p>I built a two-band model: the nickel \(3d_{x^2-y^2}\) band, plus a second band living between the layers. The second band carries current over part of the phase diagram, which is what makes the <span class="term" tabindex="0" data-def="The boundary in momentum space between filled and empty electron states. Transport, magnetism and superconductivity are all governed by the states sitting closest to it.">Fermi surface</span> so sensitive to pressure and to oxygen placement — a one-band model has nothing to be sensitive with. One set of parameters covers both the \(R\mathrm{NiO_3}\) and \(R\mathrm{NiO_2}\) families.</p>
+      <p>My PhD, supervised by Sébastien Burdin at the Laboratoire Ondes et Matière d'Aquitaine (CNRS, Université de Bordeaux) and defended on 4 November 2025, is about the infinite-layer nickelates \(R\mathrm{NiO_2}\) — nickel-oxide compounds found to <span class="term" tabindex="0" data-def="Electrical conduction with no resistive loss, below a material-specific critical temperature.">superconduct</span> in 2019. On paper they are near-copies of the copper-oxide superconductors: same layered structure, same nominal electron count. In experiment they behave differently, and the standard one-band picture accounts for only part of it.</p>
+      <p>I built a two-band model: the nickel \(3d_{x^2-y^2}\) band, plus a second band living between the layers. The second band carries current over part of the phase diagram, which is what makes the <span class="term" tabindex="0" data-def="The boundary in momentum space between filled and empty electron states. Transport, magnetism and superconductivity are all governed by the states sitting closest to it.">Fermi surface</span> so responsive to pressure and to oxygen placement — a second band gives the material a degree of freedom a one-band description leaves out. One set of parameters covers both the \(R\mathrm{NiO_3}\) and \(R\mathrm{NiO_2}\) families.</p>
       <p>The model makes a testable prediction. The wavelength at which the electrons want to order is not fixed by the crystal structure, as had been assumed; it shifts as the material is doped or squeezed. Scattering experiments can check this directly, and Simulation 2 lets you move the control and watch the peak walk. Published in <a class="inline" href="https://doi.org/10.1088/1361-648X/ada908">J. Phys.: Condens. Matter <b>37</b>, 125703 (2025)</a>; preprint <a class="inline" href="https://arxiv.org/abs/2407.16042">arXiv:2407.16042</a>; <a class="inline" href="https://theses.hal.science/tel-05502836">thesis (open access)</a>.</p>
       <p>Since then I have worked on problems with the same shape: an enormous space of possible states, one dial you can turn, and a threshold where the behaviour changes character. Concretely — neural networks used to represent quantum states, battery ageing predicted from <em>ab initio</em> chemistry, and combinatorial optimisation solved with methods borrowed from statistical physics. Each simulation below marks that threshold in its own control parameter.</p>
     </div>
@@ -317,7 +325,7 @@
       </div>
       <p class="cap"><b>Simulation 2.</b> The bare susceptibility
     <span class="eqd">\(\displaystyle \chi_0(\mathbf q) = \frac{1}{N}\sum_{\mathbf k} \frac{f(E_{\mathbf k}) - f(E_{\mathbf k+\mathbf q})}{E_{\mathbf k+\mathbf q} - E_{\mathbf k}},\)</span>
-    evaluated on a \(64^2\) \(\mathbf k\)-mesh for a \(33^2\) \(\mathbf q\)-mesh. Intraband contributions only, with matrix elements set to unity; degenerate denominators are replaced by \(-\partial f/\partial E\). The maximum arises from <span class="term" tabindex="0" data-def="The condition in which extended, nearly parallel sections of the Fermi surface are connected by a single wavevector, enhancing the response at that wavevector.">nesting</span> and broadens as \(k_\mathrm{B}T\) increases. Approximations to note: no vertex corrections, no interband terms, and no self-energy.</p>
+    evaluated on a \(64^2\) \(\mathbf k\)-mesh for a \(33^2\) \(\mathbf q\)-mesh. Intraband contributions only, with matrix elements set to unity; degenerate denominators are replaced by \(-\partial f/\partial E\). The maximum arises from <span class="term" tabindex="0" data-def="The condition in which extended, nearly parallel sections of the Fermi surface are connected by a single wavevector, enhancing the response at that wavevector.">nesting</span> and broadens as \(k_\mathrm{B}T\) increases. Scope of the approximation: intraband response at the bare level, without vertex corrections or self-energy.</p>
     </div>
   </div>
 </section>
@@ -327,7 +335,7 @@
   <div class="wrap">
     <p class="eyebrow rise"><b>04</b><span>Simulation 3 · Optimisation</span></p>
     <h2 class="split">Portfolio selection as an Ising ground state</h2>
-    <p class="lead rise">Choosing which assets to hold is the same mathematics as finding the lowest-energy arrangement of a magnet. Hold or don't hold becomes spin up or spin down; expected return becomes a magnetic field on each site; the risk of holding two correlated assets becomes a coupling between them. With ten assets there are only 1024 possibilities, so every one can be checked and the true best answer is known. That matters: benchmarks of quantum-inspired solvers usually compare against another approximate method. Here the solver is scored against the proven optimum, and the gap to it is the only number worth reporting.</p>
+    <p class="lead rise">Choosing which assets to hold is the same mathematics as finding the lowest-energy arrangement of a magnet. Holding or not holding becomes spin up or spin down; expected return becomes a magnetic field on each site; the risk of holding two correlated assets becomes a coupling between them. With ten assets there are only 1024 possibilities, so every one can be checked and the true best answer is known. That matters: benchmarks of quantum-inspired solvers usually compare against another approximate method. Here the solver is scored against the proven optimum, and the gap to it is the only number worth reporting.</p>
 
     <div class="plate rise">
       <div class="panes">
@@ -367,7 +375,7 @@
       </div>
       <p class="cap"><b>Simulation 3.</b> The objective is
     <span class="eqd">\(\displaystyle H = -\sum_i h_i x_i + \lambda \sum_{i&lt;j} C_{ij}\, x_i x_j + A\Bigl(\sum_i x_i - K\Bigr)^{\!2},\)</span>
-    with \(x_i \in \{0,1\}\), \(h_i\) the expected returns and \(C_{ij}\) the covariance matrix, minimised by single-flip Metropolis under geometric cooling (<span class="term" tabindex="0" data-def="Minimisation by sampling at a temperature that is lowered slowly, so the system settles into a low-energy configuration rather than the nearest one.">simulated annealing</span>) from \(T = 3\) to \(T = 0.01\). Returns and covariances are fixed synthetic data and the random stream is seeded by \((\lambda, K, \text{sweeps})\), so a given setting reproduces its trace exactly. The default budget of 70 sweeps is deliberately short: at that budget the solver does not always reach \(E^*\). <em>Full app</em> opens the complete implementation in a window on this page.</p>
+    with \(x_i \in \{0,1\}\), \(h_i\) the expected returns and \(C_{ij}\) the covariance matrix, minimised by single-flip Metropolis under geometric cooling (<span class="term" tabindex="0" data-def="Minimisation by sampling at a temperature that is lowered slowly, so the system settles into a low-energy configuration rather than the nearest one.">simulated annealing</span>) from \(T = 3\) to \(T = 0.01\). Returns and covariances are fixed synthetic data and the random stream is seeded by \((\lambda, K, \text{sweeps})\), so a given setting reproduces its trace exactly. The default budget of 70 sweeps is deliberately short, so the gap to \(E^*\) stays visible and measurable. <em>Full app</em> opens the complete implementation in a window on this page.</p>
     </div>
   </div>
 </section>
@@ -460,7 +468,7 @@
   <div class="wrap">
     <p class="eyebrow rise"><b>07</b><span>Summary</span></p>
     <h2 class="split">Models, control parameters, and checks</h2>
-    <p class="lead rise">Five of these seven rows are the simulations above; two are still in progress. The last column says what each model was checked against — without that column the rest is an assertion.</p>
+    <p class="lead rise">Five of these seven rows are the simulations above; two are still in progress. The last column says what each model was checked against, which is what makes the rest verifiable.</p>
     <div class="ledwrap rise">
       <table>
         <thead><tr><th>System</th><th>Reduced to</th><th>Control parameter</th><th>Threshold</th><th>Validated against</th></tr></thead>
@@ -486,10 +494,10 @@
     <h2 class="split">Method</h2>
     <p class="lead rise">Every model above was built in the same four steps, in that order. The order matters more than any single technique: most of the work is in the first step, and most of the mistakes are caught in the last.</p>
     <div class="steps rise">
-      <div class="step"><span class="n">01</span><h3>Reduce</h3><p>Find the smallest number of moving parts that still produces the behaviour — two bands for a nickelate, hold-or-don't and correlations for a portfolio. Get this wrong and no amount of computing power will save the result.</p></div>
+      <div class="step"><span class="n">01</span><h3>Reduce</h3><p>Identify the minimal set of moving parts that still produces the behaviour — two bands for a nickelate, holdings and correlations for a portfolio. This step sets the ceiling on everything after it: the reduction decides what the computation is able to tell you.</p></div>
       <div class="step"><span class="n">02</span><h3>Formulate</h3><p>Write it in a form that established mathematics already knows how to attack — an energy function, a landscape to minimise. Then what you can say about the answer is a result, not just a number the code returned.</p></div>
       <div class="step"><span class="n">03</span><h3>Compute</h3><p>Vectorise the inner loops, move the expensive parts onto GPUs or the cluster, and check against cases with known exact answers before running anything large.</p></div>
-      <div class="step"><span class="n">04</span><h3>Validate</h3><p>Compare against experiment, independent data, or an exact solution — specifically against data the model was not built to reproduce. Where it fails, the failure tells you which assumption was wrong.</p></div>
+      <div class="step"><span class="n">04</span><h3>Validate</h3><p>Compare against experiment, independent data, or an exact solution — specifically against data the model was not built to reproduce. Where prediction and measurement diverge, the discrepancy identifies precisely which assumption to revisit.</p></div>
     </div>
   </div>
 </section>
@@ -598,12 +606,12 @@
   <div class="wrap">
     <p class="eyebrow rise"><b>10</b><span>What is next</span></p>
     <h2 class="split">Where the work is going</h2>
-    <p class="lead rise">Four open threads, none settled. Each has the same shape as the work above — a huge space of possibilities, one dial, a threshold worth finding. For each I have said where the uncertainty is rather than where it might lead.</p>
+    <p class="lead rise">Four active threads. Each has the same shape as the work above — a large space of possibilities, one dial, a threshold worth finding. For each I have said what remains to be established.</p>
     <div class="tiles rise">
-      <div><span class="tag">Active</span><h3>Neural-network quantum states</h3><p>Writing a quantum state down explicitly costs twice as much memory for every particle added, so the honest limit is a few tens of particles. A neural network can represent the state compactly instead, trained by Monte Carlo and checked against <span class="term" tabindex="0" data-def="Exact numerical solution of a small quantum system by direct diagonalisation of its Hamiltonian; used as a reference for approximate methods.">exact answers</span> wherever those are still computable. Open directions: finite temperature, real-time dynamics, and neutral-atom hardware.</p></div>
+      <div><span class="tag">Active</span><h3>Neural-network quantum states</h3><p>Writing a quantum state down explicitly costs twice as much memory for every particle added, which puts the practical reach at a few tens of particles. A neural network can represent the state compactly instead, trained by Monte Carlo and checked against <span class="term" tabindex="0" data-def="Exact numerical solution of a small quantum system by direct diagonalisation of its Hamiltonian; used as a reference for approximate methods.">exact answers</span> wherever those are still computable. Open directions: finite temperature, real-time dynamics, and neutral-atom hardware.</p></div>
       <div><span class="tag">Validating</span><h3>Ab initio battery modelling</h3><p>Quantities computed from first-principles chemistry — how easily lithium moves, how much a site holds, what voltage results — fed as priors into the <span class="term" tabindex="0" data-def="Doyle–Fuller–Newman: the standard continuum model of a lithium-ion cell, treating porous electrodes and electrolyte transport.">Doyle–Fuller–Newman</span> cell model, the standard engineering description of a battery. Where that model and real cycling data disagree systematically, the disagreement is the signal, and it becomes the target for predicting cell lifetime.</p></div>
       <div><span class="tag">Measuring</span><h3>Benchmarking quantum-inspired optimisation</h3><p>Classical and quantum-inspired solvers run on identical problems, under one metric, against exact baselines — so that a reported speed-up reflects the solver and not a quietly changed convention. <a href="#s4" id="launchAppLink">Simulation 3 is the public version.</a></p></div>
-      <div><span class="tag">Formulating</span><h3>Statistical physics of market microstructure</h3><p>An order book is a large number of agents each making a buy-or-sell decision, pushed far from equilibrium — formally close to a spin system. Whether the sudden shifts in market behaviour can be described in <span class="term" tabindex="0" data-def="A qualitative change in the collective state of a system, driven by the alignment of many local interactions.">the same language as phase transitions</span> is genuinely open, and the answer may well turn out to be no.</p></div>
+      <div><span class="tag">Formulating</span><h3>Statistical physics of market microstructure</h3><p>An order book is a large number of agents each making a buy-or-sell decision, pushed far from equilibrium — formally close to a spin system. Whether the sudden shifts in market behaviour can be described in <span class="term" tabindex="0" data-def="A qualitative change in the collective state of a system, driven by the alignment of many local interactions.">the same language as phase transitions</span> is an open question, and establishing the answer either way is the useful result.</p></div>
     </div>
   </div>
 </section>
@@ -613,7 +621,7 @@
   <div class="wrap">
     <p class="eyebrow rise"><b>11</b><span>Contact</span></p>
     <h2 class="split">Contact</h2>
-    <p class="lead rise">I am looking for postdoctoral positions and collaborations in computational condensed matter, many-body methods, and scientific machine learning — in academia or industry. If you have a problem with the shape of the ones above, a system worth reducing to its essentials and a threshold worth finding, I would like to hear about it. Email is the most reliable way to reach me.</p>
+    <p class="lead rise">I am looking for postdoctoral positions and collaborations in computational condensed matter, many-body methods, and scientific machine learning — in academia or industry. If you are working on something with the shape of the problems above — a system worth reducing to its essentials, a threshold worth finding — I would like to hear about it. Email is the most reliable way to reach me.</p>
     <ul class="links rise">
       <li><a href="mailto:alpeshsheth.phy@gmail.com">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 5.5A1.5 1.5 0 0 1 3.5 4h17A1.5 1.5 0 0 1 22 5.5v13a1.5 1.5 0 0 1-1.5 1.5h-17A1.5 1.5 0 0 1 2 18.5v-13Zm2 .7v12.3h16V6.2l-7.5 6a1 1 0 0 1-1.25 0L4 6.2Zm1.9-.7 6.1 4.9L18.1 5.5H5.9Z"></path></svg>
