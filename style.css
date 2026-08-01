@@ -310,10 +310,6 @@ a.inline:hover{color:var(--b1)}
 .meta strong{display:block;color:var(--ink);font-weight:400;margin-top:var(--s1);letter-spacing:0;
   text-transform:none;font-family:var(--body);font-size:var(--t-small);text-wrap:balance}
 .herocta{display:flex;gap:var(--s2);flex-wrap:wrap;margin-top:var(--s7)}
-.cue{font-family:var(--mono);font-size:var(--t-micro);letter-spacing:.1em;
-  text-transform:none;color:var(--soft);margin-top:var(--s7);display:flex;gap:var(--s2);
-  align-items:center}
-.cue i{display:block;width:34px;height:1px;background:var(--soft)}
 
 /* ══ plate frame ══════════════════════════════════════════════ */
 .plate{margin-top:clamp(1.4rem,3.2vh,2.4rem)}
