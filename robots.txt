@@ -1,9 +1,10 @@
 User-agent: *
 Allow: /
-# Old site versions — kept for reference, hidden from search
-# to avoid duplicate-content dilution of the main page
-Disallow: /v1/
-Disallow: /v2/
+
+# The phone shell is the same content as the desktop page, chosen by
+# device rather than by URL, so it is excluded to avoid duplicate-content
+# dilution of the canonical page.
+Disallow: /app_v2.html
 Disallow: /data/
 
 Sitemap: https://asheth-git.github.io/sitemap.xml

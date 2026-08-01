@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<title>Alpesh SHETH, PhD · mobile</title>
+<meta name="description" content="Alpesh Sheth, PhD (Université de Bordeaux, 2025). Computational condensed matter physics: infinite-layer nickelates, multi-orbital models, many-body methods, and scientific machine learning.">
+<meta name="theme-color" content="#F8F8F6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0B0C0E" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="A. Sheth">
+<link rel="canonical" href="https://asheth-git.github.io/">
+
+<meta property="og:title" content="Alpesh Sheth · Computational Condensed Matter Physics">
+<meta property="og:description" content="Computational condensed matter physics: infinite-layer nickelates, multi-orbital models, and many-body methods.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://asheth-git.github.io/">
+<meta property="og:image" content="https://asheth-git.github.io/assets/og-banner.png">
+<meta property="og:site_name" content="Alpesh Sheth">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://asheth-git.github.io/assets/og-banner.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer="" src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer="" src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'\\(',right:'\\)',display:false},{left:'\\[',right:'\\]',display:true}]});"></script>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="mobile.css">
+<link rel="icon" href="data:image/svg+xml,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'&gt;&lt;rect width='32' height='32' fill='%23F8F8F6'/&gt;&lt;circle cx='16' cy='16' r='7' fill='none' stroke='%231436E8' stroke-width='2'/&gt;&lt;circle cx='16' cy='16' r='2.5' fill='%23E2431F'/&gt;&lt;/svg&gt;">
+<script>
+  (function(){var s=null;try{s=localStorage.getItem("as-theme")}catch(e){}
+    /* the paper scheme is the identity of the site, so it is the
+       default; dark is available but chosen, never assumed */
+    document.documentElement.dataset.theme = s || "light";})();
+</script>
+<script>
+  /* The other half of the guard in index.html — see the comment there.
+     Routing has to work in both directions or a laptop that follows a
+     shared link to this page is stuck in the phone shell forever. */
+  (function () {
+    var PIN = "as-layout";
+    var q = location.search;
+    try {
+      if (q.indexOf("phone=1") > -1) sessionStorage.setItem(PIN, "phone");
+      else if (q.indexOf("desktop=1") > -1) sessionStorage.setItem(PIN, "desktop");
+      var pinned = sessionStorage.getItem(PIN);
+      if (pinned === "phone") return;
+      if (pinned === "desktop") { location.replace("index.html"); return; }
+    } catch (e) { /* private mode: fall through to detection */ }
+
+    var coarse = matchMedia("(pointer: coarse)").matches;
+    var shortEdge = Math.min(screen.width || 0, screen.height || 0);
+    if (!(coarse && shortEdge <= 600)) location.replace("index.html");
+  })();
+</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-48Y9CGCCEE"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-48Y9CGCCEE');
+</script>
+
+</head>
+<body class="app" data-view="home">
+
+<a class="skip" href="#main-content">Skip to content</a>
+<div id="load">
+  <div>
+    <div class="nm" id="loadName"></div>
+    <div class="tick" id="loadTick">ordering · T/T<sub>c</sub> 3.60</div>
+  </div>
+</div>
+
+<canvas id="bz" aria-hidden="true"></canvas>
+
+<header class="abar">
+  <a class="nm" href="#" data-go="home">Alpesh SHETH, PhD</a>
+  <span class="rt">
+    <a class="tgl" href="index.html?desktop=1">Desktop</a>
+    <button class="tgl" id="themeBtn" aria-label="Toggle colour scheme">Dark</button>
+  </span>
+</header>
+
+<div class="views">
+
+<!-- ══ HOME ═══════════════════════════════════════════════════ -->
+<div class="view on" id="v-home">
+  <div class="ahero">
+    <p class="sub rise">Computational condensed matter physics · Many-body theory</p>
+    <h1 class="split">Alpesh SHETH, PhD</h1>
+    <p class="lead rise">I build small physical models of materials and test them against experiment. Most recently: the infinite-layer nickelates, a family of superconductors that look almost identical on paper to the copper-oxide superconductors but behave differently in the lab. I showed the difference comes from a second electronic band the copper oxides do not have. I work in Python, C++ and Fortran, on GPUs and HPC clusters.</p>
+    <div class="meta rise">
+      <div>Doctorate<strong>Bordeaux, 2025</strong></div>
+      <div>Laboratory<strong>LOMA · CNRS 5798</strong></div>
+      <div>Field<strong>Quantum materials</strong></div>
+      <div>Simulations<strong>Five, run in-browser</strong></div>
+    </div>
+    <div class="herocta rise">
+      <a class="btn" href="#" data-go="plates">Open the simulations</a>
+      <a class="btn ghost" href="Alpesh_Sheth_CV.pdf" download="">CV</a>
+    </div>
+    <p class="hint">five models, run here as you read</p>
+  </div>
+</div>
+
+<!-- ══ PLATES ═════════════════════════════════════════════════ -->
+<div class="view" id="v-plates">
+  <div class="pnav" id="pnav">
+    <button class="on" data-card="0"><b>1</b><span>Bands</span></button>
+    <button data-card="1"><b>2</b><span>Nesting</span></button>
+    <button data-card="2"><b>3</b><span>Anneal</span></button>
+    <button data-card="3"><b>4</b><span>Moiré</span></button>
+    <button data-card="4"><b>5</b><span>Spins</span></button>
+  </div>
+
+  <div class="track" id="track">
+
+    <!-- Plate I -->
+    <article class="card">
+      <div class="body">
+        <h3 class="pt">Fermi-surface topology of the two-orbital model</h3>
+        <p class="why">The Fermi surface is the boundary between the electron states that are filled and those that are empty; its shape governs almost everything the material does. Two things happen as you raise the energy. First the surface tears and reconnects, changing shape entirely. About 60 meV higher, the second band drops below the cut-off and a new pocket of electrons appears. Drag the band panel to move the energy and watch both.</p>
+        <div class="pane grab" id="bandPane">
+          <span class="tl val">E<sub>±</sub>(k) · Γ–X–M–Γ</span>
+          <span class="tr val" id="tagE">E<sub>F</sub> = −0.560 eV</span>
+          <canvas id="band" role="img" aria-label="Band structure"></canvas>
+        </div>
+        <p class="hint"><i></i>drag the band panel to move E<sub>F</sub></p>
+        <div class="pane">
+          <span class="tl val">Fermi surface · k<sub>z</sub> = 0</span>
+          <span class="tr val">marching squares</span>
+          <canvas id="fs" role="img" aria-label="Fermi surface contours"></canvas>
+        </div>
+        <div class="legend">
+          <span><i style="background:var(--b1)"></i>Ni d character</span>
+          <span><i style="background:var(--b2)"></i>rare-earth interlayer</span>
+        </div>
+        <p class="cap"><b>Simulation 1.</b> Two-band tight-binding model with \(t = 0.40\) eV: a Ni \(d_{x^2-y^2}\) band with hoppings \(t\) and \(t'\) (in units of \(t\)), and an interlayer band of rare-earth character, coupled by <span class="term" tabindex="0" data-def="The mixing of two electronic states into hybrid states that repel in energy, opening a gap where the bands would otherwise cross.">hybridisation</span> \(V\), so that
+    <span class="eqd">\(\displaystyle E_\pm(\mathbf k) = \tfrac12\bigl(\varepsilon_1+\varepsilon_2\bigr) \pm \sqrt{\tfrac14\bigl(\varepsilon_1-\varepsilon_2\bigr)^2 + V^2}.\)</span>
+    Right panel: the zero level set of \(E_\pm(\mathbf k) - E_\mathrm{F}\) on a \(170^2\) grid, contoured by marching squares. Reduced from the model of <a class="inline" href="https://doi.org/10.1088/1361-648X/ada908">J. Phys.: Condens. Matter <b>37</b>, 125703 (2025)</a>.</p>
+      </div>
+      <div class="sheet">
+        <div class="ctrl"><label for="ef">E<sub>F</sub></label>
+          <input type="range" id="ef" min="-1.20" max="1.30" step="0.005" value="-0.560" aria-label="Fermi level in eV"><output id="efO">−0.560 eV</output></div>
+        <div class="ctrl"><label for="vv">\(V\) · hybridisation</label>
+          <input type="range" id="vv" min="0" max="0.30" step="0.005" value="0.040" aria-label="Hybridisation in eV"><output id="vvO">0.040 eV</output></div>
+        <div class="ctrl"><label for="tp">\(t'\) · hopping</label>
+          <input type="range" id="tp" min="0" max="0.45" step="0.005" value="0.250" aria-label="t prime"><output id="tpO">0.250 t</output></div>
+        <div class="state">
+          <span>topology <b id="sTop">electron pocket at Γ</b></span>
+          <span>Γ pocket <b id="sPk">closed</b></span>
+          <span class="flag" id="flag1">Lifshitz transition</span>
+        </div>
+      </div>
+    </article>
+
+    <!-- Plate II -->
+    <article class="card">
+      <div class="body">
+        <h3 class="pt">Where the electrons want to order</h3>
+        <p class="why">This map asks: at which wavelength are the electrons most willing to organise themselves? A bright spot means the material is close to ordering at that spacing — magnetically, or as a static charge pattern. In this model the bright spot sits on the zone boundary and moves as the band fills, ending near the wavevector the copper oxides are known for. Move the control and watch it walk; that motion is the prediction experiments can test. The map is computed row by row when you arrive, and can be recomputed at any energy.</p>
+        <div class="pane">
+          <span class="tl val">χ<sub>0</sub>(q) · Lindhard</span>
+          <span class="tr val" id="tagX">idle</span>
+          <canvas id="chi" role="img" aria-label="Susceptibility map"></canvas>
+        </div>
+        <div class="pane">
+          <span class="tl val">χ<sub>0</sub> along Γ–X–M–Γ</span>
+          <span class="tr val" id="tagX2">—</span>
+          <canvas id="chicut" role="img" aria-label="Susceptibility along the path"></canvas>
+        </div>
+        <div class="legend">
+          <span><i style="background:var(--b1)"></i>low χ<sub>0</sub></span>
+          <span><i style="background:var(--b2)"></i>high χ<sub>0</sub></span>
+        </div>
+        <p class="cap"><b>Simulation 2.</b> The bare susceptibility
+    <span class="eqd">\(\displaystyle \chi_0(\mathbf q) = \frac{1}{N}\sum_{\mathbf k} \frac{f(E_{\mathbf k}) - f(E_{\mathbf k+\mathbf q})}{E_{\mathbf k+\mathbf q} - E_{\mathbf k}},\)</span>
+    evaluated on a \(64^2\) \(\mathbf k\)-mesh for a \(33^2\) \(\mathbf q\)-mesh. Intraband contributions only, with matrix elements set to unity; degenerate denominators are replaced by \(-\partial f/\partial E\). The maximum arises from <span class="term" tabindex="0" data-def="The condition in which extended, nearly parallel sections of the Fermi surface are connected by a single wavevector, enhancing the response at that wavevector.">nesting</span> and broadens as \(k_\mathrm{B}T\) increases. Approximations to note: no vertex corrections, no interband terms, and no self-energy.</p>
+      </div>
+      <div class="sheet">
+        <div class="ctrl"><label for="xef">\(E_\mathrm{F}\) · filling</label>
+          <input type="range" id="xef" min="-1.20" max="0.80" step="0.01" value="-0.400" aria-label="Fermi level for susceptibility"><output id="xefO">−0.400 eV</output></div>
+        <div class="ctrl"><label for="xkt">\(k_\mathrm{B}T\)</label>
+          <input type="range" id="xkt" min="0.005" max="0.10" step="0.005" value="0.020" aria-label="Temperature"><output id="xktO">0.020 eV</output></div>
+        <div class="row"><button id="xrun" class="raw">Compute \(\chi_0(\mathbf q)\)</button><button class="ghost" id="xclear">Clear</button></div>
+        <div class="bar"><i id="xbar"></i></div>
+        <div class="state">
+          <span>nesting peak <b id="sQ">—</b></span>
+          <span>\(\chi_0\) there <b id="sX">—</b></span>
+          <span>\(\chi_0\) at M <b id="sM">—</b></span>
+          <span class="flag" id="flag2">nesting at (π, π)</span>
+        </div>
+      </div>
+    </article>
+
+    <!-- Plate III -->
+    <article class="card">
+      <div class="body">
+        <h3 class="pt">Portfolio selection as an Ising ground state</h3>
+        <p class="why">Choosing which assets to hold is the same mathematics as finding the lowest-energy arrangement of a magnet. Hold or don't hold becomes spin up or spin down; expected return becomes a magnetic field on each site; the risk of holding two correlated assets becomes a coupling between them. With ten assets there are only 1024 possibilities, so every one can be checked and the true best answer is known. That matters: benchmarks of quantum-inspired solvers usually compare against another approximate method. Here the solver is scored against the proven optimum, and the gap to it is the only number worth reporting.</p>
+        <div class="pane">
+          <span class="tl val">energy trace vs schedule</span>
+          <span class="tr val" id="tagA">idle</span>
+          <canvas id="anneal" role="img" aria-label="Energy during the anneal"></canvas>
+        </div>
+        <div class="chips" id="chips"></div>
+        <div class="legend">
+          <span><i style="background:var(--b1)"></i>E(sweep)</span>
+          <span><i style="background:var(--b2)"></i>E* exact</span>
+          <span><i style="background:var(--soft)"></i>T(sweep)</span>
+        </div>
+        <p class="cap"><b>Simulation 3.</b> The objective is
+    <span class="eqd">\(\displaystyle H = -\sum_i h_i x_i + \lambda \sum_{i&lt;j} C_{ij}\, x_i x_j + A\Bigl(\sum_i x_i - K\Bigr)^{\!2},\)</span>
+    with \(x_i \in \{0,1\}\), \(h_i\) the expected returns and \(C_{ij}\) the covariance matrix, minimised by single-flip Metropolis under geometric cooling (<span class="term" tabindex="0" data-def="Minimisation by sampling at a temperature that is lowered slowly, so the system settles into a low-energy configuration rather than the nearest one.">simulated annealing</span>) from \(T = 3\) to \(T = 0.01\). Returns and covariances are fixed synthetic data and the random stream is seeded by \((\lambda, K, \text{sweeps})\), so a given setting reproduces its trace exactly. The default budget of 70 sweeps is deliberately short: at that budget the solver does not always reach \(E^*\). <em>Full app</em> opens the complete implementation in a window on this page.</p>
+      </div>
+      <div class="sheet">
+        <div class="ctrl"><label for="kk">\(K\) · holdings</label>
+          <input type="range" id="kk" min="2" max="8" step="1" value="5" aria-label="Target holdings"><output id="kkO">5</output></div>
+        <div class="ctrl"><label for="lam">\(\lambda\) · risk aversion</label>
+          <input type="range" id="lam" min="0" max="3" step="0.05" value="1.00" aria-label="Risk aversion"><output id="lamO">1.00</output></div>
+        <div class="ctrl"><label for="swp">sweeps</label>
+          <input type="range" id="swp" min="20" max="400" step="10" value="70" aria-label="Anneal sweeps"><output id="swpO">70</output></div>
+        <div class="row"><button id="run">Run anneal</button><button class="ghost" id="reset">Reset</button><button class="ghost" id="launchAppBtn">Full app</button></div>
+        <div class="state">
+          <span>\(E\) <b id="sEA">—</b></span>
+          <span>\(E^*\) <b id="sEX">—</b></span>
+          <span>gap <b id="sGap">—</b></span>
+          <span>ret / risk <b id="sSh">—</b></span>
+          <span class="flag" id="flag3">exact optimum reached</span>
+        </div>
+      </div>
+    </article>
+
+    <!-- Plate IV -->
+    <article class="card">
+      <div class="body">
+        <h3 class="pt">Moiré periodicity in twisted bilayers</h3>
+        <p class="why">Stack two identical atomic lattices and rotate one by a fraction of a degree: the overlap produces a much larger repeating pattern — a <span class="term" tabindex="0" data-def="The long-wavelength pattern formed by two slightly misaligned periodic lattices; in twisted bilayers it acts as a superlattice potential on the electrons.">moiré superlattice</span> — in the same way two overlaid mesh screens do. The electrons feel that larger pattern as if it were the real crystal, which is how twisting a bilayer changes its electrical behaviour. Before my PhD I studied graphene on boron nitride in this geometry using <span class="term" tabindex="0" data-def="Density functional theory: the standard first-principles method for computing electronic structure.">density functional theory</span>.</p>
+        <div class="pane">
+          <span class="tl val">two lattices, twist θ</span>
+          <span class="tr val" id="tagM">θ = 5.00°</span>
+          <canvas id="moire" role="img" aria-label="Moire pattern"></canvas>
+        </div>
+        <div class="legend">
+          <span><i style="background:var(--b1)"></i>fixed layer</span>
+          <span><i style="background:var(--b2)"></i>twisted layer</span>
+        </div>
+        <p class="cap"><b>Simulation 4.</b> The superlattice vectors are constructed as
+    <span class="eqd">\(\displaystyle \mathbf L_i = \bigl(R(\theta) - I\bigr)^{-1}\mathbf a_i,\)</span>
+    from which \(\lambda = a / 2\sin(\theta/2)\) follows rather than being imposed; the period therefore diverges as \(\theta \to 0\). Near \(\theta \approx 1.1^\circ\) in twisted bilayer graphene the lowest folded bands become narrow, so that \(U/W\) grows large; correlated insulating and superconducting states are observed in that regime. The atom count assumes two atoms per unit cell in each of two layers.</p>
+      </div>
+      <div class="sheet">
+        <div class="ctrl"><label for="th">\(\theta\) · twist</label>
+          <input type="range" id="th" min="0.6" max="14" step="0.01" value="5" aria-label="Twist angle"><output id="thO">5.00°</output></div>
+        <div class="ctrl"><label for="aa">\(a\) · lattice</label>
+          <input type="range" id="aa" min="0.20" max="0.35" step="0.001" value="0.246" aria-label="Lattice constant"><output id="aaO">0.246 nm</output></div>
+        <div class="state">
+          <span>\(\lambda/a\) <b id="sLa">—</b></span>
+          <span>\(\lambda\) <b id="sLnm">—</b></span>
+          <span>atoms/cell <b id="sNat">—</b></span>
+          <span class="flag" id="flag4">magic angle · flat bands</span>
+        </div>
+      </div>
+    </article>
+
+    <!-- Plate V -->
+    <article class="card">
+      <div class="body">
+        <h3 class="pt">The two-dimensional Ising model</h3>
+        <p class="why">The standard textbook model of a phase transition: a grid of magnets, each preferring to point the same way as its neighbours. Vermilion is up, white is down. Below the critical temperature they lock into large domains that drift slowly; above it, order breaks down and the pattern turns to noise. This is the cleanest demonstration of a threshold there is, which is why it anchors this page. It runs on your GPU. Hold a pointer over the lattice to pull the magnets one way; tap or click to push the other.</p>
+        <div class="pane field" id="isingPane">
+          <span class="tl val">2D Ising · Metropolis · GPU</span>
+          <span class="tr val" id="tagI">T/T<sub>c</sub> = 0.720</span>
+          <canvas id="isingCanvas" role="img" aria-label="Interactive Ising model"></canvas>
+        </div>
+        <p class="hint"><i></i>tap the lattice to magnetise a spot</p>
+        <div class="legend">
+          <span><i class="box" style="background:var(--b2);border-color:var(--b2)"></i>spin up</span>
+          <span><i class="box" style="background:#fff"></i>spin down</span>
+        </div>
+        <p class="cap"><b>Simulation 5.</b> The Hamiltonian is
+    <span class="eqd">\(\displaystyle H = -J\sum_{\langle ij\rangle} s_i s_j - \sum_i h_i s_i,\)</span>
+    with \(J = 1\) and \(k_\mathrm{B} = 1\), for which Onsager's solution gives \(T_c = 2/\ln(1+\sqrt2) \approx 2.269\). The configuration is held in a texture and updated by a checkerboard-parallel Metropolis pass, one sublattice at a time, so that the neighbours of an updating site are fixed and detailed balance is preserved. The initial condition is seeded, so a given re-seed reproduces the same trajectory.</p>
+      </div>
+      <div class="sheet">
+        <div class="ctrl"><label for="tempSlider">\(T/T_c\)</label>
+          <input type="range" id="tempSlider" min="0.44" max="1.60" step="0.005" value="0.72" aria-label="Reduced temperature"><output id="tempOut">0.720</output></div>
+        <div class="row"><button class="ghost" id="heroPause" aria-pressed="false">Pause</button><button class="ghost" id="isingSeed">Re-seed</button></div>
+        <div class="state">
+          <span>magnetisation <b id="magOut">+0.00</b></span>
+          <span>regime <b id="sReg">ordered</b></span>
+          <span class="flag" id="flag5">critical region</span>
+        </div>
+      </div>
+    </article>
+
+  </div>
+</div>
+
+<!-- ══ WORK (overview, ledger, method, exploring) ═════════════ -->
+<div class="view" id="v-work">
+  <div class="pad">
+    <p class="eyebrow"><b>01</b><span>Research</span></p>
+    <h2>Research</h2>
+    <div class="lead">
+      <p>My PhD, supervised by Sébastien Burdin at the Laboratoire Ondes et Matière d'Aquitaine (CNRS, Université de Bordeaux) and defended on 4 November 2025, is about the infinite-layer nickelates \(R\mathrm{NiO_2}\) — nickel-oxide compounds found to <span class="term" tabindex="0" data-def="Electrical conduction with no resistive loss, below a material-specific critical temperature.">superconduct</span> in 2019. On paper they are near-copies of the copper-oxide superconductors: same layered structure, same nominal electron count. In experiment they are not, and the standard one-band picture does not explain the gap.</p>
+      <p>I built a two-band model: the nickel \(3d_{x^2-y^2}\) band, plus a second band living between the layers. The second band carries current over part of the phase diagram, which is what makes the <span class="term" tabindex="0" data-def="The boundary in momentum space between filled and empty electron states. Transport, magnetism and superconductivity are all governed by the states sitting closest to it.">Fermi surface</span> so sensitive to pressure and to oxygen placement — a one-band model has nothing to be sensitive with. One set of parameters covers both the \(R\mathrm{NiO_3}\) and \(R\mathrm{NiO_2}\) families.</p>
+      <p>The model makes a testable prediction. The wavelength at which the electrons want to order is not fixed by the crystal structure, as had been assumed; it shifts as the material is doped or squeezed. Scattering experiments can check this directly, and Simulation 2 lets you move the control and watch the peak walk. Published in <a class="inline" href="https://doi.org/10.1088/1361-648X/ada908">J. Phys.: Condens. Matter <b>37</b>, 125703 (2025)</a>; preprint <a class="inline" href="https://arxiv.org/abs/2407.16042">arXiv:2407.16042</a>; <a class="inline" href="https://theses.hal.science/tel-05502836">thesis (open access)</a>.</p>
+      <p>Since then I have worked on problems with the same shape: an enormous space of possible states, one dial you can turn, and a threshold where the behaviour changes character. Concretely — neural networks used to represent quantum states, battery ageing predicted from <em>ab initio</em> chemistry, and combinatorial optimisation solved with methods borrowed from statistical physics. Each simulation below marks that threshold in its own control parameter.</p>
+    </div>
+
+    <hr class="vrule">
+    <p class="eyebrow"><b>02</b><span>Summary</span></p>
+    <h2>Models, control parameters, and checks</h2>
+    <p class="lead">Five of these seven rows are the simulations above; two are still in progress. The last column says what each model was checked against — without that column the rest is an assertion.</p>
+    <div class="ledwrap">
+      <table>
+        <thead><tr><th>System</th><th>Reduced to</th><th>Control</th><th>Threshold</th><th>Validated against</th></tr></thead>
+        <tbody>
+          <tr><td>Infinite-layer nickelates</td><td>Two-orbital model</td><td>E<sub>F</sub>, V, pressure</td><td><span class="th">second pocket opens</span></td><td>DFT, ARPES</td></tr>
+          <tr><td>Electronic instabilities</td><td>Lindhard χ<sub>0</sub>(q)</td><td>Doping, T</td><td><span class="th">boundary nesting, X → M with filling</span></td><td>JPCM 37, 125703</td></tr>
+          <tr><td>Portfolio selection</td><td>Ising Hamiltonian</td><td>λ, K</td><td><span class="th">exact optimum</span></td><td>Enumeration over 2<sup>N</sup></td></tr>
+          <tr><td>Twisted bilayers</td><td>Moiré mini-zone</td><td>Twist θ</td><td><span class="th">collapse at 1.1°</span></td><td>DFT on graphene / hBN</td></tr>
+          <tr><td>Spin lattices</td><td>2D Ising model</td><td>T, field h</td><td><span class="th">order lost at T<sub>c</sub></span></td><td>Onsager's exact solution</td></tr>
+          <tr><td>Many-body states</td><td>Neural ansatz |ψ<sub>θ</sub>⟩</td><td>Capacity, sampler</td><td><span class="th">energy below reference</span></td><td>Exact diagonalisation</td></tr>
+          <tr><td>Battery ageing</td><td>DFN + ab initio priors</td><td>Barriers, capacities</td><td><span class="th">structured residual</span></td><td>Lab cycling data</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="scrollhint">→ table scrolls sideways</p>
+
+    <hr class="vrule">
+    <p class="eyebrow"><b>03</b><span>Method</span></p>
+    <h2>Method</h2>
+    <p class="lead">Every model above was built in the same four steps, in that order. The order matters more than any single technique: most of the work is in the first step, and most of the mistakes are caught in the last.</p>
+    <div class="steps">
+      <div class="step"><span class="n">01</span><h3>Reduce</h3><p>Find the smallest number of moving parts that still produces the behaviour — two bands for a nickelate, hold-or-don't and correlations for a portfolio. Get this wrong and no amount of computing power will save the result.</p></div>
+      <div class="step"><span class="n">02</span><h3>Formulate</h3><p>Write it in a form that established mathematics already knows how to attack — an energy function, a landscape to minimise. Then what you can say about the answer is a result, not just a number the code returned.</p></div>
+      <div class="step"><span class="n">03</span><h3>Compute</h3><p>Vectorise the inner loops, move the expensive parts onto GPUs or the cluster, and check against cases with known exact answers before running anything large.</p></div>
+      <div class="step"><span class="n">04</span><h3>Validate</h3><p>Compare against experiment, independent data, or an exact solution — specifically against data the model was not built to reproduce. Where it fails, the failure tells you which assumption was wrong.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ RECORD ═════════════════════════════════════════════════ -->
+<div class="view" id="v-record">
+  <div class="pad">
+    <p class="eyebrow"><b>04</b><span>Record</span></p>
+    <div class="cvhead">
+      <h2>Publications and training</h2>
+      <a class="btn ghost" href="Alpesh_Sheth_CV.pdf" download="">PDF</a>
+    </div>
+    <p class="lead">One peer-reviewed paper, an open-access thesis, a preprint, and the positions behind them. The thesis and both preprints are free to read.</p>
+    <div class="cv">
+      <div class="cvtabs" role="tablist">
+        <button class="on" role="tab" data-tab="timeline">Timeline</button>
+        <button role="tab" data-tab="education">Education</button>
+        <button role="tab" data-tab="publications">Papers</button>
+        <button role="tab" data-tab="talks">Talks</button>
+      </div>
+      <div class="cvbody">
+        <div class="cvpane on" id="pane-timeline" role="tabpanel"><div id="timelineList"></div></div>
+
+        <div class="cvpane" id="pane-education" role="tabpanel">
+          <div class="edu-entry">
+            <span class="edu-crest" aria-hidden="true">
+              <svg viewBox="0 0 100 100">
+                <defs><path id="rimUB" d="M 50,50 m -33,0 a 33,33 0 1,1 66,0 a 33,33 0 1,1 -66,0"></path></defs>
+                <circle cx="50" cy="50" r="48" fill="#dfe7ee" stroke="#2b4258" stroke-width="2"></circle>
+                <circle cx="50" cy="50" r="41" fill="none" stroke="#55677a" stroke-width="1" stroke-dasharray="1.5 3"></circle>
+                <text font-size="10" letter-spacing="1.6" fill="#22303d" font-family="Georgia, serif">
+                  <textPath href="#rimUB" startOffset="2%">UNIVERSITÉ · DE · BORDEAUX ·</textPath>
+                </text>
+                <text x="50" y="57" text-anchor="middle" font-size="24" fill="#22303d" font-family="Georgia, serif">UB</text>
+                <text x="50" y="70" text-anchor="middle" font-size="8.5" letter-spacing="1" fill="#55677a" font-family="Georgia, serif">1441</text>
+              </svg>
+              <img src="assets/edu-bordeaux.png" alt="" loading="lazy" onerror="this.remove()">
+            </span>
+            <span class="entry">
+              <span class="entry-key">2021 – 2025 · Doctorate</span>
+              <span class="entry-title">PhD in Material Science, Université de Bordeaux</span>
+              <span class="entry-sub">Theoretical modelling of infinite-layer nickelates, at LOMA (UMR 5798, CNRS). Defended 4 November 2025, dir. S. Burdin · <a href="https://theses.hal.science/tel-05502836" target="_blank" rel="noopener">full text on HAL</a></span>
+            </span>
+          </div>
+          <div class="edu-entry">
+            <span class="edu-crest" aria-hidden="true">
+              <svg viewBox="0 0 100 100">
+                <defs><path id="rimMSU1" d="M 50,50 m -33,0 a 33,33 0 1,1 66,0 a 33,33 0 1,1 -66,0"></path></defs>
+                <circle cx="50" cy="50" r="48" fill="#dfe7ee" stroke="#2b4258" stroke-width="2"></circle>
+                <circle cx="50" cy="50" r="41" fill="none" stroke="#55677a" stroke-width="1" stroke-dasharray="1.5 3"></circle>
+                <text font-size="8.6" letter-spacing="0.9" fill="#22303d" font-family="Georgia, serif">
+                  <textPath href="#rimMSU1" startOffset="1%">M.S. UNIVERSITY · OF BARODA ·</textPath>
+                </text>
+                <text x="50" y="57" text-anchor="middle" font-size="21" fill="#22303d" font-family="Georgia, serif">MSU</text>
+                <text x="50" y="70" text-anchor="middle" font-size="8.5" letter-spacing="1" fill="#55677a" font-family="Georgia, serif">1949</text>
+              </svg>
+              <img src="assets/edu-msu.png" alt="" loading="lazy" onerror="this.remove()">
+            </span>
+            <span class="entry">
+              <span class="entry-key">2018 – 2020 · Master's</span>
+              <span class="entry-title">MSc in Condensed Matter Physics, M.S. University of Baroda</span>
+              <span class="entry-sub">Department of Physics, Faculty of Science</span>
+            </span>
+          </div>
+          <div class="edu-entry">
+            <span class="edu-crest" aria-hidden="true">
+              <svg viewBox="0 0 100 100">
+                <defs><path id="rimMSU2" d="M 50,50 m -33,0 a 33,33 0 1,1 66,0 a 33,33 0 1,1 -66,0"></path></defs>
+                <circle cx="50" cy="50" r="48" fill="#dfe7ee" stroke="#2b4258" stroke-width="2"></circle>
+                <circle cx="50" cy="50" r="41" fill="none" stroke="#55677a" stroke-width="1" stroke-dasharray="1.5 3"></circle>
+                <text font-size="8.6" letter-spacing="0.9" fill="#22303d" font-family="Georgia, serif">
+                  <textPath href="#rimMSU2" startOffset="1%">M.S. UNIVERSITY · OF BARODA ·</textPath>
+                </text>
+                <text x="50" y="57" text-anchor="middle" font-size="21" fill="#22303d" font-family="Georgia, serif">MSU</text>
+                <text x="50" y="70" text-anchor="middle" font-size="8.5" letter-spacing="1" fill="#55677a" font-family="Georgia, serif">1949</text>
+              </svg>
+              <img src="assets/edu-msu.png" alt="" loading="lazy" onerror="this.remove()">
+            </span>
+            <span class="entry">
+              <span class="entry-key">2015 – 2018 · Bachelor's</span>
+              <span class="entry-title">BSc in Physics, M.S. University of Baroda</span>
+              <span class="entry-sub">Department of Physics, Faculty of Science</span>
+            </span>
+          </div>
+        </div>
+
+        <div class="cvpane" id="pane-publications" role="tabpanel"><div id="pubList"></div></div>
+
+        <div class="cvpane" id="pane-talks" role="tabpanel">
+          <a class="talk" href="https://www.youtube.com/live/tUv6uxbzKBw" target="_blank" rel="noopener">
+            <img src="assets/talk-thumb.jpg" alt="Recording of invited talk" loading="lazy" width="96">
+            <span class="entry">
+              <span class="entry-key">2023 · Invited talk</span>
+              <span class="entry-title">Modelling oxygen and rare-earth atomic impurities in nickelates</span>
+              <span class="entry-sub">IIP-Natal WE-Heraeus Workshop on New Frontiers in Emergent Materials · watch the recording</span>
+            </span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <hr class="vrule">
+    <div class="skills">
+      <div><h3>Languages</h3><p>Python · C++ · Fortran · Julia · Bash · MATLAB · LaTeX</p></div>
+      <div><h3>Many-body methods</h3><p>Green's functions · Dynamical mean-field theory · Exact diagonalisation · Kubo formalism</p></div>
+      <div><h3>Electronic structure &amp; dynamics</h3><p>VASP · Quantum ESPRESSO · LAMMPS · CP2K · TRIQS</p></div>
+      <div><h3>Data &amp; machine learning</h3><p>Predictive modelling · Neural-network methods · Data pipelines · Statistical analysis</p></div>
+      <div><h3>Optimisation</h3><p>Simulated annealing · Quantum-inspired solvers · Rigorous benchmarking</p></div>
+      <div><h3>Infrastructure</h3><p>High-performance computing (Slurm) · Git · Workflow automation</p></div>
+    </div>
+
+    <hr class="vrule">
+    <p class="eyebrow"><b>05</b><span>What is next</span></p>
+    <h2>Where the work is going</h2>
+    <p class="lead">Four open threads, none settled. Each has the same shape as the work above — a huge space of possibilities, one dial, a threshold worth finding. For each I have said where the uncertainty is rather than where it might lead.</p>
+    <div class="tiles">
+      <div><span class="tag">Active</span><h3>Neural-network quantum states</h3><p>Writing a quantum state down explicitly costs twice as much memory for every particle added, so the honest limit is a few tens of particles. A neural network can represent the state compactly instead, trained by Monte Carlo and checked against <span class="term" tabindex="0" data-def="Exact numerical solution of a small quantum system by direct diagonalisation of its Hamiltonian; used as a reference for approximate methods.">exact answers</span> wherever those are still computable. Open directions: finite temperature, real-time dynamics, and neutral-atom hardware.</p></div>
+      <div><span class="tag">Validating</span><h3>Ab initio battery modelling</h3><p>Quantities computed from first-principles chemistry — how easily lithium moves, how much a site holds, what voltage results — fed as priors into the <span class="term" tabindex="0" data-def="Doyle–Fuller–Newman: the standard continuum model of a lithium-ion cell, treating porous electrodes and electrolyte transport.">Doyle–Fuller–Newman</span> cell model, the standard engineering description of a battery. Where that model and real cycling data disagree systematically, the disagreement is the signal, and it becomes the target for predicting cell lifetime.</p></div>
+      <div><span class="tag">Measuring</span><h3>Benchmarking quantum-inspired optimisation</h3><p>Classical and quantum-inspired solvers run on identical problems, under one metric, against exact baselines — so that a reported speed-up reflects the solver and not a quietly changed convention. Simulation 3 is the public version.</p></div>
+      <div><span class="tag">Formulating</span><h3>Statistical physics of market microstructure</h3><p>An order book is a large number of agents each making a buy-or-sell decision, pushed far from equilibrium — formally close to a spin system. Whether the sudden shifts in market behaviour can be described in <span class="term" tabindex="0" data-def="A qualitative change in the collective state of a system, driven by the alignment of many local interactions.">the same language as phase transitions</span> is genuinely open, and the answer may well turn out to be no.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ CONTACT ════════════════════════════════════════════════ -->
+<div class="view" id="v-contact">
+  <div class="pad">
+    <p class="eyebrow"><b>06</b><span>Contact</span></p>
+    <h2>Contact</h2>
+    <p class="lead">I am looking for postdoctoral positions and collaborations in computational condensed matter, many-body methods, and scientific machine learning — in academia or industry. If you have a problem with the shape of the ones above, a system worth reducing to its essentials and a threshold worth finding, I would like to hear about it. Email is the most reliable way to reach me.</p>
+    <ul class="links">
+      <li><a href="mailto:alpeshsheth.phy@gmail.com">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 5.5A1.5 1.5 0 0 1 3.5 4h17A1.5 1.5 0 0 1 22 5.5v13a1.5 1.5 0 0 1-1.5 1.5h-17A1.5 1.5 0 0 1 2 18.5v-13Zm2 .7v12.3h16V6.2l-7.5 6a1 1 0 0 1-1.25 0L4 6.2Zm1.9-.7 6.1 4.9L18.1 5.5H5.9Z"></path></svg>
+        <span><b>Email</b>alpeshsheth.phy@gmail.com</span></a></li>
+      <li><a href="https://www.linkedin.com/in/alpesh-sheth/" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.225 0z"></path></svg>
+        <span><b>LinkedIn</b>alpesh-sheth</span></a></li>
+      <li><a href="https://theses.hal.science/tel-05502836" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2h9l5 5v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1Zm8 1.8V8h4.2L14 3.8ZM8 11h8v1.6H8V11Zm0 3.4h8V16H8v-1.6Zm0 3.4h5.5v1.6H8v-1.6Z"></path></svg>
+        <span><b>Thesis</b>Open access · HAL</span></a></li>
+      <li><a href="https://scholar.google.com/citations?user=TpDyu0AAAAAJ" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"></path></svg>
+        <span><b>Scholar</b>Publications</span></a></li>
+      <li><a href="Alpesh_Sheth_CV.pdf" download="">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v10.2l3.6-3.6 1.4 1.4L12 16 6.9 11l1.4-1.4L12 13.2V3h0ZM5 19h14v2H5v-2Z"></path></svg>
+        <span><b>CV</b>Download PDF</span></a></li>
+    </ul>
+
+    <div class="telemetry" id="telemetry">
+      <canvas id="mapCanvas" role="img" aria-label="Map of visitor locations"></canvas>
+      <p class="cap">Dot-matrix equirectangular land mask, 128 × 56. Vermilion badges count visits per country; the blue pulse is the current visitor.</p>
+    </div>
+
+    <p class="acolophon">
+      <span>© <span id="year">2026</span> Alpesh Sheth</span>
+      <span>last updated <time id="lastUpdated" datetime="2026-07-30">30 July 2026</time></span>
+    </p>
+  </div>
+</div>
+
+</div><!-- /.views -->
+
+<nav class="tabs" id="tabs" aria-label="Sections">
+  <button class="on" data-view="home"><span class="no">01</span><span>Home</span></button>
+  <button data-view="plates"><span class="no">02</span><span>Simulations</span></button>
+  <button data-view="work"><span class="no">03</span><span>Work</span></button>
+  <button data-view="record"><span class="no">04</span><span>Record</span></button>
+  <button data-view="contact"><span class="no">05</span><span>Contact</span></button>
+</nav>
+
+<div id="appOverlay" hidden="">
+  <div class="app-window" role="dialog" aria-modal="true" aria-label="Quantum Portfolio application">
+    <div class="app-window-bar">
+      <span>Quantum Portfolio · demo</span>
+      <button id="appCloseBtn" aria-label="Close application">×</button>
+    </div>
+    <iframe id="appFrame" title="Quantum Portfolio" loading="lazy"></iframe>
+  </div>
+</div>
+
+<script src="main.js"></script>
+<script>
+/* ══ app shell: view switching + plate carousel ═══════════════
+   Views are display:none when inactive, so their canvases measure
+   zero. After every switch the engine's redraw hooks re-run and a
+   synthetic resize re-allocates the GPU lattice. */
+(function(){
+  const views = [...document.querySelectorAll(".view")];
+  const tabs  = [...document.querySelectorAll("#tabs button")];
+  const track = document.getElementById("track");
+  const pnav  = [...document.querySelectorAll("#pnav button")];
+
+  function show(name){
+    document.body.dataset.view = name;
+    views.forEach(v => v.classList.toggle("on", v.id === "v" + "-" + name));
+    tabs.forEach(t => t.classList.toggle("on", t.dataset.view === name));
+    /* the newly-shown view has not been laid out yet in this frame, so
+       a canvas that measures its parent would read zero. Wait one full
+       frame past the style change before re-measuring. */
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      if (window.redrawAll) window.redrawAll();
+      dispatchEvent(new Event("resize"));
+    }));
+  }
+  tabs.forEach(t => t.addEventListener("click", () => show(t.dataset.view)));
+  document.addEventListener("click", e => {
+    const g = e.target.closest("[data-go]");
+    if (!g) return;
+    e.preventDefault();
+    show(g.dataset.go);
+  });
+
+  /* ── control drawer ─────────────────────────────────────────
+     Each figure's controls are wrapped in a collapsible region with a
+     handle. The drawer is a sibling of the scrolling prose rather than
+     an overlay, so it cannot cover the figure; collapsing it simply
+     returns that height to the figure. The handle carries a summary of
+     the live state, so the reader loses nothing by closing it. */
+  document.querySelectorAll(".sheet").forEach((sheet, n) => {
+    const inner = document.createElement("div");
+    inner.className = "sheet-inner";
+    inner.id = "controls-" + n;
+    while (sheet.firstChild) inner.appendChild(sheet.firstChild);
+    const handle = document.createElement("button");
+    handle.className = "sheet-handle raw";
+    handle.type = "button";
+    handle.setAttribute("aria-controls", inner.id);
+    handle.innerHTML = '<span class="grab" aria-hidden="true"></span>' +
+      '<span class="hl">Controls</span>' +
+      '<span class="caret" aria-hidden="true"></span>';
+    sheet.appendChild(handle);
+    sheet.appendChild(inner);
+    const set = open => {
+      sheet.dataset.open = String(open);
+      handle.setAttribute("aria-expanded", String(open));
+    };
+    /* open where there is room for both, closed on short screens */
+    set(innerHeight > 680);
+    handle.addEventListener("click", () => {
+      set(sheet.dataset.open !== "true");
+      requestAnimationFrame(() => { if (window.redrawAll) window.redrawAll(); });
+    });
+  });
+
+  function goCard(i){
+    track.scrollTo({ left: i * track.clientWidth, behaviour: "smooth" });
+  }
+  pnav.forEach((b, i) => b.addEventListener("click", () => goCard(i)));
+  let st;
+  track.addEventListener("scroll", () => {
+    clearTimeout(st);
+    st = setTimeout(() => {
+      const i = Math.round(track.scrollLeft / Math.max(track.clientWidth, 1));
+      pnav.forEach((b, k) => b.classList.toggle("on", k === i));
+      if (window.redrawAll) window.redrawAll();
+    }, 90);
+  }, { passive: true });
+})();
+</script>
+<!-- Cloudflare Web Analytics --><script defer="" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon="{&quot;token&quot;: &quot;58e89f8f1438432b83573861b438fc01&quot;}"></script><!-- End Cloudflare Web Analytics -->
+
+
+</body></html>

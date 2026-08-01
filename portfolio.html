@@ -1,20 +1,39 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
+<html lang="en"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quantum Portfolio · Alpesh Sheth</title>
+<title>Quantum Portfolio · Alpesh SHETH, PhD</title>
 <meta name="description" content="Portfolio optimization as a ground-state problem: assets mapped onto an Ising Hamiltonian, solved by simulated annealing.">
 <meta name="author" content="Alpesh Sheth">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Nunito:ital,wght@0,400;0,600;0,700;1,400&family=Red+Hat+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
-<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
-  onload="renderMathInElement(document.body,{delimiters:[{left:'\\(',right:'\\)',display:false},{left:'\\[',right:'\\]',display:true}]});"></script>
-<link rel="stylesheet" href="app.css">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%2304070c'/><circle cx='16' cy='16' r='7' fill='none' stroke='%2321e6d6' stroke-width='2'/><circle cx='16' cy='16' r='2.5' fill='%23ff9a3c'/></svg>">
+<script defer="" src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer="" src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'\\(',right:'\\)',display:false},{left:'\\[',right:'\\]',display:true}]});"></script>
+<link rel="stylesheet" href="quantum-portfolio/app.css">
+<link rel="stylesheet" href="portfolio-skin.css">
+<script>
+  /* the window inherits the scheme the visitor chose on the site, and
+     falls back to paper — never to the operating system, which would let
+     a light page open a dark instrument */
+  (function () {
+    var s = null;
+    try { s = localStorage.getItem("as-theme"); } catch (e) {}
+    document.documentElement.dataset.theme = s || "light";
+  })();
+</script>
+<link rel="icon" href="data:image/svg+xml,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'&gt;&lt;rect width='32' height='32' fill='%23F8F8F6'/&gt;&lt;circle cx='16' cy='16' r='7' fill='none' stroke='%231436E8' stroke-width='2'/&gt;&lt;circle cx='16' cy='16' r='2.5' fill='%23E2431F'/&gt;&lt;/svg&gt;">
+
+
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-48Y9CGCCEE"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-48Y9CGCCEE');
+</script>
 </head>
 <body>
 
@@ -162,6 +181,87 @@
 </main>
 </div>
 
-<script src="app.js"></script>
-</body>
-</html>
+<script src="quantum-portfolio/app.js"></script>
+<script>
+/* ══ site integration ═══════════════════════════════════════════════
+   Everything here is presentation glue between the instrument and the
+   page that hosts it. The solver in app.js is untouched. */
+(function () {
+  "use strict";
+  var root = document.documentElement;
+
+  /* ── 1. slider fill ──────────────────────────────────────────────
+     WebKit has no ::-moz-range-progress equivalent, so the travelled
+     part of the track is a gradient stop the skin reads from --fill.
+     Firefox paints its own progress element and ignores this. */
+  var ranges = [].slice.call(document.querySelectorAll('input[type="range"]'));
+  function paint(el) {
+    var min = +el.min || 0;
+    var max = el.max === "" ? 100 : +el.max;
+    var span = max - min;
+    el.style.setProperty("--fill", span ? ((+el.value - min) / span).toFixed(4) : 0);
+  }
+  ranges.forEach(function (el) {
+    paint(el);
+    el.addEventListener("input", function () { paint(el); });
+    /* the app resets sliders programmatically, which fires no input
+       event — repaint on change too, and after a reset click */
+    el.addEventListener("change", function () { paint(el); });
+  });
+  document.addEventListener("click", function (e) {
+    if (e.target.closest && e.target.closest("#resetBtn"))
+      requestAnimationFrame(function () { ranges.forEach(paint); });
+  });
+
+  /* ── 2. theme ────────────────────────────────────────────────────
+     The instrument opens inside an iframe on the site. It reads the
+     stored scheme once at boot (see the head), but the visitor can
+     toggle the site's theme while the window is open, and an iframe
+     gets no notification of that: it is a separate document with its
+     own <html>. Two channels cover both cases —
+
+       postMessage : the parent tells us directly, same tab.
+       storage     : another tab changed the choice; this fires in
+                     every OTHER document sharing the origin.
+
+     Both funnel into one applier so the app can never end up showing
+     a scheme the site is not showing. */
+  function applyTheme(next) {
+    if (next !== "light" && next !== "dark") return;
+    if (root.dataset.theme === next) return;
+    root.classList.add("theme-swap");
+    root.dataset.theme = next;
+    /* the trace and the sector bars are canvas-drawn from CSS colours,
+       so they need a repaint to pick the new palette up */
+    if (typeof window.redrawApp === "function") { try { window.redrawApp(); } catch (e) {} }
+    void root.offsetWidth;
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () { root.classList.remove("theme-swap"); });
+    });
+  }
+
+  window.addEventListener("message", function (e) {
+    /* Only the document that framed us may set the scheme, and the only
+       thing it is allowed to say is which of two schemes to show. */
+    if (e.source !== window.parent) return;
+    var d = e.data;
+    if (!d || typeof d !== "object" || d.type !== "as-theme") return;
+    applyTheme(d.theme);
+  });
+
+  window.addEventListener("storage", function (e) {
+    if (e.key === "as-theme") applyTheme(e.newValue);
+  });
+
+  /* Ask on arrival: if the window was opened from the site, the parent
+     answers with the current scheme, which closes the gap between the
+     iframe booting and the next toggle. */
+  if (window.parent !== window) {
+    try { window.parent.postMessage({ type: "as-theme-request" }, "*"); } catch (e) {}
+  }
+})();
+</script>
+
+
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "58e89f8f1438432b83573861b438fc01"}'></script><!-- End Cloudflare Web Analytics -->
+</body></html>

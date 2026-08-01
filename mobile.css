@@ -1,0 +1,265 @@
+/* ═══════════════════════════════════════════════════════════════
+   ALPESH SHETH — v2 mobile app shell
+   Loads on top of style.css. Same theme, app chrome: fixed top
+   bar, five bottom tabs, one view at a time, plates as a swipeable
+   carousel with sticky control sheets.
+   ═══════════════════════════════════════════════════════════════ */
+
+body.app{overflow:hidden;height:100svh;font-size:var(--t-body)}
+
+/* The phone retunes TOKENS, never individual components. Restating a
+   font-size per block is how the two shells drifted apart in the first
+   place; overriding the ramp here keeps one type system with two
+   settings.
+
+   Leading is lower than the desktop's because the measure is: a phone
+   column runs ~38 characters against the desktop's 66, and long leading
+   on short lines pulls consecutive lines apart instead of guiding the
+   eye between them. Headings tighten for the same reason. */
+body.app{
+  --pane-h:clamp(200px,34svh,300px);
+  --t-h1:clamp(2rem,9.5vw,2.9rem);
+  --t-h2:clamp(1.35rem,5.8vw,1.7rem);
+  --t-h3:clamp(1.06rem,4.2vw,1.18rem);
+  --t-lead:clamp(16.5px,4.3vw,18px);
+  --lh-body:1.55; --lh-lead:1.5; --lh-mono:1.68;
+  --lh-h1:1.06; --lh-h2:1.2; --lh-h3:1.3;
+}
+#bz{opacity:.9;transition:opacity .4s var(--ease)}
+body.app:not([data-view="home"]) #bz{opacity:0}
+
+/* ══ top bar ══════════════════════════════════════════════════ */
+.abar{position:fixed;top:0;left:0;right:0;z-index:60;display:flex;justify-content:space-between;
+  align-items:center;gap:var(--s2);height:calc(52px + env(safe-area-inset-top));
+  padding:env(safe-area-inset-top) var(--s4) 0;background:var(--paper-glass);
+  backdrop-filter:var(--glass);-webkit-backdrop-filter:var(--glass);
+  border-bottom:1px solid var(--hair)}
+.abar .nm{font-family:var(--ui);font-weight:600;letter-spacing:-.02em;font-size:var(--t-small);
+  color:var(--ink);text-decoration:none}
+.abar .rt{display:flex;gap:.4rem;align-items:center}
+.abar .tgl{min-height:34px;padding:.4rem .6rem}
+
+/* ══ views ════════════════════════════════════════════════════ */
+.views{position:fixed;top:calc(52px + env(safe-area-inset-top));left:0;right:0;
+  bottom:calc(58px + env(safe-area-inset-bottom));z-index:2}
+.view{display:none;height:100%;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
+.view.on{display:block}
+.view>.pad{padding:var(--s6) var(--s4) var(--s8)}
+.view section{padding:0;border-top:0;background:transparent}
+.view h2{max-width:none;margin-bottom:.9rem}
+.view .lead{max-width:none}
+.view .eyebrow{margin-bottom:1rem}
+.vrule{border:0;height:1px;background:var(--hair);margin:1.9rem 0}
+
+/* ══ home ═════════════════════════════════════════════════════ */
+.ahero{min-height:100%;display:flex;flex-direction:column;justify-content:center;padding:26px var(--s4) 40px}
+.ahero h1{margin-bottom:var(--s3)}
+.ahero .lead{max-width:none}
+.ahero .meta{grid-template-columns:1fr 1fr;font-size:var(--t-micro)}
+.ahero .herocta a{flex:1;justify-content:center;min-height:46px;padding:.8rem .9rem}
+
+/* ══ plate carousel ═══════════════════════════════════════════ */
+/* Five figures in five equal columns: the previous horizontal scroller
+   put Figures 4 and 5 off the edge with nothing to indicate they were
+   there. Labels are short enough to fit the narrowest phone. */
+.pnav{display:grid;grid-template-columns:repeat(5,1fr);gap:var(--s1);
+  padding:var(--s2) var(--s3);border-bottom:1px solid var(--hair);
+  background:var(--paper-glass);backdrop-filter:var(--glass);
+  -webkit-backdrop-filter:var(--glass)}
+.pnav::-webkit-scrollbar{display:none}
+.pnav button{display:flex;flex-direction:column;align-items:center;justify-content:center;
+  box-shadow:none;
+  gap:1px;background:transparent;color:var(--soft);border:1px solid var(--hair);
+  padding:var(--s1) 2px;min-height:44px;font-size:var(--t-micro);letter-spacing:.04em;
+  text-transform:none;min-width:0;overflow:hidden}
+.pnav button b{font-weight:500;font-size:.9em;opacity:.65}
+.pnav button span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.pnav button.on b{opacity:1}
+.pnav button.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.track{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;height:calc(100% - 59px);
+  scrollbar-width:none}
+.track::-webkit-scrollbar{display:none}
+/* The card is a fixed-height column: the prose scrolls, the control
+   drawer is a sibling pinned at the bottom of the flow. It was
+   previously position:sticky inside the same scroller, which is what
+   put the sliders on top of the figure. */
+.card{flex:0 0 100%;width:100%;scroll-snap-align:start;overflow:hidden;
+  display:flex;flex-direction:column;min-height:0}
+.card>.body{flex:1 1 auto;min-height:0;overflow-y:auto;
+  -webkit-overflow-scrolling:touch;padding:var(--s4) var(--s4) var(--s6)}
+.card .pane{border:1px solid var(--hair)}
+.card h3.pt{font-family:var(--ui);font-weight:500;font-size:var(--t-h3);letter-spacing:-.02em;
+  margin:0 0 .5rem}
+.card .why{font-size:var(--t-small);line-height:var(--lh-body);margin:0 0 1rem;color:var(--body-ink)}
+.card .pane canvas{width:100%;height:var(--pane-h)}
+.card .cap{margin:.9rem 0 1.4rem}
+.sheet{flex:none;background:var(--panel-glass);
+  backdrop-filter:var(--glass);-webkit-backdrop-filter:var(--glass);
+  border-top:1px solid var(--hair);
+  padding:0 var(--s4) calc(var(--s3) + env(safe-area-inset-bottom))}
+/* the drawer handle: always reachable, states summarised while closed */
+.sheet-handle{display:flex;align-items:center;justify-content:space-between;gap:var(--s3);
+  box-shadow:none;
+  width:100%;background:transparent;color:var(--soft);border:0;border-radius:0;
+  min-height:42px;padding:0;margin:0 calc(-1 * var(--s4));
+  width:calc(100% + 2 * var(--s4));padding:0 var(--s4);text-transform:uppercase}
+.sheet-handle:hover{background:transparent;color:var(--ink)}
+.sheet-handle:active{transform:none}
+/* the grab bar reads as a drawer edge; the chevron is a real target */
+.sheet-handle{justify-content:center;position:relative;min-height:48px;gap:var(--s2)}
+.sheet-handle .grab{position:absolute;top:6px;left:50%;transform:translateX(-50%);
+  width:44px;height:3px;border-radius:2px;background:var(--hair);
+  transition:background var(--d-fast) var(--ease)}
+.sheet-handle:hover .grab{background:var(--soft)}
+.sheet-handle .hl{margin-top:6px}
+.sheet-handle .caret{margin-top:6px;width:0;height:0;
+  border-left:5px solid transparent;border-right:5px solid transparent;
+  border-top:6px solid currentColor;
+  transition:transform var(--d-fast) var(--ease)}
+.sheet[data-open="false"] .sheet-handle .caret{transform:rotate(180deg)}
+.sheet-inner{display:grid;gap:var(--s2);overflow:hidden;
+  padding-bottom:var(--s2);
+  transition:max-height var(--d-mid) var(--ease),opacity var(--d-fast) var(--ease)}
+.sheet[data-open="false"] .sheet-inner{max-height:0;opacity:0;padding-bottom:0}
+.sheet[data-open="true"] .sheet-inner{max-height:60svh;opacity:1}
+.sheet .ctrl{font-size:var(--t-mono);gap:var(--s3);min-height:44px}
+.sheet .ctrl label{min-width:8.4em}
+.sheet .ctrl output{min-width:5.2em}
+/* Same control as the desktop, scaled for the thumb: a larger grab
+   target over a slightly heavier groove. Overriding the height here
+   would collapse the hit area, so only the track and thumb grow. */
+.sheet input[type=range]{height:26px}
+.sheet input[type=range]::-webkit-slider-runnable-track{height:4px}
+.sheet input[type=range]::-moz-range-track,
+.sheet input[type=range]::-moz-range-progress{height:4px}
+.sheet input[type=range]::-webkit-slider-thumb{width:22px;height:22px;margin-top:-9px}
+.sheet input[type=range]::-moz-range-thumb{width:22px;height:22px}
+.sheet .row button{min-height:44px;flex:1}
+.sheet .state{display:flex;flex-wrap:wrap;gap:var(--s1) var(--s4);text-align:left;
+  white-space:normal;margin-top:var(--s2);line-height:var(--lh-mono)}
+.hint{font-family:var(--mono);font-size:var(--t-micro);letter-spacing:.1em;
+  text-transform:none;color:var(--soft);margin:var(--s2) 0 0;display:flex;gap:var(--s2);
+  align-items:center}
+.hint i{display:block;width:20px;height:1px;background:var(--soft)}
+
+/* ══ tab bar ══════════════════════════════════════════════════ */
+.tabs{position:fixed;bottom:0;left:0;right:0;z-index:60;display:grid;
+  grid-template-columns:repeat(5,1fr);background:var(--paper-glass);
+  backdrop-filter:var(--glass);-webkit-backdrop-filter:var(--glass);
+  border-top:1px solid var(--hair);padding-bottom:env(safe-area-inset-bottom)}
+.tabs button{background:transparent;border:0;border-radius:0;color:var(--soft);min-height:58px;
+  box-shadow:none;
+  padding:var(--s2) 2px;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:var(--s1);font-size:var(--t-micro);letter-spacing:.02em;
+  text-transform:none;min-width:0}
+/* "Simulations" is the longest label; sentence case and no letterspacing
+   keep all five inside a 5-column bar on the narrowest phone */
+.tabs button span:last-child{max-width:100%;overflow:hidden;text-overflow:ellipsis;
+  white-space:nowrap}
+.tabs button:active{transform:none}
+.tabs button:hover{background:transparent;color:var(--soft)}
+.tabs button .no{font-size:var(--t-micro);color:var(--soft);opacity:.6;
+  font-variant-numeric:tabular-nums}
+.tabs button.on{color:var(--ink)}
+.tabs button.on .no{color:var(--b1);opacity:1}
+
+/* ══ mobile-tuned shared components ═══════════════════════════ */
+.view .tiles{grid-template-columns:1fr}
+.view .tiles p{font-size:var(--t-mono)}
+.view .links{grid-template-columns:1fr}
+.view .skills{grid-template-columns:1fr;gap:1.2rem}
+.view .step{grid-template-columns:2.2rem 1fr;gap:var(--s2) var(--s4);padding:var(--s4) 0}
+.view .step h3{grid-column:2}
+.view .step p{grid-column:2;margin-top:var(--s1)}
+.view .cvtabs button{flex:1;min-height:44px;padding:.7rem .4rem}
+.view .talk{grid-template-columns:96px 1fr}
+.view .telemetry{padding:.8rem}
+.view table{min-width:40rem;font-size:var(--t-micro)}
+/* ══ opened on a wide screen ═══════════════════════════════════
+   This is a phone shell, so above tablet width it holds a phone-
+   sized column centred on the paper rather than stretching its
+   line lengths to 100ch. */
+@media(min-width:760px){
+  .abar,.tabs{max-width:520px;left:50%;transform:translateX(-50%);
+    border-left:1px solid var(--hair);border-right:1px solid var(--hair)}
+  .views{max-width:520px;left:50%;transform:translateX(-50%);
+    border-left:1px solid var(--hair);border-right:1px solid var(--hair)}
+}
+.ahero .lead{max-width:44ch}
+.card .why{max-width:52ch}
+.acolophon{font-family:var(--mono);font-size:var(--t-micro);letter-spacing:.1em;
+  text-transform:uppercase;color:var(--soft);display:flex;flex-direction:column;gap:var(--s1)}
+
+.term::after{width:min(19rem,80vw)}
+
+/* ══ contact fills its screen ═════════════════════════════════
+   The contact view is short, so its content was floating in the
+   top half. It now spans the full height with the map taking the
+   slack and the colophon pinned to the bottom edge. */
+#v-contact>.pad{min-height:100%;display:flex;flex-direction:column;
+  padding-bottom:var(--s7)}
+#v-contact .links{margin-top:var(--s6)}
+/* two columns with the email card spanning both: every row is full,
+   so no card is ever left alone on a line */
+#v-contact .links{grid-template-columns:repeat(2,1fr)}
+#v-contact .links li:first-child{grid-column:1/-1}
+@media(max-width:380px){
+  #v-contact .links{grid-template-columns:1fr}
+  #v-contact .links li:first-child{grid-column:auto}
+}
+#v-contact .links a{min-height:60px;padding:var(--s3) var(--s4)}
+#v-contact .telemetry{margin-top:var(--s6)}
+#v-contact .telemetry canvas{width:100%}
+.acolophon{margin-top:auto;padding-top:var(--s7)}
+/* white spin-down swatch needs an edge to be seen on paper */
+.legend i.box{height:9px;width:9px;border:1px solid var(--hair)}
+
+/* ══ vertical rhythm inside the shell ═════════════════════════ */
+.view .lead p{margin-bottom:var(--s4)}
+.view .lead p:last-child{margin-bottom:0}
+.view h2{margin-bottom:var(--s4)}
+.card .why{margin-bottom:var(--s4)}
+.card .pane+.hint{margin-top:var(--s2)}
+.card .legend{margin-top:var(--s3)}
+.card .cap{margin:var(--s3) 0 0}
+/* stacked panes inside one card share a single gap value */
+.card .pane+.pane{margin-top:var(--s4)}
+/* tiles: headings on a common baseline, bodies free to differ */
+.view .tiles h3{min-height:0}
+.state{font-variant-numeric:tabular-nums}
+
+/* ══ figure first ═════════════════════════════════════════════
+   On a phone the heading and the explanatory paragraph pushed the
+   canvas below the fold, so the reader met a figure they had to go
+   looking for. In the shell the order is title → figure → legend →
+   prose → caption: the subject of the card is the first thing on
+   screen, and the reading matter follows it. The source order is left
+   in its natural reading sequence for anything that does not apply
+   this layout (print, the desktop page, assistive technology). */
+.card>.body{display:flex;flex-direction:column}
+.card h3.pt{order:0}
+.card .pane{order:1}
+.card .hint{order:2}
+.card .chips{order:2}
+.card .bar{order:2}
+.card .legend{order:3}
+.card .why{order:4;margin:var(--s4) 0 0}
+.card .cap{order:5}
+/* the leading figure gets the room; a secondary panel is a scroll away */
+.card .pane:first-of-type{flex:none}
+
+/* ══ rhythm and density in the shell ══════════════════════════════
+   One line height per role, matching the desktop page, and tighter
+   block spacing so a section needs less travel to read. */
+.view,.view p,.view .lead{line-height:var(--lh-body)}
+.view .cap,.view .state,.view .tiles p,.view .skills p,.view .entry-sub,
+.view .entry ul,.view td,.view th{line-height:var(--lh-mono)}
+.view .step p{line-height:var(--lh-body)}
+.vrule{margin:var(--s7) 0}
+.view>.pad{padding:var(--s5) var(--s4) var(--s8)}
+.view h2{margin-bottom:var(--s3)}
+.view .eyebrow{margin-bottom:var(--s3)}
+.view .tiles>div{padding:var(--s4) var(--s4) var(--s5)}
+.view .steps{margin-top:var(--s5)}
+.view .skills{margin-top:var(--s5);gap:var(--s5)}
+.view .ledwrap,.view .cv,.view .links,.view .tiles{margin-top:var(--s5)}

@@ -257,11 +257,19 @@ function readUniverse() {
 }
 
 /* ---------------- trace canvas ---------------- */
+/* Kept so the trace can be repainted without re-running the anneal —
+   on resize, and when the host page changes colour scheme (the stroke
+   colour is read from CSS). */
+let lastTrace = [];
 function drawTrace(trace) {
+  lastTrace = trace || [];
   const c = ui.trace, ctx = c.getContext("2d");
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
   const w = c.clientWidth * dpr, hgt = c.clientHeight * dpr;
-  if (c.width !== w) { c.width = w; c.height = hgt; }
+  /* both dimensions, not just width: the stylesheet shortens this
+     canvas on short viewports, and testing width alone left the
+     backing store at the old height and stretched the plot */
+  if (c.width !== w || c.height !== hgt) { c.width = w; c.height = hgt; }
   ctx.clearRect(0, 0, w, hgt);
   if (trace.length < 2) return;
   let lo = Infinity, hi = -Infinity;
@@ -275,7 +283,10 @@ function drawTrace(trace) {
     const yp = pad + (1 - (trace[i] - lo) / (hi - lo)) * (hgt - 2 * pad);
     i === 0 ? ctx.moveTo(xp, yp) : ctx.lineTo(xp, yp);
   }
-  ctx.strokeStyle = "#2fb8ab";
+  /* fallback is the site's Ni-blue, not the app's retired teal — it only
+     fires if the skin failed to load, and should still look intentional */
+  ctx.strokeStyle = getComputedStyle(document.documentElement)
+    .getPropertyValue("--accent").trim() || "#1436E8";
   ctx.lineWidth = 1.3 * dpr;
   ctx.stroke();
 }
@@ -414,3 +425,13 @@ if (CONFIG.backendURL) {
   ui.universeNote.textContent = "market data resolved by the production engine";
 }
 setStatus("", "idle");
+
+/* Repaint hook for the host page: the trace is drawn once when the
+   anneal finishes and then never again, so rotating a phone stretched
+   it and a colour-scheme change left it drawn in the old accent. */
+window.redrawApp = () => drawTrace(lastTrace);
+let traceResize;
+window.addEventListener("resize", () => {
+  clearTimeout(traceResize);
+  traceResize = setTimeout(() => drawTrace(lastTrace), 150);
+});
