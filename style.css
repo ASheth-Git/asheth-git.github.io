@@ -555,6 +555,30 @@ html[data-theme="dark"] .edu-crest img{filter:saturate(.7) brightness(.92)}
   border-radius:var(--radius)}
 .telemetry canvas{display:block;width:100%;height:auto;margin:0 auto}
 .telemetry .cap{margin-top:.7rem}
+
+/* ── visitor readout ──────────────────────────────────────────────
+   The counts used to exist only as numerals inside the map badges,
+   which meant the two facts most worth stating — how many people have
+   read this, and from how many countries — were never stated at all.
+   They are a hairline strip under the map, on the same rule-and-label
+   grammar as the hero's meta row. */
+.tstats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;
+  margin-top:var(--s4);background:var(--hair);
+  border:1px solid var(--hair);border-radius:var(--radius);overflow:hidden}
+.tstat{background:var(--panel);padding:var(--s3) var(--s4);min-width:0}
+.tstat.wide{grid-column:span 2}
+.tstat .tk{display:block;font-family:var(--mono);font-size:var(--t-micro);
+  letter-spacing:.14em;text-transform:uppercase;color:var(--soft)}
+.tstat .tv{display:block;margin-top:2px;font-family:var(--mono);
+  font-size:var(--t-mono);font-weight:500;color:var(--ink);
+  font-variant-numeric:tabular-nums;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* the located country reads as the live value it is */
+#tHere{color:var(--b1)}
+@media(max-width:620px){
+  .tstats{grid-template-columns:1fr 1fr}
+  .tstat.wide{grid-column:1/-1}
+}
 footer.site{display:flex;justify-content:space-between;gap:var(--s4);flex-wrap:wrap;
   padding:var(--s5) var(--pad) calc(var(--s6) + env(safe-area-inset-bottom));
   border-top:1px solid var(--hair);font-family:var(--mono);font-size:var(--t-micro);

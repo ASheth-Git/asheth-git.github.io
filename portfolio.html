@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"><head>
+<html lang="en" data-theme="dark"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Quantum Portfolio · Alpesh SHETH, PhD</title>
@@ -14,15 +14,18 @@
 <link rel="stylesheet" href="quantum-portfolio/app.css">
 <link rel="stylesheet" href="portfolio-skin.css">
 <script>
-  /* the window inherits the scheme the visitor chose on the site, and
-     falls back to paper — never to the operating system, which would let
-     a light page open a dark instrument */
+  /* theme resolved before first paint so the scheme never flashes.
+     Dark is the default: the plates are emissive figures — spectral
+     weight, a spin lattice, an annealing trace — and they carry more
+     contrast on ink than on paper. Light stays one click away and is
+     remembered once chosen. */
   (function () {
     var s = null;
     try { s = localStorage.getItem("as-theme"); } catch (e) {}
-    document.documentElement.dataset.theme = s || "light";
+    document.documentElement.dataset.theme = s || "dark";
   })();
 </script>
+<link rel="icon" href="data:image/svg+xml,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'&gt;&lt;rect width='32' height='32' fill='%230B0C0E'/&gt;&lt;circle cx='16' cy='16' r='7' fill='none' stroke='%237B93FF' stroke-width='2'/&gt;&lt;circle cx='16' cy='16' r='2.5' fill='%23FF7F58'/&gt;&lt;/svg&gt;" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="data:image/svg+xml,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'&gt;&lt;rect width='32' height='32' fill='%23F8F8F6'/&gt;&lt;circle cx='16' cy='16' r='7' fill='none' stroke='%231436E8' stroke-width='2'/&gt;&lt;circle cx='16' cy='16' r='2.5' fill='%23E2431F'/&gt;&lt;/svg&gt;">
 
 
@@ -46,6 +49,8 @@
   <span class="topbar-status mono" id="engineStatus">
     <span class="status-dot" id="statusDot"></span><span id="statusText">idle</span>
   </span>
+  <button class="tgl mono" id="themeBtn" type="button"
+          aria-label="Toggle colour scheme">Light</button>
 </header>
 
 <div id="layout">
@@ -172,10 +177,12 @@
   </div>
 
   <footer id="appfoot" class="mono">
-    physics core: Ising-mapped portfolio selection, simulated annealing ·
-    demo mode runs a textbook single-flip annealer on bundled snapshot data ·
-    production engine and constraint encoding proprietary ·
-    <a href="https://asheth-git.github.io" target="_blank" rel="noopener">asheth-git.github.io</a>
+    <span class="foot-by">Engineered by <a href="https://asheth-git.github.io">Alpesh SHETH, PhD</a></span>
+    <span class="foot-note">
+      Physics core: Ising-mapped portfolio selection, simulated annealing ·
+      demo mode runs a textbook single-flip annealer on bundled snapshot data ·
+      production engine and constraint encoding proprietary
+    </span>
   </footer>
 
 </main>
@@ -226,19 +233,42 @@
 
      Both funnel into one applier so the app can never end up showing
      a scheme the site is not showing. */
-  function applyTheme(next) {
+  var btn = document.getElementById("themeBtn");
+  function label() {
+    if (btn) btn.textContent = root.dataset.theme === "dark" ? "Light" : "Dark";
+  }
+  label();
+
+  function applyTheme(next, broadcast) {
     if (next !== "light" && next !== "dark") return;
-    if (root.dataset.theme === next) return;
+    if (root.dataset.theme === next) { label(); return; }
     root.classList.add("theme-swap");
     root.dataset.theme = next;
-    /* the trace and the sector bars are canvas-drawn from CSS colours,
-       so they need a repaint to pick the new palette up */
+    label();
+    /* The trace is a canvas whose stroke is read from CSS, so it holds
+       the old accent until something repaints it. It is drawn once when
+       an anneal finishes and never again — which is exactly why the app
+       looked like it had not followed the site. */
     if (typeof window.redrawApp === "function") { try { window.redrawApp(); } catch (e) {} }
     void root.offsetWidth;
     requestAnimationFrame(function () {
       requestAnimationFrame(function () { root.classList.remove("theme-swap"); });
     });
+    if (broadcast) {
+      try { localStorage.setItem("as-theme", next); } catch (e) {}
+      if (window.parent !== window) {
+        try { window.parent.postMessage({ type: "as-theme", theme: next }, "*"); } catch (e) {}
+      }
+    }
   }
+
+  /* The app carries its own toggle. Opened standalone it is the only
+     control there is; opened in the site's window it is a second one,
+     and the two stay in step because every change goes through
+     applyTheme and is echoed to the other document. */
+  if (btn) btn.addEventListener("click", function () {
+    applyTheme(root.dataset.theme === "dark" ? "light" : "dark", true);
+  });
 
   window.addEventListener("message", function (e) {
     /* Only the document that framed us may set the scheme, and the only
@@ -246,19 +276,30 @@
     if (e.source !== window.parent) return;
     var d = e.data;
     if (!d || typeof d !== "object" || d.type !== "as-theme") return;
-    applyTheme(d.theme);
+    applyTheme(d.theme, false);
   });
 
   window.addEventListener("storage", function (e) {
-    if (e.key === "as-theme") applyTheme(e.newValue);
+    if (e.key === "as-theme") applyTheme(e.newValue, false);
   });
 
-  /* Ask on arrival: if the window was opened from the site, the parent
-     answers with the current scheme, which closes the gap between the
-     iframe booting and the next toggle. */
-  if (window.parent !== window) {
-    try { window.parent.postMessage({ type: "as-theme-request" }, "*"); } catch (e) {}
+  /* Ask on arrival, and again whenever this document is revealed or
+     restored from the back/forward cache: the frame can be created while
+     hidden, and a request answered into a hidden frame is easy to miss.
+     Re-reading the stored value costs nothing and closes the gap. */
+  function resync() {
+    var stored = null;
+    try { stored = localStorage.getItem("as-theme"); } catch (e) {}
+    if (stored) applyTheme(stored, false);
+    if (window.parent !== window) {
+      try { window.parent.postMessage({ type: "as-theme-request" }, "*"); } catch (e) {}
+    }
   }
+  resync();
+  window.addEventListener("pageshow", resync);
+  document.addEventListener("visibilitychange", function () {
+    if (!document.hidden) resync();
+  });
 })();
 </script>
 

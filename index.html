@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light"><head>
+<html lang="en" data-theme="dark"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Alpesh SHETH, PhD · Computational Condensed Matter Physics</title>
@@ -87,13 +87,16 @@
 
 
 <link rel="stylesheet" href="style.css">
+<link rel="icon" href="data:image/svg+xml,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'&gt;&lt;rect width='32' height='32' fill='%230B0C0E'/&gt;&lt;circle cx='16' cy='16' r='7' fill='none' stroke='%237B93FF' stroke-width='2'/&gt;&lt;circle cx='16' cy='16' r='2.5' fill='%23FF7F58'/&gt;&lt;/svg&gt;" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="data:image/svg+xml,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'&gt;&lt;rect width='32' height='32' fill='%23F8F8F6'/&gt;&lt;circle cx='16' cy='16' r='7' fill='none' stroke='%231436E8' stroke-width='2'/&gt;&lt;circle cx='16' cy='16' r='2.5' fill='%23E2431F'/&gt;&lt;/svg&gt;">
 <script>
-  /* theme resolved before first paint so the paper never flashes */
+  /* theme resolved before first paint so the scheme never flashes.
+     Dark is the default: the plates are emissive figures — spectral
+     weight, a spin lattice, an annealing trace — and they carry more
+     contrast on ink than on paper. Light stays one click away and is
+     remembered once chosen. */
   (function(){var s=null;try{s=localStorage.getItem("as-theme")}catch(e){}
-    /* the paper scheme is the identity of the site, so it is the
-       default; dark is available but chosen, never assumed */
-    document.documentElement.dataset.theme = s || "light";})();
+    document.documentElement.dataset.theme = s || "dark";})();
 </script>
 <script>
   /* Layout is chosen by the device, not by the visitor: there is no
@@ -633,7 +636,12 @@
 
     <div class="telemetry rise" id="telemetry">
       <canvas id="mapCanvas" role="img" aria-label="Map of visitor locations"></canvas>
-      <p class="cap">Dot-matrix equirectangular land mask, 128 × 56. Vermilion badges count visits per country; the blue pulse is the current visitor.</p>
+      <div class="tstats" id="tstats" aria-live="polite">
+        <div class="tstat"><span class="tk">Visits</span><b class="tv" id="tVisits">—</b></div>
+        <div class="tstat"><span class="tk">Countries</span><b class="tv" id="tCountries">—</b></div>
+        <div class="tstat wide"><span class="tk">You are here</span><b class="tv" id="tHere">locating…</b></div>
+      </div>
+      <p class="cap">Dot-matrix equirectangular land mask, 128 × 56. Each ring is a country that has visited, its radius growing with the log of the count. The blue source is you — the rings leaving it are a wave packet spreading from your position at constant phase velocity.</p>
     </div>
   </div>
 </section>

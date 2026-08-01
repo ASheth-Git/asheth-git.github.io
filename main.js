@@ -121,44 +121,64 @@ function publishTheme() {
 addEventListener("message", e => {
   const f = el("appFrame");
   if (!f || !f.contentWindow || e.source !== f.contentWindow) return;
-  if (e.data && e.data.type === "as-theme-request") publishTheme();
+  const d = e.data;
+  if (!d || typeof d !== "object") return;
+  if (d.type === "as-theme-request") { publishTheme(); return; }
+  /* the app window carries its own toggle — a change made there is the
+     visitor's choice just as much as one made here, so the site follows
+     it rather than fighting it back */
+  if (d.type === "as-theme" && (d.theme === "light" || d.theme === "dark")) {
+    if (document.documentElement.dataset.theme !== d.theme) applyTheme(d.theme);
+  }
 });
 
-function initTheme() {
+const themeLabel = () => {
   const btn = el("themeBtn");
-  const label = () => {
-    if (!btn) return;
-    const dark = document.documentElement.dataset.theme === "dark";
-    btn.textContent = dark ? "Light" : "Dark";
-  };
-  label();
-  if (!btn) return;
-  btn.addEventListener("click", () => {
-    const root = document.documentElement;
-    const next = root.dataset.theme === "dark" ? "light" : "dark";
+  if (btn) btn.textContent =
+    document.documentElement.dataset.theme === "dark" ? "Light" : "Dark";
+};
 
-    /* A theme flip touches three things that otherwise land at three
-       different times: the page background (no transition, snaps), the
-       chrome (180ms colour transitions), and the canvases (repainted
-       from JS). Left alone they tear — the paper goes dark while the
-       plates are still light and the buttons crossfade behind both.
-       Suppressing transitions for the duration collapses all three into
-       a single paint, which reads as an instant, deliberate switch. */
-    root.classList.add("theme-swap");
-    root.dataset.theme = next;
-    try { localStorage.setItem("as-theme", next); } catch (e) {}
-    label();
-    readPalette();
-    /* synchronous, not rAF: the canvases must carry the new palette in
-       the same frame the CSS variables change in */
-    redrawAll();
-    /* force the style flush while transitions are still off, then hand
-       them back a frame later so ordinary hover states keep animating */
-    void root.offsetWidth;
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      root.classList.remove("theme-swap");
-    }));
-    publishTheme();
+/* The single place a scheme changes. Everything that can trigger one —
+   the button here, the toggle inside the app window, another tab — goes
+   through this, which is what keeps every surface on one scheme. */
+function applyTheme(next, persist) {
+  const root = document.documentElement;
+  if (next !== "light" && next !== "dark" || root.dataset.theme === next) return;
+
+  /* A theme flip touches three things that otherwise land at three
+     different times: the page background (no transition, snaps), the
+     chrome (180ms colour transitions), and the canvases (repainted from
+     JS). Left alone they tear — the paper goes dark while the plates are
+     still light and the buttons crossfade behind both. Suppressing
+     transitions for the duration collapses all three into a single
+     paint, which reads as an instant, deliberate switch. */
+  root.classList.add("theme-swap");
+  root.dataset.theme = next;
+  if (persist) { try { localStorage.setItem("as-theme", next); } catch (e) {} }
+  themeLabel();
+  readPalette();
+  /* synchronous, not rAF: the canvases must carry the new palette in the
+     same frame the CSS variables change in. Every plate repaints here,
+     including the ones sitting in a hidden view of the phone shell. */
+  redrawAll();
+  /* force the style flush while transitions are still off, then hand
+     them back a frame later so ordinary hover states keep animating */
+  void root.offsetWidth;
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    root.classList.remove("theme-swap");
+  }));
+  publishTheme();
+}
+
+function initTheme() {
+  themeLabel();
+  const btn = el("themeBtn");
+  if (btn) btn.addEventListener("click", () => {
+    applyTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark", true);
+  });
+  /* a change made in another tab is still this visitor's choice */
+  addEventListener("storage", e => {
+    if (e.key === "as-theme") applyTheme(e.newValue, false);
   });
 }
 
@@ -1248,6 +1268,13 @@ function initIsing() {
       const m = sum / cnt;
       magOut.textContent = (m >= 0 ? "+" : "−") + Math.abs(m).toFixed(2);
     }
+    paintLattice();
+  }
+
+  /* One frame of the lattice at the current palette. Split out of the
+     loop so a theme change can repaint a plate the loop is not running
+     for — see the REDRAW hook below. */
+  function paintLattice() {
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
     gl.viewport(0, 0, canvas.width, canvas.height);
     gl.useProgram(drawProg);
@@ -1255,9 +1282,10 @@ function initIsing() {
     gl.uniform1i(uD.state, 0);
     gl.uniform2f(uD.res, canvas.width, canvas.height);
     gl.uniform2f(uD.mouseCss, mouse.cx, mouse.cy);
-    /* spin down white, spin up vermilion, walls a deepened vermilion —
-       maximum separation between the two phases at a glance */
-    const dn = [255, 255, 255], up = P.rgbB2, acc = lerpRGB(P.rgbB2, P.rgbInk, 0.45);
+    /* spins down take the paper, spins up the vermilion, walls a
+       deepened vermilion — maximum separation between the two phases at
+       a glance, and it has to follow the scheme rather than assume white */
+    const dn = P.rgbPaper, up = P.rgbB2, acc = lerpRGB(P.rgbB2, P.rgbInk, 0.45);
     gl.uniform3f(uD.dn, dn[0] / 255, dn[1] / 255, dn[2] / 255);
     gl.uniform3f(uD.up, up[0] / 255, up[1] / 255, up[2] / 255);
     gl.uniform3f(uD.acc, acc[0] / 255, acc[1] / 255, acc[2] / 255);
@@ -1268,8 +1296,21 @@ function initIsing() {
   const refit = () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(allocate, 200); };
   addEventListener("resize", refit);
   /* the lattice reallocates when its container gets a size, so the plate
-     is never left at the placeholder 300×150 after a view switch */
-  REDRAW.push(() => { if (pane.clientWidth > 2 && Math.abs(pane.clientWidth * Math.min(devicePixelRatio || 1, 2) - canvas.width) > 8) allocate(); });
+     is never left at the placeholder 300×150 after a view switch.
+
+     The second half is the palette. This plate is the only one whose
+     colours live in GPU uniforms written by the render loop, and that
+     loop is gated on `visible` — so a plate sitting in a hidden view (in
+     the phone shell, four views out of five at any moment) keeps its old
+     pixels through a theme change and still shows them when its tab is
+     finally opened. That is what made one toggle look like it only
+     applied to the page you were on. Painting one frame here, from the
+     freshly read palette and regardless of visibility, means a single
+     toggle reaches every view at once. */
+  REDRAW.push(() => {
+    if (pane.clientWidth > 2 && Math.abs(pane.clientWidth * Math.min(devicePixelRatio || 1, 2) - canvas.width) > 8) allocate();
+    if (canvas.width > 2) paintLattice();
+  });
   sizeWatch(pane);
   requestAnimationFrame(frame);
 
@@ -1484,18 +1525,65 @@ function initTelemetry() {
     return true;
   }
   let t0 = performance.now(), visible = false, rafId = null;
+
+  /* ── the current visitor ──────────────────────────────────────────
+     A single ring expanding once every 1.8s read as a generic "ping".
+     This is a wave packet instead: RIPPLES crests launched from the
+     source at even intervals, each fading as it spreads, so the source
+     reads as continuously emitting rather than blinking. The envelope
+     is sin(πφ)·(1−φ) — zero amplitude at launch and at the horizon, a
+     maximum in between — which is what stops the crests appearing out
+     of nowhere at the centre. A stationary halo and a crosshair fix the
+     position itself, since the crests alone leave the eye guessing
+     where the origin was. */
+  const RIPPLES = 3, PERIOD = 2600, REACH = 26;
   function drawFrame(now) {
     if (!W || !H) { rafId = null; return; }
     ctx.clearRect(0, 0, W, H);
     ctx.drawImage(base, 0, 0);
     if (visitor) {
       const [vx, vy] = visitor;
-      const phase = REDUCE ? 0.5 : ((now - t0) / 1800) % 1;
-      ctx.strokeStyle = P.b1; ctx.globalAlpha = 0.7 * (1 - phase);
-      ctx.lineWidth = 1.2 * dpr;
-      ctx.beginPath(); ctx.arc(vx, vy, (3 + 11 * phase) * dpr * 0.6, 0, 6.2832); ctx.stroke();
-      ctx.globalAlpha = 1; ctx.fillStyle = P.b1;
-      ctx.beginPath(); ctx.arc(vx, vy, 2.2 * dpr * 0.7, 0, 6.2832); ctx.fill();
+      const u = dpr * 0.6;
+      const t = REDUCE ? 0.45 : ((now - t0) / PERIOD) % 1;
+
+      ctx.save();
+      ctx.lineCap = "round";
+      for (let k = 0; k < (REDUCE ? 1 : RIPPLES); k++) {
+        const phase = (t + k / RIPPLES) % 1;
+        const amp = Math.sin(Math.PI * phase) * (1 - phase);
+        if (amp <= 0.01) continue;
+        ctx.strokeStyle = P.b1;
+        ctx.globalAlpha = 0.75 * amp;
+        ctx.lineWidth = (1.5 - 0.7 * phase) * dpr;
+        ctx.beginPath();
+        ctx.arc(vx, vy, (3 + REACH * phase) * u, 0, 6.2832);
+        ctx.stroke();
+      }
+
+      /* halo, then core: the source sits above its own wake */
+      ctx.globalAlpha = 0.16;
+      ctx.fillStyle = P.b1;
+      ctx.beginPath(); ctx.arc(vx, vy, 6.5 * u, 0, 6.2832); ctx.fill();
+
+      /* crosshair — four ticks clear of the core, so the position is
+         legible even where the land mask is dense */
+      ctx.globalAlpha = 0.55;
+      ctx.strokeStyle = P.b1;
+      ctx.lineWidth = 1 * dpr;
+      const gap = 4.5 * u, arm = 8 * u;
+      ctx.beginPath();
+      ctx.moveTo(vx - arm, vy); ctx.lineTo(vx - gap, vy);
+      ctx.moveTo(vx + gap, vy); ctx.lineTo(vx + arm, vy);
+      ctx.moveTo(vx, vy - arm); ctx.lineTo(vx, vy - gap);
+      ctx.moveTo(vx, vy + gap); ctx.lineTo(vx, vy + arm);
+      ctx.stroke();
+
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = P.paper;
+      ctx.beginPath(); ctx.arc(vx, vy, 3.1 * u, 0, 6.2832); ctx.fill();
+      ctx.fillStyle = P.b1;
+      ctx.beginPath(); ctx.arc(vx, vy, 2.2 * u, 0, 6.2832); ctx.fill();
+      ctx.restore();
     }
     if (visible && !REDUCE && visitor) rafId = requestAnimationFrame(drawFrame);
     else rafId = null;
@@ -1518,12 +1606,60 @@ function initTelemetry() {
   /* First call POSTs to register this visit — exactly once per browser
      session (sessionStorage guard), so reloads and polls never inflate
      counts. Subsequent GETs are read-only. */
+  /* ── readout ──────────────────────────────────────────────────────
+     Counts arrive as a list of per-country totals, so the two headline
+     numbers are derived here rather than sent. They tick up to their
+     value the first time the strip is seen: a number that lands by
+     counting reads as measured, and this one is. */
+  const REGION = (() => {
+    try { return new Intl.DisplayNames([document.documentElement.lang || "en"], { type: "region" }); }
+    catch (e) { return null; }
+  })();
+  const shown = {};
+  function odometer(node, to) {
+    if (!node) return;
+    const from = shown[node.id] || 0;
+    shown[node.id] = to;
+    if (REDUCE || to === from || to > 5000) { node.textContent = to.toLocaleString(); return; }
+    const start = performance.now(), dur = Math.min(900, 260 + Math.abs(to - from) * 8);
+    const step = now => {
+      const k = Math.min(1, (now - start) / dur);
+      /* ease-out: fast enough to feel like a readout settling, not a
+         slot machine */
+      const v = Math.round(from + (to - from) * (1 - Math.pow(1 - k, 3)));
+      node.textContent = v.toLocaleString();
+      if (k < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }
+  let statsSeen = false;
+  const statsEl = el("tstats");
+  if (statsEl) new IntersectionObserver(en => {
+    if (en[0].isIntersecting) { statsSeen = true; paintStats(); }
+  }, { threshold: 0.3 }).observe(statsEl);
+
+  function paintStats() {
+    if (!statsSeen) return;
+    const total = countries.reduce((a, c) => a + (c.count || 0), 0);
+    odometer(el("tVisits"), total);
+    odometer(el("tCountries"), countries.length);
+    const here = el("tHere");
+    if (!here) return;
+    if (lastGeo) {
+      const cc = (lastGeo.country || lastGeo.code || "").toUpperCase();
+      const city = lastGeo.city || "";
+      const name = cc && REGION ? (() => { try { return REGION.of(cc); } catch (e) { return cc; } })() : cc;
+      here.textContent = [city, name].filter(Boolean).join(", ") || "somewhere on Earth";
+    } else here.textContent = "locating…";
+  }
+
   async function fetchTelemetry(registerHit = false) {
     try {
       const res = await fetch(TELEMETRY_ENDPOINT, { method: registerHit ? "POST" : "GET" });
       const data = await res.json();
       if (data.countries && Array.isArray(data.countries)) { countries = data.countries; buildBase(); kick(); }
       if (data.current) { lastGeo = data.current; relocate(lastGeo); kick(); }
+      paintStats();
     } catch (e) {
       /* The endpoint being down is an operational detail, not something
          to report to a reader. The map is drawn from the local land

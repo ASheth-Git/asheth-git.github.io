@@ -115,6 +115,13 @@ html.theme-swap *::before,html.theme-swap *::after{
   color:var(--accent);background:var(--accent-soft)}
 .topbar-status{font-family:var(--ff-mono);font-size:var(--t-micro);
   letter-spacing:.08em;color:var(--muted)}
+/* the app's own scheme toggle, matching the one in the site's bar */
+.tgl{font-family:var(--ff-mono);font-size:var(--t-micro);letter-spacing:.1em;
+  text-transform:uppercase;background:transparent;border:1px solid var(--line);
+  color:var(--muted);padding:var(--s1) var(--s2);min-height:32px;cursor:pointer;
+  border-radius:var(--radius);box-shadow:none;
+  transition:color var(--d-fast) var(--ease),border-color var(--d-fast) var(--ease)}
+.tgl:hover{color:var(--ink);border-color:var(--ink)}
 .status-dot.running{background:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
 .status-dot.done{background:var(--green);box-shadow:0 0 0 3px var(--accent-soft)}
 
@@ -231,8 +238,18 @@ input[type=range]:focus-visible::-webkit-slider-thumb{
 .sector-tag{font-family:var(--ff-mono);font-size:var(--t-micro);
   background:var(--accent-soft);color:var(--accent)}
 .empty{font-family:var(--ff-mono);font-size:var(--t-mono);color:var(--faint)}
+/* The byline carries the same weight and case as the site's own brand,
+   so the instrument reads as signed work rather than an anonymous demo. */
 #appfoot{font-family:var(--ff-mono);color:var(--faint);font-size:var(--t-micro);
-  border-top:1px solid var(--line)}
+  border-top:1px solid var(--line);display:flex;flex-wrap:wrap;
+  justify-content:space-between;gap:var(--s2) var(--s5);align-items:baseline}
+.foot-by{font-family:var(--ff-display);font-size:var(--t-mono);font-weight:500;
+  letter-spacing:-.01em;color:var(--muted);white-space:nowrap}
+.foot-by a{color:var(--ink);text-decoration:none;
+  border-bottom:1px solid var(--accent);padding-bottom:1px}
+.foot-by a:hover{color:var(--accent)}
+.foot-note{flex:1 1 22rem;min-width:0;text-align:right}
+@media(max-width:600px){.foot-note{text-align:left}}
 
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
