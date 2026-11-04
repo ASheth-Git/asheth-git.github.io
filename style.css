@@ -1,41 +1,70 @@
+/* ═══════════════════════════════════════════════════════════════
+   ALPESH SHETH — v2 stylesheet
+   Theme lineage: sheth-redesign-v5 (paper, hairline plates,
+   Instrument Sans / Newsreader / JetBrains Mono, Ni-blue +
+   rare-earth vermilion), extended with a dark ink mode.
+   Shared by index.html (site) and app_v2.html (phone shell).
+   ═══════════════════════════════════════════════════════════════ */
+
 :root{
   --paper:#F8F8F6; --panel:#FCFCFB; --ink:#0E0F11; --body-ink:#22262C; --soft:#5C6169;
   --hair:rgba(14,15,17,.13); --hair-2:rgba(14,15,17,.07); --sink:rgba(14,15,17,.04);
-  --b1:#1436E8;
-  --b2:#E2431F;
+  --b1:#1436E8;                 /* Ni d(x²−y²) / d(z²) character */
+  --b2:#E2431F;                 /* rare-earth interlayer band    */
   --ui:"Instrument Sans",system-ui,-apple-system,sans-serif;
   --body:"Newsreader",Georgia,serif;
   --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
   --pad:clamp(20px,4.6vw,72px);
   --rail:clamp(0px,14vw,240px);
 
+  /* spacing — 4px base, used for every gap, pad and margin below */
   --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:20px; --s6:24px;
   --s7:32px; --s8:40px; --s9:56px; --s10:72px;
 
-  --t-micro:clamp(12px,.72vw,13px);
-  --t-label:clamp(12.5px,.78vw,13.5px);
-  --t-mono:clamp(13.5px,.86vw,15px);
-  --t-small:clamp(15px,.98vw,16.5px);
-  --t-body:clamp(17px,1.12vw,19px);
-  --t-lead:clamp(18px,1.3vw,21px);
+  /* type scale — one ramp, no one-off font sizes. Every step is a
+     fluid clamp so the ramp keeps its proportions from phone to
+     desktop instead of snapping at breakpoints. Nothing sits below
+     12px: the mono chrome carries subscripts and unit symbols, which
+     become unreadable before the surrounding text does. */
+  --t-micro:clamp(12px,.72vw,13px);  /* mono chrome: pane labels, legends, chips */
+  --t-label:clamp(12.5px,.78vw,13.5px); /* mono labels: eyebrow, th, entry-key, tabs */
+  --t-mono:clamp(13.5px,.86vw,15px); /* mono body: controls, captions, state */
+  --t-small:clamp(15px,.98vw,16.5px);/* small prose */
+  --t-body:clamp(17px,1.12vw,19px);  /* prose */
+  --t-lead:clamp(18px,1.3vw,21px);   /* section opener */
   --t-h3:clamp(16.5px,1.15vw,18.5px);
   --t-h2:clamp(1.5rem,3.1vw,2.45rem);
   --t-h1:clamp(2.05rem,6.4vw,5.1rem);
 
+  /* Leading is a function of measure, not of taste. Body prose is capped
+     at 70ch here, which is long enough to need the eye helped back to
+     the next line — 1.65. Display sizes need proportionally less as they
+     grow, so each heading carries its own. The phone shell overrides
+     these where its measure is genuinely shorter. */
   --lh-body:1.65; --lh-lead:1.55; --lh-mono:1.7; --lh-tight:1.32;
   --lh-h1:1.02; --lh-h2:1.14; --lh-h3:1.34;
 
+  /* Optical sizing: Newsreader is a variable font with an opsz axis.
+     Left to the browser it optically sizes for the pixel size alone,
+     which makes long-form prose look thin; pinning it slightly larger
+     restores the stroke weight a printed serif would have. */
   --opsz-body:20;
 
+  /* One height for every simulation pane, so plates that sit side by
+     side in a two-column grid and plates that run full width all read
+     as the same instrument. Consumed by fit() in main.js — changing it
+     here changes every canvas at once. */
   --pane-h:clamp(280px,26vw,400px);
 
+  /* motion — three durations, one easing, everywhere */
   --d-fast:180ms; --d-mid:280ms; --d-slow:640ms;
   --ease:cubic-bezier(.22,.75,.2,1);
 
+  /* surface — hairline plates over frosted glass, one elevation */
   --radius:2px;
-  --glass:none;
-  --panel-glass:var(--panel);
-  --paper-glass:var(--paper);
+  --glass:blur(14px) saturate(1.35);
+  --panel-glass:color-mix(in oklab,var(--panel) 76%,transparent);
+  --paper-glass:color-mix(in oklab,var(--paper) 82%,transparent);
   --lift:0 1px 0 color-mix(in oklab,var(--ink) 5%,transparent);
   --lift-modal:0 24px 60px color-mix(in oklab,var(--ink) 26%,transparent);
   --scheme:light;
@@ -44,8 +73,8 @@ html[data-theme="dark"]{
   --paper:#0B0C0E; --panel:#111214; --ink:#F1F1ED; --body-ink:#D3D5D8; --soft:#8C9199;
   --hair:rgba(241,241,237,.20); --hair-2:rgba(241,241,237,.10); --sink:rgba(241,241,237,.05);
   --b1:#7B93FF; --b2:#FF7F58;
-  --panel-glass:var(--panel);
-  --paper-glass:var(--paper);
+  --panel-glass:color-mix(in oklab,var(--panel) 68%,transparent);
+  --paper-glass:color-mix(in oklab,var(--paper) 74%,transparent);
   --scheme:dark;
 }
 @media(prefers-color-scheme:dark){
@@ -53,8 +82,8 @@ html[data-theme="dark"]{
     --paper:#0B0C0E; --panel:#111214; --ink:#F1F1ED; --body-ink:#D3D5D8; --soft:#8C9199;
     --hair:rgba(241,241,237,.20); --hair-2:rgba(241,241,237,.10); --sink:rgba(241,241,237,.05);
     --b1:#7B93FF; --b2:#FF7F58;
-    --panel-glass:var(--panel);
-    --paper-glass:var(--paper);
+    --panel-glass:color-mix(in oklab,var(--panel) 68%,transparent);
+    --paper-glass:color-mix(in oklab,var(--paper) 74%,transparent);
     --scheme:dark;
   }
 }
@@ -62,7 +91,8 @@ html[data-theme="dark"]{
   text-transform:uppercase;color:var(--soft)}
 .val,.raw{text-transform:none;letter-spacing:0}
 .val{font-variant-numeric:tabular-nums}
-
+/* subscripts and superscripts in mono chrome: raised/lowered without
+   disturbing the line box, so control rows keep a single baseline */
 sub,sup{font-size:.76em;line-height:0}
 sub{vertical-align:-.24em}
 sup{vertical-align:.42em}
@@ -77,38 +107,70 @@ body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);f
   font-optical-sizing:auto;font-variation-settings:"opsz" var(--opsz-body);
   font-kerning:normal;font-variant-ligatures:common-ligatures contextual}
 
+/* ══ theme flip ═══════════════════════════════════════════════════
+   Held for the two frames main.js takes to swap the palette. Without
+   it the background snaps, the chrome crossfades over 180ms and the
+   canvases repaint from JS — three clocks, one gesture, visible tear.
+   Everything is frozen so the switch lands in a single paint. */
 html.theme-swap,html.theme-swap *,
 html.theme-swap *::before,html.theme-swap *::after{
   transition:none!important;animation:none!important}
 main,section,.wrap{min-width:0}
 img{max-width:100%;display:block}
 
-#bz{position:absolute;top:0;left:0;width:100%;height:100vh;z-index:0;display:block;pointer-events:none}
+/* ══ loader ═══════════════════════════════════════════════════ */
+#load{position:fixed;inset:0;z-index:120;background:var(--paper);display:grid;place-items:center;
+  transition:opacity var(--d-slow) var(--ease),visibility var(--d-slow)}
+#load.done{opacity:0;visibility:hidden}
+#load .nm{font-family:var(--ui);font-weight:600;letter-spacing:-.03em;
+  font-size:clamp(1.5rem,6.2vw,4.2rem);display:flex;flex-wrap:wrap;justify-content:center;line-height:1}
+#load .nm span{display:inline-block;min-width:.34em;text-align:center}
+#load .nm span.sp{min-width:.32em}
+/* punctuation hugs the preceding letter — a monospaced cell around the
+   comma reads as a space before it */
+#load .nm span.pn{min-width:0}
+#load .tick{font-family:var(--mono);font-size:var(--t-label);letter-spacing:.18em;
+  color:var(--soft);text-align:center;margin-top:var(--s5);text-transform:uppercase}
+
+/* ══ ambient hero render ══════════════════════════════════════ */
+#bz{position:fixed;inset:0;width:100%;height:100%;z-index:0;display:block;pointer-events:none}
 main{position:relative;z-index:2;padding-left:var(--rail)}
 
+/* ══ fixed chrome ═════════════════════════════════════════════ */
 .top{position:fixed;top:0;left:0;right:0;z-index:60;display:flex;justify-content:space-between;
   align-items:center;gap:var(--s4);padding:var(--s3) var(--pad);font-family:var(--mono);
   font-size:var(--t-label);letter-spacing:.1em;text-transform:uppercase;pointer-events:none;
   isolation:isolate}
-
+/* The fade belongs to the backdrop, not to the bar's contents. Masking
+   .top itself dissolved the brand, the links and the toggle mid-glyph,
+   because the mask applies to the element's own rendering — text
+   included. It now lives on a pseudo-element behind the content. */
 .top::before{content:"";position:absolute;inset:0;z-index:-1;
   background:linear-gradient(var(--paper-glass),transparent);
   backdrop-filter:var(--glass);-webkit-backdrop-filter:var(--glass);
   mask-image:linear-gradient(#000 55%,transparent);
   -webkit-mask-image:linear-gradient(#000 55%,transparent)}
-
+/* The bar itself ignores pointers so the hero stays draggable beneath it,
+   but everything placed IN the bar must be interactive. An allow-list of
+   element types silently killed a <select> added later; targeting the
+   bar's children instead means any future control works by default. */
 .top .brand,.top .right>*{pointer-events:auto}
-
+/* A name is not chrome. The bar sets mono/uppercase/.1em tracking for
+   its labels, which turned "Alpesh SHETH, PhD" into "ALPESH SHETH , PHD"
+   — the doctorate miscapitalised and the comma floated off the surname
+   by the tracking. The brand opts out and matches the phone bar, so the
+   name reads identically on both shells. */
 .top .brand{color:var(--ink);text-decoration:none;
   font-family:var(--ui);font-weight:600;font-size:var(--t-small);
   text-transform:none;letter-spacing:-.02em}
 .top .right{display:flex;gap:1rem;align-items:baseline}
+.top .pct{color:var(--soft);font-variant-numeric:tabular-nums}
 .tgl{font-family:var(--mono);font-size:var(--t-label);letter-spacing:.1em;box-shadow:none;
   text-transform:uppercase;background:transparent;border:1px solid var(--hair);color:var(--soft);
   padding:var(--s1) var(--s2);cursor:pointer;min-height:32px;border-radius:var(--radius);
   transition:color var(--d-fast) var(--ease),border-color var(--d-fast) var(--ease)}
 .tgl:hover{color:var(--ink);border-color:var(--ink)}
-
+/* compact section menu: shown only when the rail is not */
 .navsel{display:none;font-family:var(--mono);font-size:var(--t-label);letter-spacing:.06em;
   text-transform:uppercase;background:transparent;color:var(--soft);
   border:1px solid var(--hair);border-radius:var(--radius);padding:var(--s1) var(--s2);
@@ -116,45 +178,103 @@ main{position:relative;z-index:2;padding-left:var(--rail)}
 .navsel:hover{color:var(--ink);border-color:var(--ink)}
 @media(max-width:1180px){.navsel{display:block}}
 @media(max-width:520px){.navsel{max-width:7.5rem}}
-
+/* ══ section wheel ════════════════════════════════════════════════
+   The rail is a drum: a short window over the section list with the
+   current section held on a reading line. It is a readout of position
+   as much as a control, so it needs a fixed height and a centre — not
+   a full-height column of links. */
 .rail{position:fixed;left:var(--pad);top:50%;transform:translateY(-50%);z-index:60;
   font-family:var(--mono);font-size:var(--t-label);letter-spacing:.07em;
   width:max-content;max-width:min(20vw,13rem)}
-
+/* The drum is draggable AND its entries are links. ns-resize claimed
+   the whole surface for dragging and made the rail look inert, so the
+   grab cursor lives on the drum while each entry asserts pointer —
+   which is also the truth of the interaction after the capture fix in
+   wheel.js: a tap follows the link, a drag spins the wheel. */
+/* five entries of 28px: an odd count so one sits exactly on the
+   reading line with two above and two below */
+.rail-drum{height:140px;overflow:hidden;position:relative;
+  cursor:grab;touch-action:none;scrollbar-width:none}
+.rail-drum::-webkit-scrollbar{display:none}
+.rail-drum[data-live="1"]{cursor:grabbing}
+.rail-drum[data-live="1"] a{cursor:grabbing}
+.rail-track{display:flex;flex-direction:column}
+/* the rims fade so the column reads as a curved surface */
+.rail-fade{position:absolute;left:0;right:0;height:38%;pointer-events:none;z-index:2}
+.rail-fade.t{top:0;background:linear-gradient(var(--paper),color-mix(in oklab,var(--paper) 10%,transparent))}
+.rail-fade.b{bottom:0;background:linear-gradient(color-mix(in oklab,var(--paper) 10%,transparent),var(--paper))}
+.rail-mark{position:absolute;left:-6px;top:50%;width:3px;height:3px;margin-top:-1.5px;
+  border-radius:50%;background:var(--b1);pointer-events:none;z-index:3}
+@media(prefers-reduced-motion:reduce){.rail-drum{scroll-behavior:auto}}
 .rail a{display:flex;gap:var(--s2);align-items:center;text-decoration:none;color:var(--soft);
   height:28px;flex:0 0 28px;white-space:nowrap;opacity:.5;cursor:pointer;
   transition:color var(--d-fast) var(--ease),opacity var(--d-fast) var(--ease)}
+.rail a .no{width:1.4em;font-variant-numeric:tabular-nums}
 .rail a .nm{white-space:nowrap;text-transform:uppercase;overflow:hidden;text-overflow:ellipsis}
 .rail a.on{color:var(--ink);opacity:1}
 .rail:hover a,.rail:focus-within a{opacity:.75}
 .rail:hover a.on,.rail:focus-within a.on{opacity:1}
-
+/* an entry under the cursor is the one a tap would follow, so it reads
+   as the active target rather than as another row of the readout */
 .rail a:hover{color:var(--b1);opacity:1}
-
+/* the rail appears only once the gutter comfortably exceeds the widest
+   label (Fermiology, ~110px including the numeral and gap); below that
+   the top bar carries a compact section menu instead, so navigation is
+   never absent — 1366×768, 1440×900 and iPad landscape all sit here */
+/* The gutter and the rail it is reserved for must be governed by ONE
+   condition. Previously main/footer indented unconditionally while the
+   rail hid itself in a media query, leaving a wide empty gutter and
+   badly off-centre text. Zeroing the token collapses the indent for
+   every consumer at once, so the two cannot drift apart again. */
 @media(max-width:1180px){
   :root{--rail:0px}
   .rail{display:none}
 }
-
+/* the label is sized to fit the gutter rather than being clipped by it */
 .rail a{max-width:calc(var(--rail) - var(--pad) - var(--s5))}
 .rail a .nm{text-overflow:ellipsis;overflow:hidden}
 
-hr.rule{border:0;height:1px;background:var(--hair);margin:0}
-@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+/* ══ flow animation ═══════════════════════════════════════════
+   The hidden state is applied only when scripting is available (the
+   root gets .js from main.js). Without it every element renders in
+   its final state, so a failed script, a blocked CDN or a crawler that
+   runs no frames sees the whole page rather than a blank one.
+   Both the hidden and the revealed rule carry the same html.js prefix:
+   the prefix adds specificity, so a bare .rise.in would lose to
+   html.js .rise and nothing would ever become visible. */
+html.js .rise{opacity:0;transform:translateY(16px);
+  transition:opacity var(--d-slow) var(--ease),transform var(--d-slow) var(--ease)}
+html.js .rise.in{opacity:1;transform:none}
+.split .wd{display:inline-block;white-space:nowrap}
+html.js .split .ch{display:inline-block;transform:translateY(.5em);opacity:0;
+  transition:transform var(--d-slow) var(--ease),opacity var(--d-slow) var(--ease)}
+html.js .split.in .ch{transform:none;opacity:1}
+hr.rule{border:0;height:1px;background:var(--hair);transform-origin:left;margin:0}
+html.js hr.rule{transform:scaleX(0);transition:transform var(--d-slow) var(--ease)}
+html.js hr.rule.in{transform:scaleX(1)}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  html.js .rise,html.js .split .ch,html.js hr.rule{
+    opacity:1!important;transform:none!important;transition:none}
+  #load{display:none}
+}
 
+/* ══ layout ═══════════════════════════════════════════════════ */
 section{padding:clamp(3.4rem,8vh,6.4rem) var(--pad);border-top:1px solid var(--hair);position:relative}
 section.first{border-top:0}
 section.opaque{background:var(--paper-glass);backdrop-filter:var(--glass);
   -webkit-backdrop-filter:var(--glass)}
 @supports not (backdrop-filter:blur(1px)){section.opaque{background:var(--paper)}}
 .wrap{max-width:84rem;margin:0 auto}
-
+/* measure is capped for reading, not for want of room */
 .lead{max-width:66ch;font-size:var(--t-lead);line-height:var(--lh-lead)}
 .eyebrow{font-family:var(--mono);font-size:var(--t-label);letter-spacing:.16em;
   text-transform:uppercase;color:var(--soft);margin:0 0 var(--s6);display:flex;gap:var(--s3);
   align-items:baseline;flex-wrap:wrap}
 .eyebrow b{color:var(--ink);font-weight:500}
-
+/* Headings read their size and leading from tokens so the phone shell
+   retunes the ramp in one place instead of restating a font-size per
+   component — which is how the two shells drifted apart. */
 h1{font-family:var(--ui);font-weight:600;letter-spacing:-.04em;line-height:var(--lh-h1);
   font-size:var(--t-h1);margin:0 0 1.1rem;text-wrap:balance}
 h1 .ph{font-weight:400;color:var(--soft);letter-spacing:-.02em}
@@ -171,22 +291,27 @@ a.inline:hover{color:var(--b1)}
 .sub{font-family:var(--mono);font-size:var(--t-label);letter-spacing:.13em;
   text-transform:uppercase;color:var(--soft);margin:0 0 var(--s6)}
 
+/* hero */
 .hero{min-height:100svh;display:flex;flex-direction:column;justify-content:center;
   padding-top:5.5rem;padding-bottom:5rem}
 .hero .lead{max-width:58ch}
-.meta{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s5);
+.meta{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s5);
   border-top:1px solid var(--hair);padding-top:var(--s4);margin-top:var(--s7);
   font-family:var(--mono);font-size:var(--t-micro);letter-spacing:.1em;text-transform:uppercase;
   color:var(--soft);max-width:52rem}
-
-@media(max-width:900px){.meta{grid-template-columns:1fr}}
+/* Explicit column counts, as for the contact grid: auto-fit chooses the
+   track count from available width and will happily leave one item alone
+   on a second row. Four items divide evenly into 4, 2 and 1, so every
+   row is full at every breakpoint. */
+@media(max-width:1100px){.meta{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:420px){.meta{grid-template-columns:1fr}}
-
+/* on narrow desktops the zone sits under the copy, so it steps back */
 @media(max-width:1180px){#bz{opacity:.4}}
 .meta strong{display:block;color:var(--ink);font-weight:400;margin-top:var(--s1);letter-spacing:0;
   text-transform:none;font-family:var(--body);font-size:var(--t-small);text-wrap:balance}
 .herocta{display:flex;gap:var(--s2);flex-wrap:wrap;margin-top:var(--s7)}
 
+/* ══ plate frame ══════════════════════════════════════════════ */
 .plate{margin-top:clamp(1.4rem,3.2vh,2.4rem)}
 .panes{display:grid;gap:1px;background:var(--hair);border:1px solid var(--hair)}
 .panes.two{grid-template-columns:1.16fr 1fr}
@@ -194,7 +319,11 @@ a.inline:hover{color:var(--b1)}
 @media(max-width:880px){.panes.two{grid-template-columns:1fr}}
 .pane{background:var(--panel-glass);backdrop-filter:var(--glass);
   -webkit-backdrop-filter:var(--glass);position:relative;min-width:0}
-
+/* One height for every plate, from --pane-h. The panes in a .two grid
+   are unequal in width (1.16fr / 1fr), so per-canvas aspect ratios made
+   the left plate short and the right one tall in the same row; driving
+   height from the stylesheet instead makes every simulation the same
+   size whatever column it lands in. fit() in main.js reads this back. */
 .pane canvas{display:block;width:100%;height:var(--pane-h)}
 .pane .tl,.pane .tr{position:absolute;top:var(--s3);font-family:var(--mono);
   font-size:var(--t-micro);color:var(--soft);white-space:nowrap;text-transform:none;
@@ -216,7 +345,14 @@ a.inline:hover{color:var(--b1)}
 .ctrl label{min-width:11.2em}
 .ctrl output{color:var(--ink);font-variant-numeric:tabular-nums;min-width:5.4em;text-align:right;
   font-weight:500}
-
+/* ── range control ────────────────────────────────────────────────
+   A 1px rule with a floating dot read as a hairline artefact rather
+   than a control, and gave no indication of where in its range a
+   parameter sat. The track is now a legible groove carrying a filled
+   portion in the band colour, so position is readable at a glance and
+   the control belongs to the same drawing language as the plates. The
+   fill is painted by main.js into --fill (0–1) as the value changes;
+   absent script it degrades to a plain groove. */
 input[type=range]{-webkit-appearance:none;appearance:none;flex:1;min-width:0;
   height:20px;background:transparent;margin:0;touch-action:pan-y;cursor:ew-resize}
 input[type=range]::-webkit-slider-runnable-track{height:3px;border-radius:2px;
@@ -254,7 +390,11 @@ input[type=range]:focus-visible::-moz-range-thumb{
 .cap{font-family:var(--mono);font-size:var(--t-mono);line-height:var(--lh-mono);color:var(--soft);
   margin-top:var(--s3);max-width:78ch;text-transform:none}
 .cap .katex{font-size:1em}
-
+/* ── buttons ──────────────────────────────────────────────────────
+   Solid ink by default, band-blue on hover. The 44px minimum is the
+   comfortable touch target and is shared with the phone shell rather
+   than being re-specified there. Weight 500 keeps the mono uppercase
+   legible at label size, where 400 goes spindly. */
 button,a.btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--s2);
   font-family:var(--mono);font-size:var(--t-label);font-weight:500;letter-spacing:.1em;
   text-transform:uppercase;
@@ -288,6 +428,7 @@ button.busy::after{content:"";position:absolute;inset:0;margin:auto;width:12px;h
 .bar{height:2px;background:var(--hair);margin-top:var(--s2);overflow:hidden}
 .bar i{display:block;height:100%;width:0;background:var(--b1);transition:width var(--d-fast) linear}
 
+/* ══ hover/tap definitions ════════════════════════════════════ */
 .term{border-bottom:1px dotted var(--b1);cursor:help;position:relative}
 .term:focus{outline:none}
 .term::after{content:attr(data-def);position:absolute;left:50%;bottom:calc(100% + var(--s2));
@@ -299,6 +440,7 @@ button.busy::after{content:"";position:absolute;inset:0;margin:auto;width:12px;h
 .term:hover::after,.term:focus-visible::after,.term.open::after{opacity:1;visibility:visible;
   transform:translateX(-50%)}
 
+/* ══ tables, tiles, steps, skills ═════════════════════════════ */
 .ledwrap{overflow-x:auto;margin-top:var(--s7);border:1px solid var(--hair);
   border-radius:var(--radius)}
 table{border-collapse:collapse;width:100%;min-width:46rem;font-family:var(--mono);
@@ -316,19 +458,29 @@ td .th{color:var(--b2);white-space:nowrap}
 .tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;
   background:var(--hair);border:1px solid var(--hair);margin-top:var(--s7);
   border-radius:var(--radius);overflow:hidden}
-
+/* four cards: 2×2 then 1×4 — never three across with one stranded */
 @media(max-width:620px){.tiles{grid-template-columns:1fr}}
 .tiles>div{background:var(--panel-glass);backdrop-filter:var(--glass);
   -webkit-backdrop-filter:var(--glass);padding:var(--s4);min-height:9rem;display:flex;
   flex-direction:column}
-
+.tiles .tag{font-family:var(--mono);font-size:var(--t-micro);letter-spacing:.14em;
+  text-transform:uppercase;color:var(--soft);padding-bottom:var(--s4)}
+/* headings share a baseline across the row; only the body text differs
+   in length, and it grows downward */
 .tiles h3{min-height:2.7em;display:flex;align-items:flex-start}
-.tiles p{font-size:var(--t-small);color:var(--body-ink);
+.tiles p{font-family:var(--mono);font-size:var(--t-mono);line-height:var(--lh-mono);color:var(--soft);
   margin:var(--s1) 0 0}
 .tiles p a{color:var(--b1)}
+.steps{border-top:1px solid var(--hair);margin-top:var(--s7)}
+.step{display:grid;grid-template-columns:3rem 10.5rem 1fr;gap:var(--s4);padding:var(--s5) 0;
+  border-bottom:1px solid var(--hair);align-items:baseline}
+.step .n{font-family:var(--mono);font-size:var(--t-mono);color:var(--soft)}
+.step p{margin:0;font-size:var(--t-small)}
+@media(max-width:780px){.step{grid-template-columns:2.1rem 1fr}
+  .step p{grid-column:2/-1;margin-top:.32rem}}
 .skills{display:grid;grid-template-columns:repeat(3,1fr);
   gap:var(--s6) var(--s7);margin-top:var(--s7)}
-
+/* six groups: 3×2, 2×3, then a single column — all exact divisors */
 @media(max-width:900px){.skills{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:520px){.skills{grid-template-columns:1fr}}
 .skills h3{font-family:var(--mono);font-size:var(--t-micro);letter-spacing:.14em;
@@ -336,6 +488,7 @@ td .th{color:var(--b2);white-space:nowrap}
 .skills p{font-family:var(--mono);font-size:var(--t-mono);line-height:var(--lh-mono);color:var(--ink);
   margin:0;text-transform:none}
 
+/* ══ record / CV ledger ═══════════════════════════════════════ */
 .cvhead{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;flex-wrap:wrap}
 .cv{border:1px solid var(--hair);margin-top:var(--s7);background:var(--panel-glass);
   backdrop-filter:var(--glass);-webkit-backdrop-filter:var(--glass);border-radius:var(--radius)}
@@ -370,6 +523,7 @@ td .th{color:var(--b2);white-space:nowrap}
 html[data-theme="dark"] .edu-crest svg,
 html[data-theme="dark"] .edu-crest img{filter:saturate(.7) brightness(.92)}
 
+/* ══ links + footer ═══════════════════════════════════════════ */
 .links{list-style:none;padding:0;margin:var(--s7) 0 0;display:grid;
   grid-template-columns:repeat(5,1fr);gap:1px;background:var(--hair);
   border:1px solid var(--hair);border-radius:var(--radius);overflow:hidden}
@@ -392,10 +546,39 @@ html[data-theme="dark"] .edu-crest img{filter:saturate(.7) brightness(.92)}
 .links b{display:block;font-size:var(--t-micro);letter-spacing:.14em;text-transform:uppercase;
   color:var(--soft);margin-bottom:var(--s1);font-weight:400}
 .links a:hover b{color:color-mix(in oklab,var(--paper) 70%,transparent)}
+.telemetry{margin-top:var(--s7);border:1px solid var(--hair);background:var(--panel-glass);
+  backdrop-filter:var(--glass);-webkit-backdrop-filter:var(--glass);padding:var(--s4);
+  border-radius:var(--radius)}
+.telemetry canvas{display:block;width:100%;height:auto;margin:0 auto}
+.telemetry .cap{margin-top:.7rem}
+
+/* ── visitor readout ──────────────────────────────────────────────
+   The counts used to exist only as numerals inside the map badges,
+   which meant the two facts most worth stating — how many people have
+   read this, and from how many countries — were never stated at all.
+   They are a hairline strip under the map, on the same rule-and-label
+   grammar as the hero's meta row. */
+.tstats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;
+  margin-top:var(--s4);background:var(--hair);
+  border:1px solid var(--hair);border-radius:var(--radius);overflow:hidden}
+.tstat{background:var(--panel);padding:var(--s3) var(--s4);min-width:0}
+.tstat.wide{grid-column:span 2}
+.tstat .tk{display:block;font-family:var(--mono);font-size:var(--t-micro);
+  letter-spacing:.14em;text-transform:uppercase;color:var(--soft)}
+.tstat .tv{display:block;margin-top:2px;font-family:var(--mono);
+  font-size:var(--t-mono);font-weight:500;color:var(--ink);
+  font-variant-numeric:tabular-nums;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* the located country reads as the live value it is */
+#tHere{color:var(--b1)}
+@media(max-width:620px){
+  .tstats{grid-template-columns:1fr 1fr}
+  .tstat.wide{grid-column:1/-1}
+}
 footer.site{display:flex;justify-content:space-between;gap:var(--s4);flex-wrap:wrap;
   padding:var(--s5) var(--pad) calc(var(--s6) + env(safe-area-inset-bottom));
   border-top:1px solid var(--hair);font-family:var(--mono);font-size:var(--t-micro);
-  letter-spacing:.1em;text-transform:uppercase;color:var(--soft);
+  letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin-left:var(--rail);
   position:relative;z-index:2;background:var(--paper)}
 :focus-visible{outline:2px solid var(--b1);outline-offset:2px}
 input[type=range]:focus-visible{outline-offset:6px}
@@ -405,6 +588,7 @@ input[type=range]:focus-visible{outline-offset:6px}
   *,*::before,*::after{animation-duration:1ms!important;transition-duration:1ms!important}
 }
 
+/* ══ app overlay (Quantum Portfolio) ══════════════════════════ */
 #appOverlay{position:fixed;inset:0;z-index:110;background:color-mix(in oklab,var(--ink) 52%,transparent);
   backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
   display:grid;place-items:center;padding:clamp(0px,3vw,2rem)}
@@ -419,7 +603,10 @@ input[type=range]:focus-visible{outline-offset:6px}
   font-size:var(--t-label);line-height:1;padding:.3rem .55rem;min-height:34px;min-width:36px}
 .app-window iframe{flex:1;width:100%;border:0;background:var(--paper)}
 body.app-open{overflow:hidden}
-
+/* On a phone the instrument needs every pixel: a centred 86svh card
+   inside a padded scrim left the control rack and the results competing
+   for about half the screen. Full-bleed below the tablet breakpoint,
+   with the title bar keeping its close button in the safe area. */
 @media(max-width:760px){
   #appOverlay{padding:0;place-items:stretch}
   .app-window{width:100%;height:100dvh;max-height:100dvh;border:0;
@@ -429,33 +616,49 @@ body.app-open{overflow:hidden}
     padding-right:max(var(--s3),env(safe-area-inset-right))}
 }
 
+/* ══ KaTeX in paper theme ═════════════════════════════════════ */
 .katex{font-size:1.02em}
-
+/* A displayed equation is centred on its own line with the vertical air
+   a journal would give it, and is allowed to scroll rather than force
+   the column wider on a narrow screen. */
 .katex-display{margin:var(--s4) 0;overflow-x:auto;overflow-y:hidden;padding:2px 0}
 .cap .katex-display{margin:var(--s3) 0}
 .cap .katex-display>.katex{font-size:1em}
-
+/* A displayed equation inside a caption. KaTeX's own display mode emits
+   a block element, which cannot legally sit inside a paragraph, so the
+   equation is set inline with \displaystyle and given block geometry
+   here — same typography, valid markup. */
 .eqd{display:block;text-align:center;margin:var(--s4) 0;overflow-x:auto;
   overflow-y:hidden;padding:2px 0}
 .eqd .katex{font-size:1.06em}
-
+/* labels and readouts carry mathematics, so they are never transformed */
 .ctrl label,.dl,.state,output{text-transform:none}
 .ctrl label .katex,.dl .katex,.state .katex,.cap .katex{font-size:1em}
 .eq{font-family:var(--mono);font-size:var(--t-micro);color:var(--soft);margin:.7rem 0 0}
 
+/* ══ print ════════════════════════════════════════════════════════
+   A printed copy is how an academic page is most often read at length,
+   so it is treated as a first-class output rather than an afterthought.
+   Everything the reveal animation gates is forced to its final state —
+   without this the page prints blank, since the reveal only fires for a
+   viewport that is being scrolled and painted. */
 @media print{
-  #bz,.rail,.top,.tabs,.abar,.pnav,#appOverlay{display:none!important}
+  html.js .rise,html.js .split .ch,html.js hr.rule,
+  .rise,.split .ch,hr.rule{
+    opacity:1!important;transform:none!important;transition:none!important}
+  #load,#bz,.rail,.top,.tabs,.abar,.pnav,#appOverlay{display:none!important}
   html,body{background:#fff!important;color:#000!important}
   main{padding-left:0!important}
+  footer.site{margin-left:0!important}
   section{border-top:1px solid #ccc!important;padding:16pt 0!important;
     background:none!important;backdrop-filter:none!important;break-inside:avoid}
-  .pane,.deck,.cv,.tiles>div,.links li{
+  .pane,.deck,.cv,.tiles>div,.links li,.telemetry{
     background:none!important;backdrop-filter:none!important}
-
-  .plate,.card,.pane,table,.entry,.tiles>div{break-inside:avoid}
+  /* a simulation and its caption stay on one page */
+  .plate,.card,.pane,table,.entry,.step,.tiles>div{break-inside:avoid}
   h1,h2,h3{break-after:avoid}
   a{color:#000!important;text-decoration:none}
-
+  /* in print a link's destination cannot be followed, so it is spelled out */
   .lead a[href^="http"]::after,.cap a[href^="http"]::after{
     content:" (" attr(href) ")";font-family:var(--mono);font-size:.85em;word-break:break-all}
   .term::after{display:none!important}

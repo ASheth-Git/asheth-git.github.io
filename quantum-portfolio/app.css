@@ -1,3 +1,11 @@
+/* ================================================================
+   QUANTUM PORTFOLIO — front end
+   Theme shared with asheth-git.github.io: deep-space dark surface
+   cards, single-hue research-teal accent, Quicksand / Nunito /
+   Red Hat Mono. No dual-tone gradients; lighter and darker shades
+   of one hue carry all emphasis.
+   ================================================================ */
+
 :root {
   --bg:        #04070c;
   --bg-2:      #070c14;
@@ -50,6 +58,7 @@ a:hover { color: var(--accent-hot); }
 sub, sup { line-height: 0; }
 ::selection { background: var(--accent); color: var(--bg); }
 
+/* ---------------- TOP BAR ---------------- */
 #topbar {
   position: sticky; top: 0; z-index: 50;
   display: flex; align-items: center; gap: 1.2rem;
@@ -91,12 +100,14 @@ sub, sup { line-height: 0; }
 .status-dot.done    { background: var(--green);  box-shadow: 0 0 8px var(--green); }
 @keyframes pulse { 50% { opacity: 0.35; } }
 
+/* ---------------- LAYOUT ---------------- */
 #layout {
   display: grid;
   grid-template-columns: 290px 1fr;
   min-height: calc(100vh - 52px);
 }
 
+/* ---------------- SIDEBAR ---------------- */
 #sidebar {
   border-right: 1px solid var(--line);
   background: var(--surface-2);
@@ -214,12 +225,14 @@ input[type="range"]::-moz-range-thumb {
   text-transform: uppercase;
 }
 
+/* ---------------- MAIN ---------------- */
 #main {
   padding: 1.6rem 1.8rem 1.2rem;
   display: flex; flex-direction: column; gap: 1.4rem;
   min-width: 0;
 }
 
+/* physics strip */
 .physics-strip {
   position: relative; overflow: hidden;
   border: 1px solid var(--line);
@@ -235,6 +248,7 @@ input[type="range"]::-moz-range-thumb {
 .physics-eq { margin-bottom: 0.6rem; overflow-x: auto; }
 .physics-text { color: var(--ink-2); font-size: 0.92rem; max-width: 72rem; }
 
+/* metric cards */
 .cards {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
@@ -265,6 +279,7 @@ input[type="range"]::-moz-range-thumb {
   color: var(--faint); font-size: 0.58rem; letter-spacing: 0.06em;
 }
 
+/* panels */
 .panel {
   border: 1px solid var(--line); border-radius: var(--radius);
   background: var(--surface);
@@ -314,6 +329,7 @@ input[type="range"]::-moz-range-thumb {
   align-items: start;
 }
 
+/* sector bars */
 .bars { display: flex; flex-direction: column; gap: 0.7rem; }
 .bar-row { font-size: 0.72rem; }
 .bar-label {
@@ -330,6 +346,7 @@ input[type="range"]::-moz-range-thumb {
 }
 .bar-fill.over { background: var(--red); }
 
+/* asset table */
 #assetTableWrap { overflow-x: auto; }
 #assetTable { width: 100%; border-collapse: collapse; font-size: 0.76rem; }
 #assetTable th {
@@ -362,6 +379,7 @@ input[type="range"]::-moz-range-thumb {
 }
 .empty { color: var(--faint); font-family: var(--ff-mono); font-size: 0.68rem; }
 
+/* footer */
 #appfoot {
   margin-top: auto;
   font-family: var(--ff-mono);
@@ -370,6 +388,7 @@ input[type="range"]::-moz-range-thumb {
   border-top: 1px solid var(--line);
 }
 
+/* ---------------- RESPONSIVE ---------------- */
 @media (max-width: 1200px) {
   .cards { grid-template-columns: repeat(3, 1fr); }
 }
@@ -383,6 +402,7 @@ input[type="range"]::-moz-range-thumb {
   #main { padding: 1.1rem 1rem 1rem; }
 }
 
+/* accessibility */
 button:focus-visible, a:focus-visible, input:focus-visible {
   outline: 2px solid var(--accent-hot); outline-offset: 2px;
 }

@@ -2,16 +2,18 @@
 
 **Ph.D. in Computational Condensed Matter Physics**
 
-Zaragoza, Spain · [alpeshsheth.phy@gmail.com](mailto:alpeshsheth.phy@gmail.com)
+📍 Zaragoza, Spain | ✉️ [alpeshsheth.phy@gmail.com](mailto:alpeshsheth.phy@gmail.com)
 
-## Technical Skills
+---
+
+## 🛠 Technical Skills
 
 * **Programming Languages**: Python, C++, Fortran, Julia, Bash scripting, MATLAB, LaTeX.
 * **Data Science & ML**: API Integration, Data Pipeline Automation, Predictive Modeling, Statistical Analysis.
 * **Simulation Methods**: Green's Functions, DMFT, Variational Monte Carlo, Neural-Network Quantum States, Tensor Networks, DFT (VASP, Quantum ESPRESSO), Molecular Dynamics (LAMMPS), Exact Diagonalization.
 * **Tools**: Git/GitHub, HPC (Slurm, OpenMP, MPI) environments, TRIQS, CP2K.
 
-## Experience
+## 💼 Experience
 
 ### Postdoctoral Research Associate | INMA (CSIC – Universidad de Zaragoza), Zaragoza, Spain
 
@@ -53,18 +55,18 @@ Zaragoza, Spain · [alpeshsheth.phy@gmail.com](mailto:alpeshsheth.phy@gmail.com)
 * Analyzed transport properties via density of states using second-order perturbation theory and Kubo formalism.
 * Determined critical size thresholds for superconducting nanoparticles to inform the design of magnetic sensor prototypes.
 
-## Projects
+## 🚀 Projects
 
 * **Quantum-Inspired Portfolio Optimization**: Developed a Python module mapping financial portfolio problems to the Ising spin model and implemented global optimization algorithms inspired by quantum statistical mechanics.
 * **Electronic Properties of Graphene Heterostructures**: Calculated electronic properties of graphene-hBN twisted heterostructures using DFT and analyzed Moiré pattern effects (presented at ICAFMOD-2020).
 
-## Education
+## 🎓 Education
 
 * **Ph.D. in Material Science**, Université de Bordeaux, Bordeaux, France (2021–2025).
 * **Master of Science, Condensed Matter Physics**, The M.S. University of Baroda, Gujarat, India (2018–2020).
 * **Bachelor of Science, Physics**, The M.S. University of Baroda, Gujarat, India (2015–2018).
 
-## Selected Publications
+## 📚 Selected Publications
 
 * **Alpesh SHETH**, et al. *"Emergence and tunability of Fermi-pocket and electronic instabilities in layered Nickelates."* Journal of Physics: Condensed Matter (2025). DOI: 10.1088/1361-648X/ada908.
 * Bharathiganesh Devanarayanan, Akariti Sharma, **Alpesh SHETH**, et al. *"Background for the Self Consistent Renormalisation (SCR) Theory."* arXiv:2108.12683 (2021).

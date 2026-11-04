@@ -9,6 +9,10 @@
 <meta name="apple-mobile-web-app-title" content="A. Sheth">
 <link rel="canonical" href="https://asheth-git.github.io/">
 
+<!-- Link preview. og:image is an absolute URL and the file name is
+     versioned: Slack, LinkedIn, X and iMessage cache a preview against the
+     image URL, so a changed picture at an unchanged path keeps serving the
+     old card. A new name is what makes them refetch. -->
 <meta property="og:site_name" content="Alpesh Sheth">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="en_GB">
@@ -27,6 +31,7 @@
 <meta name="twitter:image" content="https://asheth-git.github.io/assets/og-banner-v2.png">
 <meta name="twitter:image:alt" content="Alpesh Sheth, PhD — computational condensed matter physics">
 
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -38,10 +43,18 @@
 <link rel="icon" href="data:image/svg+xml,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'&gt;&lt;rect width='32' height='32' fill='%230B0C0E'/&gt;&lt;circle cx='16' cy='16' r='7' fill='none' stroke='%237B93FF' stroke-width='2'/&gt;&lt;circle cx='16' cy='16' r='2.5' fill='%23FF7F58'/&gt;&lt;/svg&gt;" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="data:image/svg+xml,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'&gt;&lt;rect width='32' height='32' fill='%23F8F8F6'/&gt;&lt;circle cx='16' cy='16' r='7' fill='none' stroke='%231436E8' stroke-width='2'/&gt;&lt;circle cx='16' cy='16' r='2.5' fill='%23E2431F'/&gt;&lt;/svg&gt;">
 <script>
+  /* theme resolved before first paint so the scheme never flashes.
+     Dark is the default: the plates are emissive figures — spectral
+     weight, a spin lattice, an annealing trace — and they carry more
+     contrast on ink than on paper. Light stays one click away and is
+     remembered once chosen. */
   (function(){var s=null;try{s=localStorage.getItem("as-theme")}catch(e){}
     document.documentElement.dataset.theme = s || "dark";})();
 </script>
 <script>
+  /* The other half of the guard in index.html — see the comment there.
+     Routing has to work in both directions or a laptop that follows a
+     shared link to this page is stuck in the phone shell forever. */
   (function () {
     var PIN = "as-layout";
     var q = location.search;
@@ -51,7 +64,7 @@
       var pinned = sessionStorage.getItem(PIN);
       if (pinned === "phone") return;
       if (pinned === "desktop") { location.replace("index.html"); return; }
-    } catch (e) {   }
+    } catch (e) { /* private mode: fall through to detection */ }
 
     var coarse = matchMedia("(pointer: coarse)").matches;
     var shortEdge = Math.min(screen.width || 0, screen.height || 0);
@@ -70,6 +83,12 @@
 <body class="app" data-view="home">
 
 <a class="skip" href="#main-content">Skip to content</a>
+<div id="load">
+  <div>
+    <div class="nm" id="loadName"></div>
+    <div class="tick" id="loadTick">ordering · T/T<sub>c</sub> 3.60</div>
+  </div>
+</div>
 
 <canvas id="bz" aria-hidden="true"></canvas>
 
@@ -83,24 +102,26 @@
 
 <div class="views">
 
+<!-- ══ HOME ═══════════════════════════════════════════════════ -->
 <div class="view on" id="v-home">
   <div class="ahero">
-    <p class="sub">Computational condensed matter physics · Many-body theory</p>
-    <h1>Alpesh SHETH, PhD</h1>
+    <p class="sub rise">Computational condensed matter physics · Many-body theory</p>
+    <h1 class="split">Alpesh SHETH, PhD</h1>
     <p>I am a postdoctoral researcher at INMA (CSIC – Universidad de Zaragoza), working on machine learning for quantum many-body simulation. I develop rigorous, predictive computational models of quantum materials and validate them against experimental data. My doctoral research focused on the infinite-layer nickelates: a family of superconductors that are structural and electronic analogues to cuprates, yet exhibit divergent macroscopic behavior. I demonstrated that this discrepancy is driven by a secondary electronic band unique to the nickelate system. I implement these simulations using Python, C++, and Fortran, deployed across GPU architectures and high-performance computing (HPC) clusters.</p>
-    <div class="meta">
+    <div class="meta rise">
       <div>Now<strong>Postdoc · INMA, Zaragoza</strong></div>
       <div>Doctorate<strong>Bordeaux, 2025</strong></div>
       <div>Field<strong>Quantum materials</strong></div>
       <div>Simulations<strong>Five, interactive</strong></div>
     </div>
-    <div class="herocta">
+    <div class="herocta rise">
       <a class="btn" href="#" data-go="plates">Open the simulations</a>
       <a class="btn ghost" href="Alpesh_Sheth_CV.pdf" download="">CV</a>
     </div>
   </div>
 </div>
 
+<!-- ══ PLATES ═════════════════════════════════════════════════ -->
 <div class="view" id="v-plates">
   <div class="pnav" id="pnav">
     <button class="on" data-card="0"><b>1</b><span>Bands</span></button>
@@ -112,6 +133,7 @@
 
   <div class="track" id="track">
 
+    <!-- Plate I -->
     <article class="card">
       <div class="body">
         <h3 class="pt">Fermi-surface topology of the two-orbital model</h3>
@@ -150,6 +172,7 @@
       </div>
     </article>
 
+    <!-- Plate II -->
     <article class="card">
       <div class="body">
         <h3 class="pt">Where the electrons want to order</h3>
@@ -188,6 +211,7 @@
       </div>
     </article>
 
+    <!-- Plate III -->
     <article class="card">
       <div class="body">
         <h3 class="pt">Portfolio selection as an Ising ground state</h3>
@@ -225,6 +249,7 @@
       </div>
     </article>
 
+    <!-- Plate IV -->
     <article class="card">
       <div class="body">
         <h3 class="pt">Moiré periodicity in twisted bilayers</h3>
@@ -256,6 +281,7 @@
       </div>
     </article>
 
+    <!-- Plate V -->
     <article class="card">
       <div class="body">
         <h3 class="pt">The two-dimensional Ising model</h3>
@@ -289,22 +315,25 @@
   </div>
 </div>
 
+<!-- ══ WORK (overview, ledger, method, exploring) ═════════════ -->
 <div class="view" id="v-work">
   <div class="pad">
+    <p class="eyebrow"><b>01</b><span>Research</span></p>
     <h2>Research</h2>
     <div class="lead">
       <p>My PhD research, supervised by Sébastien Burdin at the Laboratoire Ondes et Matière d'Aquitaine (CNRS, Université de Bordeaux) and defended in November 2025, focused on the infinite-layer nickelates \(R\mathrm{NiO_2}\). Discovered to <span class="term" tabindex="0" data-def="Electrical conduction with no resistive loss, below a material-specific critical temperature.">superconduct</span> in 2019, these compounds are structural and electronic analogues to copper-oxide superconductors. However, experimental observations deviate significantly from the standard one-band cuprate model.</p>
-
-      <p>To address this discrepancy, I developed a two-band model: the primary nickel \(3d_{x^2-y^2}\) band hybridized with a secondary interstitial band. This second band conducts current across specific regions of the phase diagram, granting the <span class="term" tabindex="0" data-def="The boundary in momentum space between filled and empty electron states. Transport, magnetism and superconductivity are all governed by the states sitting closest to it.">Fermi surface</span> a high sensitivity to applied pressure and oxygen stoichiometry—degrees of freedom fundamentally absent in one-band descriptions. A single set of parameters within this model captures the physics of both the \(R\mathrm{NiO_3}\) and \(R\mathrm{NiO_2}\) families.</p>
-
+      
+      <p>To address this discrepancy, I developed a two-band model: the primary nickel \(3d_{x^2-y^2}\) band hybridized with a secondary interstitial band. This second band conducts current across specific regions of the phase diagram, granting the <span class="term" tabindex="0" data-def="The boundary in momentum space between filled and empty electron states. Transport, magnetism and superconductivity are all governed by the states sitting closest to it.">Fermi surface</span> a high sensitivity to applied pressure and oxygen stoichiometry—degrees of freedom fundamentally absent in one-band descriptions. Crucially, a single set of parameters within this model captures the physics of both the \(R\mathrm{NiO_3}\) and \(R\mathrm{NiO_2}\) families.</p>
+      
       <p>This framework yields a directly testable prediction: the characteristic charge/spin ordering wavevector of the electrons is not rigidly pinned by the crystal lattice, as previously assumed, but varies continuously with doping and pressure. This shift can be verified via scattering experiments. Simulation 2 allows you to adjust these physical controls and observe the peak displacement in real time. Published in <a class="inline" href="https://doi.org/10.1088/1361-648X/ada908">J. Phys.: Condens. Matter <b>37</b>, 125703 (2025)</a>; preprint <a class="inline" href="https://arxiv.org/abs/2407.16042">arXiv:2407.16042</a>; <a class="inline" href="https://theses.hal.science/tel-05502836">thesis (open access)</a>.</p>
-
+      
       <p>As a postdoctoral researcher at INMA in Zaragoza, within the ML-QSIM project, I now apply this analytical framework to a broader class of computationally heavy problems governed by similar mechanics: high-dimensional state spaces driven by a tunable control parameter, leading to a critical threshold where macroscopic behavior shifts. Concretely, this includes neural networks used to represent many-body quantum states, <em>ab initio</em> predictions of battery aging, and mapping combinatorial optimization problems onto statistical physics models. Each simulation below isolates and visualizes the critical threshold for these respective systems.</p>
     </div>
 
     <hr class="vrule">
+    <p class="eyebrow"><b>02</b><span>Summary</span></p>
     <h2>Models, control parameters, and checks</h2>
-    <p class="lead">Five of these rows correspond to the simulations above; the other two are work in progress. The last column lists what each model was checked against.</p>
+    <p class="lead">Five of these seven rows are the simulations above; two are still in progress. The last column says what each model was checked against, which is what makes the rest verifiable.</p>
     <div class="ledwrap">
       <table>
         <thead><tr><th>System</th><th>Reduced to</th><th>Control</th><th>Threshold</th><th>Validated against</th></tr></thead>
@@ -320,11 +349,24 @@
       </table>
     </div>
     <p class="scrollhint">→ table scrolls sideways</p>
+
+    <hr class="vrule">
+    <p class="eyebrow"><b>03</b><span>Method</span></p>
+    <h2>Method</h2>
+    <p class="lead">Every model above was built in the same four steps, in that order. The order matters more than any single technique: most of the work is in the first step, and most of the mistakes are caught in the last.</p>
+    <div class="steps">
+      <div class="step"><span class="n">01</span><h3>Reduce</h3><p>Identify the minimal set of moving parts that still produces the behaviour — two bands for a nickelate, holdings and correlations for a portfolio. This step sets the ceiling on everything after it: the reduction decides what the computation is able to tell you.</p></div>
+      <div class="step"><span class="n">02</span><h3>Formulate</h3><p>Write it in a form that established mathematics already knows how to attack — an energy function, a landscape to minimise. Then what you can say about the answer is a result, not just a number the code returned.</p></div>
+      <div class="step"><span class="n">03</span><h3>Compute</h3><p>Vectorise the inner loops, move the expensive parts onto GPUs or the cluster, and check against cases with known exact answers before running anything large.</p></div>
+      <div class="step"><span class="n">04</span><h3>Validate</h3><p>Compare against experiment, independent data, or an exact solution — specifically against data the model was not built to reproduce. Where prediction and measurement diverge, the discrepancy identifies precisely which assumption to revisit.</p></div>
+    </div>
   </div>
 </div>
 
+<!-- ══ RECORD ═════════════════════════════════════════════════ -->
 <div class="view" id="v-record">
   <div class="pad">
+    <p class="eyebrow"><b>04</b><span>Record</span></p>
     <div class="cvhead">
       <h2>Publications and training</h2>
       <a class="btn ghost" href="Alpesh_Sheth_CV.pdf" download="">PDF</a>
@@ -429,21 +471,24 @@
     </div>
 
     <hr class="vrule">
-    <h2>Current work</h2>
-    <p class="lead">Work in progress, and what each project still has to establish.</p>
+    <p class="eyebrow"><b>05</b><span>What is next</span></p>
+    <h2>Where the work is going</h2>
+    <p class="lead">Four active threads. Each has the same shape as the work above — a large space of possibilities, one dial, a threshold worth finding. For each I have said what remains to be established.</p>
     <div class="tiles">
-      <div><h3>Neural-network quantum states</h3><p>Writing a quantum state down explicitly costs twice as much memory for every particle added, which puts the practical reach at a few tens of particles. A neural network can represent the state compactly instead, trained by Monte Carlo and checked against <span class="term" tabindex="0" data-def="Exact numerical solution of a small quantum system by direct diagonalisation of its Hamiltonian; used as a reference for approximate methods.">exact answers</span> wherever those are still computable. This is my main line of work at INMA, within the ML-QSIM project, with particular attention to diagnosing sampler quality, so that an energy that looks converged can be trusted. Open directions: frustrated magnets, fermions in two dimensions, finite temperature, real-time dynamics, and neutral-atom hardware.</p></div>
-      <div><h3>Ab initio battery modelling</h3><p>Quantities computed from first-principles chemistry — how easily lithium moves, how much a site holds, what voltage results — fed as priors into the <span class="term" tabindex="0" data-def="Doyle–Fuller–Newman: the standard continuum model of a lithium-ion cell, treating porous electrodes and electrolyte transport.">Doyle–Fuller–Newman</span> cell model, the standard engineering description of a battery. Where that model and real cycling data disagree systematically, the disagreement is the signal, and it becomes the target for predicting cell lifetime.</p></div>
-      <div><h3>Benchmarking quantum-inspired optimisation</h3><p>Classical and quantum-inspired solvers run on identical problems, under one metric, against exact baselines — so that a reported speed-up reflects the solver and not a quietly changed convention. Simulation 3 is the public version.</p></div>
-      <div><h3>Statistical physics of market microstructure</h3><p>An order book is a large number of agents each making a buy-or-sell decision, pushed far from equilibrium — formally close to a spin system. Whether the sudden shifts in market behaviour can be described in <span class="term" tabindex="0" data-def="A qualitative change in the collective state of a system, driven by the alignment of many local interactions.">the same language as phase transitions</span> is an open question, and establishing the answer either way is the useful result.</p></div>
+      <div><span class="tag">Active</span><h3>Neural-network quantum states</h3><p>Writing a quantum state down explicitly costs twice as much memory for every particle added, which puts the practical reach at a few tens of particles. A neural network can represent the state compactly instead, trained by Monte Carlo and checked against <span class="term" tabindex="0" data-def="Exact numerical solution of a small quantum system by direct diagonalisation of its Hamiltonian; used as a reference for approximate methods.">exact answers</span> wherever those are still computable. This is my main line of work at INMA, within the ML-QSIM project, with particular attention to diagnosing sampler quality, so that an energy that looks converged can be trusted. Open directions: frustrated magnets, fermions in two dimensions, finite temperature, real-time dynamics, and neutral-atom hardware.</p></div>
+      <div><span class="tag">Validating</span><h3>Ab initio battery modelling</h3><p>Quantities computed from first-principles chemistry — how easily lithium moves, how much a site holds, what voltage results — fed as priors into the <span class="term" tabindex="0" data-def="Doyle–Fuller–Newman: the standard continuum model of a lithium-ion cell, treating porous electrodes and electrolyte transport.">Doyle–Fuller–Newman</span> cell model, the standard engineering description of a battery. Where that model and real cycling data disagree systematically, the disagreement is the signal, and it becomes the target for predicting cell lifetime.</p></div>
+      <div><span class="tag">Measuring</span><h3>Benchmarking quantum-inspired optimisation</h3><p>Classical and quantum-inspired solvers run on identical problems, under one metric, against exact baselines — so that a reported speed-up reflects the solver and not a quietly changed convention. Simulation 3 is the public version.</p></div>
+      <div><span class="tag">Formulating</span><h3>Statistical physics of market microstructure</h3><p>An order book is a large number of agents each making a buy-or-sell decision, pushed far from equilibrium — formally close to a spin system. Whether the sudden shifts in market behaviour can be described in <span class="term" tabindex="0" data-def="A qualitative change in the collective state of a system, driven by the alignment of many local interactions.">the same language as phase transitions</span> is an open question, and establishing the answer either way is the useful result.</p></div>
     </div>
   </div>
 </div>
 
+<!-- ══ CONTACT ════════════════════════════════════════════════ -->
 <div class="view" id="v-contact">
   <div class="pad">
+    <p class="eyebrow"><b>06</b><span>Contact</span></p>
     <h2>Contact</h2>
-    <p class="lead">Email is the best way to reach me. I am based in Zaragoza, Spain.</p>
+    <p class="lead">If you are wrestling with a complex system that stubbornly resists being reduced to its mathematical essentials, or a critical threshold currently hiding in the noise, I would like to hear about it. Email is the most reliable way to reach me. I am based in Zaragoza, Spain.</p>
     <ul class="links">
       <li><a href="mailto:alpeshsheth.phy@gmail.com">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 5.5A1.5 1.5 0 0 1 3.5 4h17A1.5 1.5 0 0 1 22 5.5v13a1.5 1.5 0 0 1-1.5 1.5h-17A1.5 1.5 0 0 1 2 18.5v-13Zm2 .7v12.3h16V6.2l-7.5 6a1 1 0 0 1-1.25 0L4 6.2Zm1.9-.7 6.1 4.9L18.1 5.5H5.9Z"></path></svg>
@@ -462,6 +507,15 @@
         <span><b>CV</b>Download PDF</span></a></li>
     </ul>
 
+    <div class="telemetry" id="telemetry">
+      <canvas id="mapCanvas" role="img" aria-label="Map of visitor locations"></canvas>
+      <div class="tstats" id="tstats" aria-live="polite">
+        <div class="tstat"><span class="tk">Visits</span><b class="tv" id="tVisits">—</b></div>
+        <div class="tstat"><span class="tk">Countries</span><b class="tv" id="tCountries">—</b></div>
+        <div class="tstat wide"><span class="tk">You are here</span><b class="tv" id="tHere">locating…</b></div>
+      </div>
+    </div>
+
     <p class="acolophon">
       <span>© <span id="year">2026</span> Alpesh Sheth</span>
       <span>last updated <time id="lastUpdated" datetime="2026-11-04">4 November 2026</time></span>
@@ -469,14 +523,14 @@
   </div>
 </div>
 
-</div>
+</div><!-- /.views -->
 
 <nav class="tabs" id="tabs" aria-label="Sections">
-  <button class="on" data-view="home"><span>Home</span></button>
-  <button data-view="plates"><span>Simulations</span></button>
-  <button data-view="work"><span>Work</span></button>
-  <button data-view="record"><span>Record</span></button>
-  <button data-view="contact"><span>Contact</span></button>
+  <button class="on" data-view="home"><span class="no">01</span><span>Home</span></button>
+  <button data-view="plates"><span class="no">02</span><span>Simulations</span></button>
+  <button data-view="work"><span class="no">03</span><span>Work</span></button>
+  <button data-view="record"><span class="no">04</span><span>Record</span></button>
+  <button data-view="contact"><span class="no">05</span><span>Contact</span></button>
 </nav>
 
 <div id="appOverlay" hidden="">
@@ -491,6 +545,10 @@
 
 <script src="main.js"></script>
 <script>
+/* ══ app shell: view switching + plate carousel ═══════════════
+   Views are display:none when inactive, so their canvases measure
+   zero. After every switch the engine's redraw hooks re-run and a
+   synthetic resize re-allocates the GPU lattice. */
 (function(){
   const views = [...document.querySelectorAll(".view")];
   const tabs  = [...document.querySelectorAll("#tabs button")];
@@ -501,7 +559,9 @@
     document.body.dataset.view = name;
     views.forEach(v => v.classList.toggle("on", v.id === "v" + "-" + name));
     tabs.forEach(t => t.classList.toggle("on", t.dataset.view === name));
-
+    /* the newly-shown view has not been laid out yet in this frame, so
+       a canvas that measures its parent would read zero. Wait one full
+       frame past the style change before re-measuring. */
     requestAnimationFrame(() => requestAnimationFrame(() => {
       if (window.redrawAll) window.redrawAll();
       dispatchEvent(new Event("resize"));
@@ -515,6 +575,12 @@
     show(g.dataset.go);
   });
 
+  /* ── control drawer ─────────────────────────────────────────
+     Each figure's controls are wrapped in a collapsible region with a
+     handle. The drawer is a sibling of the scrolling prose rather than
+     an overlay, so it cannot cover the figure; collapsing it simply
+     returns that height to the figure. The handle carries a summary of
+     the live state, so the reader loses nothing by closing it. */
   document.querySelectorAll(".sheet").forEach((sheet, n) => {
     const inner = document.createElement("div");
     inner.className = "sheet-inner";
@@ -533,7 +599,7 @@
       sheet.dataset.open = String(open);
       handle.setAttribute("aria-expanded", String(open));
     };
-
+    /* open where there is room for both, closed on short screens */
     set(innerHeight > 680);
     handle.addEventListener("click", () => {
       set(sheet.dataset.open !== "true");
@@ -542,7 +608,7 @@
   });
 
   function goCard(i){
-    track.scrollTo({ left: i * track.clientWidth, behavior: "smooth" });
+    track.scrollTo({ left: i * track.clientWidth, behaviour: "smooth" });
   }
   pnav.forEach((b, i) => b.addEventListener("click", () => goCard(i)));
   let st;
@@ -556,6 +622,7 @@
   }, { passive: true });
 })();
 </script>
-<script defer="" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon="{&quot;token&quot;: &quot;58e89f8f1438432b83573861b438fc01&quot;}"></script>
+<!-- Cloudflare Web Analytics --><script defer="" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon="{&quot;token&quot;: &quot;58e89f8f1438432b83573861b438fc01&quot;}"></script><!-- End Cloudflare Web Analytics -->
+
 
 </body></html>
