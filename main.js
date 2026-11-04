@@ -1344,6 +1344,11 @@ const PROFILE = {
       links: [{ label: "arXiv:2108.12683", url: "https://arxiv.org/abs/2108.12683" }] },
   ],
   timeline: [
+    { key: "2026 – present",
+      title: "Postdoctoral Research Associate, Instituto de Nanociencia y Materiales de Aragón (INMA, CSIC – Universidad de Zaragoza)",
+      points: [
+        "Machine learning for quantum many-body simulation within the ML-QSIM project (INMA node), ATMOS group",
+        "Neural-network quantum states trained by variational Monte Carlo, with a focus on sampler quality and diagnostics"] },
     { key: "2021 – 2025",
       title: "Doctoral Researcher, Laboratoire Ondes et Matière d'Aquitaine (UMR 5798, CNRS), Université de Bordeaux",
       points: [

@@ -2,7 +2,7 @@
 
 **Ph.D. in Computational Condensed Matter Physics**
 
-📍 Bordeaux, France | ✉️ [alpeshsheth.phy@gmail.com](mailto:alpeshsheth.phy@gmail.com)
+📍 Zaragoza, Spain | ✉️ [alpeshsheth.phy@gmail.com](mailto:alpeshsheth.phy@gmail.com)
 
 ---
 
@@ -10,10 +10,17 @@
 
 * **Programming Languages**: Python, C++, Fortran, Julia, Bash scripting, MATLAB, LaTeX.
 * **Data Science & ML**: API Integration, Data Pipeline Automation, Predictive Modeling, Statistical Analysis.
-* **Simulation Methods**: Green's Functions, DMFT, DFT (VASP, Quantum ESPRESSO), Molecular Dynamics (LAMMPS), Exact Diagonalization.
-* **Tools**: Git/GitHub, HPC (Slurm) environments, TRIQS, CP2K.
+* **Simulation Methods**: Green's Functions, DMFT, Variational Monte Carlo, Neural-Network Quantum States, Tensor Networks, DFT (VASP, Quantum ESPRESSO), Molecular Dynamics (LAMMPS), Exact Diagonalization.
+* **Tools**: Git/GitHub, HPC (Slurm, OpenMP, MPI) environments, TRIQS, CP2K.
 
 ## 💼 Experience
+
+### Postdoctoral Research Associate | INMA (CSIC – Universidad de Zaragoza), Zaragoza, Spain
+
+*2026 – present*
+
+* Machine learning for quantum many-body simulation within the ML-QSIM project (INMA node), ATMOS group.
+* Neural-network quantum states trained by variational Monte Carlo, with a focus on sampler quality and diagnostics.
 
 ### Ph.D. Researcher | LOMA UMR-5798, CNRS, Bordeaux, France
 
