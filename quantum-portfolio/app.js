@@ -1,35 +1,9 @@
-/* ================================================================
-   QUANTUM PORTFOLIO — front-end engine
-   ----------------------------------------------------------------
-   Two modes, one interface:
-
-   DEMO (default, free-hostable):
-     Bundled snapshot data and a textbook single-flip simulated
-     annealer, so the interface is fully functional in public.
-     The demo solver is intentionally generic; it is NOT the
-     production algorithm.
-
-   PRODUCTION (private):
-     Set CONFIG.backendURL to your solver's endpoint. The GUI then
-     POSTs the problem and renders your engine's results and trace.
-     Contract (see README.md):
-       POST {backendURL}/solve
-         body: { tickers, dateFrom, dateTo, params:{K, maxSector, lambda, epochs} }
-         resp: { selection:[tickers], trace:[energyPerStep],
-                 metrics:{return, vol, sharpe, hhi, maxSector} }
-   No calculation code from the production engine lives here.
-   ================================================================ */
 "use strict";
 
 const CONFIG = {
-  backendURL: null,          // e.g. "http://127.0.0.1:8000" for production mode
+  backendURL: null,
 };
 
-/* ================================================================
-   DEMO SNAPSHOT — static, illustrative data (annualized return
-   proxies and sector labels). Clearly synthetic: for showcasing
-   the interface, not for investment decisions.
-   ================================================================ */
 const SNAPSHOT = {
   AAPL: { name: "Apple Inc.",             sector: "Technology",        ret: 0.339 },
   TSLA: { name: "Tesla, Inc.",            sector: "Consumer Cyclical", ret: 0.721 },
@@ -49,7 +23,6 @@ const PRESETS = {
   conservative: { K: 5, maxSector: 40,  lambda: 0.85, epochs: 1500 },
 };
 
-/* deterministic RNG so the demo covariance is reproducible */
 function mulberry32(a) {
   return function () {
     a |= 0; a = (a + 0x6D2B79F5) | 0;
@@ -59,8 +32,6 @@ function mulberry32(a) {
   };
 }
 
-/* synthetic covariance: sector-block correlation on top of
-   individual volatilities scaled with |return| */
 function buildCov(tickers) {
   const rng = mulberry32(20240101);
   const n = tickers.length;
@@ -75,7 +46,7 @@ function buildCov(tickers) {
       cov[i][j] = rho * vol[i] * vol[j];
     }
   }
-  /* symmetrize (rng calls above break symmetry) */
+
   for (let i = 0; i < n; i++)
     for (let j = i + 1; j < n; j++) {
       const v = 0.5 * (cov[i][j] + cov[j][i]);
@@ -84,12 +55,6 @@ function buildCov(tickers) {
   return cov;
 }
 
-/* ================================================================
-   DEMO SOLVER — textbook simulated annealing on the QUBO
-     E(x) = −Σ h_i x_i + λ Σ J_ij x_i x_j
-            + A (Σ x_i − K)² + B Σ_sectors max(0, n_s − cap_s)²
-   Single-flip Metropolis, geometric cooling. Generic by design.
-   ================================================================ */
 function demoAnneal(tickers, params, onStep, onDone) {
   const n = tickers.length;
   const cov = buildCov(tickers);
@@ -98,13 +63,13 @@ function demoAnneal(tickers, params, onStep, onDone) {
   const capCount = Math.max(1, Math.floor((params.maxSector / 100) * K + 1e-9));
   const sectors = tickers.map(t => SNAPSHOT[t].sector);
   const sectorNames = [...new Set(sectors)];
-  const A = 0.8, B = 0.8;                    // constraint penalty weights (demo)
-  const RISK_SCALE = 5;                      // sets the units of the risk term so
-                                             // that lambda spans a visible range
+  const A = 0.8, B = 0.8;
+  const RISK_SCALE = 5;
+
   const rng = mulberry32(Date.now() & 0xffffffff);
 
   let x = new Array(n).fill(0);
-  /* start from a random feasible-ish state: K random picks */
+
   const order = [...Array(n).keys()].sort(() => rng() - 0.5);
   for (let i = 0; i < Math.min(K, n); i++) x[order[i]] = 1;
 
@@ -136,7 +101,7 @@ function demoAnneal(tickers, params, onStep, onDone) {
   const trace = [];
 
   function tick() {
-    /* a handful of Metropolis steps per frame keeps the animation legible */
+
     const perFrame = Math.max(1, Math.round(epochs / 240));
     for (let r = 0; r < perFrame && step < epochs; r++, step++) {
       const i = (rng() * n) | 0;
@@ -147,7 +112,7 @@ function demoAnneal(tickers, params, onStep, onDone) {
         E = Enew;
         if (E < best.E) best = { E, x: [...x] };
       } else {
-        x[i] ^= 1;                            // reject: undo flip
+        x[i] ^= 1;
       }
       T *= cool;
       trace.push(E);
@@ -159,9 +124,6 @@ function demoAnneal(tickers, params, onStep, onDone) {
   requestAnimationFrame(tick);
 }
 
-/* ================================================================
-   METRICS — equal-weight portfolio over the selected assets
-   ================================================================ */
 function computeMetrics(selection, cov, tickers) {
   const k = selection.length;
   if (!k) return null;
@@ -179,9 +141,6 @@ function computeMetrics(selection, cov, tickers) {
   return { ret, vol, sharpe: vol > 0 ? ret / vol : 0, hhi, maxSector, perSector };
 }
 
-/* ================================================================
-   UI
-   ================================================================ */
 const $ = id => document.getElementById(id);
 
 const ui = {
@@ -256,19 +215,13 @@ function readUniverse() {
     .filter(t => t && SNAPSHOT[t]);
 }
 
-/* ---------------- trace canvas ---------------- */
-/* Kept so the trace can be repainted without re-running the anneal —
-   on resize, and when the host page changes colour scheme (the stroke
-   colour is read from CSS). */
 let lastTrace = [];
 function drawTrace(trace) {
   lastTrace = trace || [];
   const c = ui.trace, ctx = c.getContext("2d");
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
   const w = c.clientWidth * dpr, hgt = c.clientHeight * dpr;
-  /* both dimensions, not just width: the stylesheet shortens this
-     canvas on short viewports, and testing width alone left the
-     backing store at the old height and stretched the plot */
+
   if (c.width !== w || c.height !== hgt) { c.width = w; c.height = hgt; }
   ctx.clearRect(0, 0, w, hgt);
   if (trace.length < 2) return;
@@ -283,15 +236,13 @@ function drawTrace(trace) {
     const yp = pad + (1 - (trace[i] - lo) / (hi - lo)) * (hgt - 2 * pad);
     i === 0 ? ctx.moveTo(xp, yp) : ctx.lineTo(xp, yp);
   }
-  /* fallback is the site's Ni-blue, not the app's retired teal — it only
-     fires if the skin failed to load, and should still look intentional */
+
   ctx.strokeStyle = getComputedStyle(document.documentElement)
     .getPropertyValue("--accent").trim() || "#1436E8";
   ctx.lineWidth = 1.3 * dpr;
   ctx.stroke();
 }
 
-/* ---------------- results rendering ---------------- */
 function esc(t) {
   const d = document.createElement("div");
   d.textContent = t;
@@ -310,7 +261,6 @@ function renderResults(selection, cov, tickers, params) {
   ui.cards.sector.textContent = pct(m.maxSector);
   ui.cards.sector.classList.toggle("warn", m.maxSector * 100 > params.maxSector + 1e-6);
 
-  /* sector bars */
   ui.sectorBars.innerHTML = Object.entries(m.perSector)
     .sort((a, b) => b[1] - a[1])
     .map(([s, wgt]) => `
@@ -320,7 +270,6 @@ function renderResults(selection, cov, tickers, params) {
              style="width:${Math.min(100, wgt * 100).toFixed(1)}%"></div></div>
       </div>`).join("");
 
-  /* asset table, sorted by return */
   const w = 1 / selection.length;
   ui.assetRows.innerHTML = [...selection]
     .sort((a, b) => SNAPSHOT[b].ret - SNAPSHOT[a].ret)
@@ -334,7 +283,6 @@ function renderResults(selection, cov, tickers, params) {
       </tr>`).join("");
 }
 
-/* ---------------- solve orchestration ---------------- */
 let running = false;
 
 async function solve() {
@@ -352,7 +300,7 @@ async function solve() {
   setStatus("running", "annealing");
 
   if (CONFIG.backendURL) {
-    /* PRODUCTION MODE — the GUI only renders; the engine computes */
+
     try {
       const res = await fetch(CONFIG.backendURL.replace(/\/$/, "") + "/solve", {
         method: "POST",
@@ -367,7 +315,7 @@ async function solve() {
       if (!res.ok) throw new Error("HTTP " + res.status);
       const out = await res.json();
       drawTrace(out.trace || []);
-      const cov = buildCov(tickers);      // display-only fallback for metrics
+      const cov = buildCov(tickers);
       renderResults(out.selection, cov, tickers, params);
       ui.bestOut.textContent = out.trace ? out.trace[out.trace.length - 1].toFixed(4) : "–";
       ui.scheduleFill.style.width = "100%";
@@ -381,7 +329,6 @@ async function solve() {
     return;
   }
 
-  /* DEMO MODE */
   demoAnneal(tickers, params,
     ({ step, epochs, T, E, bestE, trace }) => {
       ui.stepOut.textContent = `${step} / ${epochs}`;
@@ -418,7 +365,6 @@ function reset() {
 ui.solveBtn.addEventListener("click", solve);
 ui.resetBtn.addEventListener("click", reset);
 
-/* mode badge */
 if (CONFIG.backendURL) {
   ui.modeBadge.textContent = "production engine";
   ui.modeBadge.classList.add("live");
@@ -426,9 +372,6 @@ if (CONFIG.backendURL) {
 }
 setStatus("", "idle");
 
-/* Repaint hook for the host page: the trace is drawn once when the
-   anneal finishes and then never again, so rotating a phone stretched
-   it and a colour-scheme change left it drawn in the old accent. */
 window.redrawApp = () => drawTrace(lastTrace);
 let traceResize;
 window.addEventListener("resize", () => {

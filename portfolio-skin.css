@@ -1,37 +1,15 @@
-/* ═══════════════════════════════════════════════════════════════
-   Quantum Portfolio · site skin
-   ---------------------------------------------------------------
-   app.css carries the instrument's layout and logic. This file is
-   the only thing that decides how it LOOKS, and it exists so the
-   window opened from the site reads as part of the same document
-   rather than as a foreign application.
-
-   The app predates the paper theme: it was designed neon-on-black,
-   with pill radii, glow shadows, Quicksand/Nunito/Red Hat Mono and
-   a teal ramp. Everything below re-expresses it in the site's own
-   vocabulary — paper and ink, hairline plates, Ni-blue and
-   rare-earth vermilion, Instrument Sans / Newsreader / JetBrains
-   Mono — without touching a line of the app's markup.
-
-   The type scale is restated here rather than imported: style.css
-   also carries body, section and heading rules that would fight the
-   app's grid. Only the tokens travel, and they are the same numbers.
-   ═══════════════════════════════════════════════════════════════ */
-
 :root{
-  /* ── surface and ink ─────────────────────────────────────────── */
+
   --bg:#F8F8F6; --bg-2:#F3F3F0; --surface:#FCFCFB; --surface-2:#F6F6F3;
   --ink:#0E0F11; --ink-2:#22262C; --muted:#5C6169; --faint:#8A9099;
   --line:rgba(14,15,17,.13); --line-2:rgba(14,15,17,.07);
   --sink:rgba(14,15,17,.04);
   --red:#E2431F; --green:#1F7A4C;
 
-  /* the band colours of the site: Ni-blue carries every accent */
   --accent:#1436E8; --accent-2:#0F27A6; --accent-hot:#4E6BFF;
   --accent-soft:rgba(20,54,232,.08);
   --ramp:linear-gradient(90deg,#1436E8 0%,#7C8AF0 42%,#F8F8F6 62%,#E2431F 100%);
 
-  /* ── type: the site's ramp, same clamps, nothing under 12px ──── */
   --ff-display:"Instrument Sans",system-ui,-apple-system,sans-serif;
   --ff-body:"Newsreader",Georgia,serif;
   --ff-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
@@ -42,7 +20,6 @@
   --t-body:clamp(16px,1.05vw,17.5px);
   --lh:1.6;
 
-  /* ── surface language: hairline plates, one elevation ────────── */
   --radius:2px;
   --shadow:0 1px 0 color-mix(in oklab,var(--ink) 5%,transparent);
   --shadow-sm:0 1px 0 color-mix(in oklab,var(--ink) 4%,transparent);
@@ -63,9 +40,6 @@ html[data-theme="dark"]{
   color-scheme:dark;
 }
 
-/* Opened directly rather than from the site, with no stored choice, the
-   app should still honour the reader's system setting — the bootstrap in
-   portfolio.html only ever writes an explicit theme. */
 @media(prefers-color-scheme:dark){
   html:not([data-theme="light"]){
     --bg:#0B0C0E; --bg-2:#0E0F12; --surface:#111214; --surface-2:#15161A;
@@ -79,11 +53,6 @@ html[data-theme="dark"]{
   }
 }
 
-/* ══ shape ════════════════════════════════════════════════════════
-   The previous skin flattened corners with *{border-radius:0!important},
-   which also squared the things that are round because they are round:
-   the brand dot and the run-status indicator. Radius is now zeroed only
-   where it described a pill or a card. */
 .mode-badge,.chip,.btn,.card,.panel,.physics-strip,
 #universeInput,.date-row input,#traceCanvas,
 .bar-track,.bar-fill,.schedule-track,.schedule-fill,.sector-tag{
@@ -91,7 +60,6 @@ html[data-theme="dark"]{
 *{text-shadow:none!important}
 .brand::before,.status-dot{border-radius:50%}
 
-/* ══ page ═════════════════════════════════════════════════════════ */
 body{background:var(--bg);color:var(--ink);
   font-family:var(--ff-body);font-size:var(--t-body);line-height:var(--lh);
   font-optical-sizing:auto;font-variation-settings:"opsz" 20}
@@ -99,13 +67,10 @@ body{background:var(--bg);color:var(--ink);
 a{color:var(--accent)}
 a:hover{color:var(--ink)}
 
-/* Held while the page swaps palette, exactly as on the site, so the
-   background, the chrome and the canvases land in one paint. */
 html.theme-swap,html.theme-swap *,
 html.theme-swap *::before,html.theme-swap *::after{
   transition:none!important;animation:none!important}
 
-/* ══ top bar ══════════════════════════════════════════════════════ */
 #topbar{background:color-mix(in oklab,var(--bg) 88%,transparent);
   border-bottom:1px solid var(--line);gap:var(--s3)}
 .brand{font-family:var(--ff-display);font-weight:600;
@@ -115,7 +80,7 @@ html.theme-swap *::before,html.theme-swap *::after{
   color:var(--accent);background:var(--accent-soft)}
 .topbar-status{font-family:var(--ff-mono);font-size:var(--t-micro);
   letter-spacing:.08em;color:var(--muted)}
-/* the app's own scheme toggle, matching the one in the site's bar */
+
 .tgl{font-family:var(--ff-mono);font-size:var(--t-micro);letter-spacing:.1em;
   text-transform:uppercase;background:transparent;border:1px solid var(--line);
   color:var(--muted);padding:var(--s1) var(--s2);min-height:32px;cursor:pointer;
@@ -125,16 +90,11 @@ html.theme-swap *::before,html.theme-swap *::after{
 .status-dot.running{background:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
 .status-dot.done{background:var(--green);box-shadow:0 0 0 3px var(--accent-soft)}
 
-/* ══ canvases ═════════════════════════════════════════════════════
-   Two surfaces in the original are dark by literal value rather than by
-   token and survived the palette swap as black furniture on paper. The
-   id selector on the trace outranks the element rule, so both are named. */
 body canvas{background:var(--surface)}
 #traceCanvas{background:var(--surface);border:1px solid var(--line)}
 .trace-reads{font-family:var(--ff-mono);font-size:var(--t-micro);color:var(--muted)}
 .trace-reads output{color:var(--accent);font-variant-numeric:tabular-nums}
 
-/* ══ sidebar racks ════════════════════════════════════════════════ */
 #sidebar{background:var(--surface-2);border-right:1px solid var(--line);
   font-size:var(--t-mono)}
 .rack-head{font-family:var(--ff-mono);color:var(--muted);
@@ -148,7 +108,6 @@ body canvas{background:var(--surface)}
   min-height:38px;padding:var(--s2) var(--s3)}
 #universeInput:focus,.date-row input:focus{border-color:var(--accent);outline:none}
 
-/* ══ controls: the same button and slider as the site ═════════════ */
 .chip{font-family:var(--ff-mono);font-size:var(--t-micro);letter-spacing:.04em;
   color:var(--muted);background:transparent;border:1px solid var(--line);
   padding:var(--s1) var(--s3);min-height:32px;display:inline-flex;align-items:center;
@@ -178,8 +137,6 @@ body canvas{background:var(--surface)}
 .ctrl label{color:var(--muted);letter-spacing:.04em}
 .ctrl output{color:var(--ink);font-weight:500;font-variant-numeric:tabular-nums}
 
-/* the site's range control, reproduced exactly: a legible groove with
-   the travelled portion filled, and a ring thumb rather than a dot */
 input[type=range]{-webkit-appearance:none;appearance:none;
   height:20px;background:transparent;cursor:ew-resize}
 input[type=range]::-webkit-slider-runnable-track{height:3px;border-radius:2px;
@@ -199,7 +156,6 @@ input[type=range]:focus{outline:none}
 input[type=range]:focus-visible::-webkit-slider-thumb{
   box-shadow:0 0 0 3px var(--surface),0 0 0 5px var(--accent)}
 
-/* ══ plates: metric cards, panels, bars, table ════════════════════ */
 .physics-strip,.panel,.card{background:var(--surface);
   border:1px solid var(--line);box-shadow:none}
 .card:hover{transform:none;box-shadow:none;border-color:var(--ink)}
@@ -238,8 +194,7 @@ input[type=range]:focus-visible::-webkit-slider-thumb{
 .sector-tag{font-family:var(--ff-mono);font-size:var(--t-micro);
   background:var(--accent-soft);color:var(--accent)}
 .empty{font-family:var(--ff-mono);font-size:var(--t-mono);color:var(--faint)}
-/* The byline carries the same weight and case as the site's own brand,
-   so the instrument reads as signed work rather than an anonymous demo. */
+
 #appfoot{font-family:var(--ff-mono);color:var(--faint);font-size:var(--t-micro);
   border-top:1px solid var(--line);display:flex;flex-wrap:wrap;
   justify-content:space-between;gap:var(--s2) var(--s5);align-items:baseline}
@@ -253,13 +208,6 @@ input[type=range]:focus-visible::-webkit-slider-thumb{
 
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
-/* ══ narrow screens ═══════════════════════════════════════════════
-   The app was built as a 290px control rack beside the results. Stacked
-   on a phone that ordering puts four racks of inputs above the numbers,
-   so the reader arrives at a wall of controls and has to scroll to find
-   out what the instrument did. The results come first and the rack sits
-   under them, which is also the order the site's own plates use: figure,
-   then the drawer that drives it. */
 @media(max-width:950px){
   #layout{display:flex;flex-direction:column}
   #main{order:1}
@@ -270,8 +218,7 @@ input[type=range]:focus-visible::-webkit-slider-thumb{
   .card-value{font-size:1.25rem}
   #topbar{padding:var(--s2) var(--s4);gap:var(--s2)}
   .brand{font-size:var(--t-mono)}
-  /* the run-state label is the first thing to lose on a narrow bar;
-     the dot still reports the state */
+
   .topbar-status span:not(.status-dot){display:none}
   #main{padding:var(--s4) var(--s4) var(--s5);gap:var(--s5)}
   #sidebar{padding:var(--s5) var(--s4) var(--s4)}
@@ -282,8 +229,7 @@ input[type=range]:focus-visible::-webkit-slider-thumb{
   #assetTable{min-width:30rem}
   .btn{min-height:46px}
 }
-/* a phone in landscape inside the overlay has very little height; the
-   trace is the one element that can afford to give some back */
+
 @media(max-height:520px){
   #traceCanvas{height:96px}
 }

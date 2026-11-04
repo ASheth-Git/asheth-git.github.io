@@ -1,10 +1,5 @@
 User-agent: *
 Allow: /
-
-# The phone shell is the same content as the desktop page, chosen by
-# device rather than by URL, so it is excluded to avoid duplicate-content
-# dilution of the canonical page.
-Disallow: /app_v2.html
-Disallow: /data/
+Disallow: /mobile.html
 
 Sitemap: https://asheth-git.github.io/sitemap.xml

@@ -1,22 +1,5 @@
-/* ═══════════════════════════════════════════════════════════════
-   ALPESH SHETH — v2 engine
-   ---------------------------------------------------------------
-   ambient   Brillouin zone of RNiO₂ by absorption through A(k,0)
-   plate I   two-band fermiology, draggable E_F, marching squares
-   plate II  Lindhard χ₀(q), progressive row-by-row evaluation
-   plate III Ising portfolio annealer, graded against enumeration
-   plate IV  moiré superlattice, exact primitive cell
-   plate V   2D Ising model, checkerboard Metropolis on the GPU
-   record    publications / timeline / education / talks
-   footer    dot-matrix visitor map (Vercel KV)
-   ---------------------------------------------------------------
-   Every init is guarded on its own DOM, so index.html and
-   app_v2.html share this file and each gets only what it holds.
-   ═══════════════════════════════════════════════════════════════ */
 "use strict";
 
-/* mulberry32: 32-bit state, uniform on [0,1), no dependence on
-   Math.random's implementation-defined sequence */
 function makeRNG(seed) {
   let a = seed >>> 0;
   return function () {
@@ -27,8 +10,7 @@ function makeRNG(seed) {
     return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
   };
 }
-/* stable hash of a parameter tuple → a seed, so "same inputs,
-   same output" holds across reloads, browsers and machines */
+
 const seedOf = (...parts) => {
   let h = 2166136261 >>> 0;
   const s = parts.join("|");
@@ -43,8 +25,6 @@ const SHELL = document.body.classList.contains("app");
 const MOBILE = SHELL || matchMedia("(max-width:880px)").matches;
 const MONO = n => `${n}px "JetBrains Mono", ui-monospace, monospace`;
 
-/* ══ theme palette, read from the stylesheet so CSS stays the
-      single source of truth for colour ══════════════════════════ */
 const P = {};
 function readPalette() {
   const cs = getComputedStyle(document.documentElement);
@@ -71,17 +51,11 @@ const rgbStr = a => `rgb(${a[0]|0},${a[1]|0},${a[2]|0})`;
 const lerpRGB = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
 readPalette();
 
-/* redraw hooks registered by each plate; fired on resize + theme flip */
 const REDRAW = [];
 const redrawAll = () => REDRAW.forEach(f => { try { f(); } catch (e) { console.warn("redraw", e); } });
-/* the mobile shell shows one view at a time; hidden canvases measure 0,
-   so it re-fires this after a tab change */
+
 window.redrawAll = redrawAll;
 
-/* Root fix for "pane is blank until you resize": every canvas watches
-   its own container. Whoever reveals a view — a tab, the carousel, an
-   orientation change — the observer fires once the box has a real size,
-   so no caller has to know which frame layout lands in. */
 const sizeWatch = (() => {
   if (typeof ResizeObserver === "undefined") return () => {};
   const seen = new WeakMap();
@@ -94,21 +68,12 @@ const sizeWatch = (() => {
       seen.set(e.target, w);
       dirty = true;
     }
-    /* redrawing sets canvas heights, which resizes the observed box — do
-       it on the next frame so the write never lands inside the same
-       observation pass that triggered it */
+
     if (dirty && !pending) pending = requestAnimationFrame(() => { pending = 0; redrawAll(); });
   });
   return node => { if (node) ro.observe(node); };
 })();
 
-/* ══ theme toggle ═════════════════════════════════════════════ */
-
-/* The portfolio window is an iframe, i.e. its own document with its own
-   <html>, so it hears nothing when this page changes scheme. It is told
-   directly. Kept next to the toggle rather than inside initAppLaunch so
-   that the two places a scheme can change — the button, and the frame
-   asking on arrival — read from one function. */
 function publishTheme() {
   const frame = el("appFrame");
   if (!frame || !frame.contentWindow || !frame.getAttribute("src")) return;
@@ -116,7 +81,7 @@ function publishTheme() {
     frame.contentWindow.postMessage(
       { type: "as-theme", theme: document.documentElement.dataset.theme },
       window.location.origin === "null" ? "*" : window.location.origin);
-  } catch (e) { /* not loaded yet; it reads localStorage at boot anyway */ }
+  } catch (e) {   }
 }
 addEventListener("message", e => {
   const f = el("appFrame");
@@ -124,9 +89,7 @@ addEventListener("message", e => {
   const d = e.data;
   if (!d || typeof d !== "object") return;
   if (d.type === "as-theme-request") { publishTheme(); return; }
-  /* the app window carries its own toggle — a change made there is the
-     visitor's choice just as much as one made here, so the site follows
-     it rather than fighting it back */
+
   if (d.type === "as-theme" && (d.theme === "light" || d.theme === "dark")) {
     if (document.documentElement.dataset.theme !== d.theme) applyTheme(d.theme);
   }
@@ -138,31 +101,18 @@ const themeLabel = () => {
     document.documentElement.dataset.theme === "dark" ? "Light" : "Dark";
 };
 
-/* The single place a scheme changes. Everything that can trigger one —
-   the button here, the toggle inside the app window, another tab — goes
-   through this, which is what keeps every surface on one scheme. */
 function applyTheme(next, persist) {
   const root = document.documentElement;
   if (next !== "light" && next !== "dark" || root.dataset.theme === next) return;
 
-  /* A theme flip touches three things that otherwise land at three
-     different times: the page background (no transition, snaps), the
-     chrome (180ms colour transitions), and the canvases (repainted from
-     JS). Left alone they tear — the paper goes dark while the plates are
-     still light and the buttons crossfade behind both. Suppressing
-     transitions for the duration collapses all three into a single
-     paint, which reads as an instant, deliberate switch. */
   root.classList.add("theme-swap");
   root.dataset.theme = next;
   if (persist) { try { localStorage.setItem("as-theme", next); } catch (e) {} }
   themeLabel();
   readPalette();
-  /* synchronous, not rAF: the canvases must carry the new palette in the
-     same frame the CSS variables change in. Every plate repaints here,
-     including the ones sitting in a hidden view of the phone shell. */
+
   redrawAll();
-  /* force the style flush while transitions are still off, then hand
-     them back a frame later so ordinary hover states keep animating */
+
   void root.offsetWidth;
   requestAnimationFrame(() => requestAnimationFrame(() => {
     root.classList.remove("theme-swap");
@@ -176,118 +126,12 @@ function initTheme() {
   if (btn) btn.addEventListener("click", () => {
     applyTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark", true);
   });
-  /* a change made in another tab is still this visitor's choice */
+
   addEventListener("storage", e => {
     if (e.key === "as-theme") applyTheme(e.newValue, false);
   });
 }
 
-/* ══ loader: spin glyphs resolving into the full name ══════════ */
-function initLoader() {
-  const box = el("loadName");
-  if (!box) return;
-  const name = "ALPESH SHETH, PhD", glyphs = "↑↓↑↓↕⇅", tick = el("loadTick");
-  const cells = [...name].map(ch => {
-    const s = document.createElement("span");
-    if (ch === " ") s.className = "sp";
-    else if (ch === ",") s.className = "pn";
-    s.textContent = ch === " " ? "\u00A0" : ch;
-    box.appendChild(s);
-    return { s, ch };
-  });
-  if (REDUCE) { el("load").classList.add("done"); return; }
-  const rnd = makeRNG(seedOf("loader"));
-  /* Driven by elapsed time, not by a tick count: a throttled or
-     coalesced timer would otherwise stretch the splash indefinitely and
-     hold the page hostage. Progress is a fraction of a fixed 950ms
-     budget, and each cell resolves at a fraction of that run — so the
-     reveal reads the same on a fast machine and a throttled tab, and
-     works for a name of any length. */
-  const DUR = 950, N = Math.max(cells.length - 1, 1);
-  const settle = () => { cells.forEach(o => { o.s.textContent = o.ch === " " ? "\u00A0" : o.ch; }); };
-  const t0 = performance.now();
-  (function step(now) {
-    const p = Math.min(1, (now - t0) / DUR);
-    cells.forEach((o, i) => {
-      if (o.ch === " ") return;
-      const at = 0.26 + 0.60 * i / N;
-      o.s.textContent = p > at ? o.ch : glyphs[(rnd() * glyphs.length) | 0];
-    });
-    if (tick) tick.innerHTML = "annealing · T/T<sub>c</sub> = " + (3.6 - 2.7 * p).toFixed(2);
-    if (p < 1) { requestAnimationFrame(step); return; }
-    settle();
-    el("load").classList.add("done");
-  })(t0);
-  /* last resort: if rAF never runs (background tab on open), the splash
-     still clears rather than covering the page forever */
-  setTimeout(() => {
-    if (el("load").classList.contains("done")) return;
-    settle();
-    el("load").classList.add("done");
-  }, DUR + 1200);
-}
-
-/* ══ flow animation ═══════════════════════════════════════════ */
-function initReveal() {
-  /* Scripting is available, so the hidden pre-reveal state may be applied.
-     The stylesheet gates it on this class, which means a blocked or broken
-     script leaves the page fully legible instead of blank. */
-  document.documentElement.classList.add("js");
-  document.querySelectorAll(".split").forEach(e => {
-    const words = e.textContent.split(" ").filter(w => w.length);
-    e.textContent = "";
-    words.forEach((word, wi) => {
-      const wrap = document.createElement("span");
-      wrap.className = "wd";
-      for (const c of word) {
-        const s = document.createElement("span");
-        s.className = "ch";
-        s.textContent = c;
-        wrap.appendChild(s);
-      }
-      e.appendChild(wrap);
-      if (wi < words.length - 1) {
-        const sp = document.createElement("span");
-        sp.className = "ch sp";
-        sp.innerHTML = "&nbsp;";
-        e.appendChild(sp);
-      }
-    });
-    [...e.querySelectorAll(".ch")].forEach((c, i) => c.style.transitionDelay = (i * 22) + "ms");
-  });
-  const targets = [...document.querySelectorAll(".split,.rise,hr.rule")];
-  const io = new IntersectionObserver(es => es.forEach(e => {
-    if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
-  }), { threshold: .15, rootMargin: "0px 0px -6% 0px" });
-  targets.forEach(e => io.observe(e));
-
-  /* Failsafe, the same reasoning as the loader's: if frames are never
-     delivered — a background tab, a headless capture, an environment that
-     starves rAF — the observer may not report, and the page would stay
-     invisible. Anything still unrevealed after a short delay is shown. */
-  setTimeout(() => {
-    targets.forEach(e => {
-      const r = e.getBoundingClientRect();
-      if (r.top < innerHeight * 1.2) e.classList.add("in");
-    });
-  }, 1600);
-  /* and before any print, everything is revealed outright */
-  const revealAll = () => targets.forEach(e => e.classList.add("in"));
-  if (typeof matchMedia === "function") {
-    const mq = matchMedia("print");
-    if (mq.addEventListener) mq.addEventListener("change", e => { if (e.matches) revealAll(); });
-  }
-  addEventListener("beforeprint", revealAll);
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   MODEL — two-band tight binding, t = 0.40 eV
-     ε₁ = −2t(cx+cy) + 4t′t·cx·cy         Ni d(x²−y²)
-     ε₂ = −1.10t(cx+cy+cz) + 2.45t        rare-earth / d(z²)
-     E± = ½(ε₁+ε₂) ± √[¼(ε₁−ε₂)² + V²]
-   ε₁(π,0) = −4t′t is a saddle → Lifshitz threshold.
-   ε₂(Γ) at kz=0 = −0.34 eV → the pocket opens.
-   ═══════════════════════════════════════════════════════════════ */
 const T_HOP = 0.40;
 const eps2D = (kx, ky, tp) => {
   const cx = Math.cos(kx), cy = Math.cos(ky);
@@ -304,20 +148,10 @@ const gammaE2 = () => T_HOP * (-1.10 * 3 + 2.45);
 function fit(cv, ar) {
   const dpr = Math.min(2, devicePixelRatio || 1);
   const w = Math.max(260, cv.parentElement.clientWidth);
-  /* Height is the stylesheet's to decide: .pane canvas sets it from
-     --pane-h so every plate is the same size regardless of which grid
-     column it occupies. Read the rendered result rather than recompute
-     it, so the clamp() resolves once, in CSS. The aspect ratio survives
-     only as a fallback for a canvas the stylesheet does not cover. */
+
   let h = Math.round(cv.getBoundingClientRect().height);
   if (h < 40) {
-    /* Either the stylesheet does not cover this canvas, or the view it
-       sits in is display:none and measures zero — in the phone shell
-       that is the normal state for four views out of five. The aspect
-       ratio sizes the bitmap either way, but an inline height is only
-       written when the element is genuinely laid out: writing one while
-       hidden would outrank --pane-h permanently and strand the plate at
-       the fallback size once its tab is finally opened. */
+
     h = Math.round(w * ar);
     if (MOBILE) h = Math.min(h, Math.round(innerHeight * 0.42));
     if (cv.parentElement.clientWidth > 0) cv.style.height = h + "px";
@@ -329,12 +163,6 @@ function fit(cv, ar) {
   return { c, w, h };
 }
 
-/* ═══ AMBIENT — absorption rendering of A(k,0) over the 3D BZ ═══
-   Beer–Lambert on paper: colour = paper · exp(−∫ Σ_b ρ_b σ_b ds).
-   Each band removes a different part of the spectrum, so the d
-   sheet reads blue and the rare-earth pocket reads vermilion.
-   Order-independent, so no depth-sorting artefacts.
-   ══════════════════════════════════════════════════════════════ */
 const BZ_VS = `#version 300 es
 in vec2 p; void main(){gl_Position=vec4(p,0.,1.);}`;
 const BZ_FS = `#version 300 es
@@ -461,10 +289,6 @@ function initAmbient() {
   requestAnimationFrame(frame);
 }
 
-/* No figure is ever left as empty axes. The work starts on first sight
-   if the reader scrolls to it, and otherwise on an idle callback shortly
-   after load — so the state never depends on the path taken through the
-   page (a rail link, a URL hash, or a jump past the figure). */
 let autoStartN = 0;
 function autoStart(fn, node) {
   let started = false;
@@ -476,16 +300,12 @@ function autoStart(fn, node) {
     }, { threshold: 0.15, rootMargin: "200px 0px" });
     io.observe(node);
   }
-  /* The fallback exists only so a figure that is never scrolled past is
-     not left as empty axes. It must not compete with first paint or with
-     the other figures, so the jobs are staggered well clear of load and
-     of each other; scrolling to a figure still starts it immediately. */
+
   const idle = window.requestIdleCallback || (f => setTimeout(f, 1));
   const slot = 3200 + 3200 * autoStartN++;
   setTimeout(() => idle(go, { timeout: 4000 }), slot);
 }
 
-/* ═══ PLATE I — fermiology ═════════════════════════════════════ */
 const PATHK = [[0, 0], [PI, 0], [PI, PI], [0, 0]], PLAB = ["Γ", "X", "M", "Γ"], NP = 150;
 const ELO = -1.55, EHI = 2.45, INS = { t: 26, b: 26, l: 44, r: 14 }, NG = 170;
 
@@ -629,12 +449,6 @@ function initFermi() {
   paint();
 }
 
-/* ═══ PLATE II — Lindhard susceptibility ═══════════════════════
-   χ₀(q) = N⁻¹ Σ_k [f(E_k) − f(E_{k+q})]/(E_{k+q} − E_k)
-   Same mesh for k and q (q on stride 2) so the shift is an
-   integer index — no trigonometry in the inner loop, and (π,π)
-   is exactly representable.
-   ═════════════════════════════════════════════════════════════ */
 const NK = 64, QS = 2, NQ = NK / QS + 1;
 
 function initChi() {
@@ -675,9 +489,7 @@ function initChi() {
       c.fillRect(ox + (i - .5) * cell, oy + S - (j + .5) * cell, cell + 1, cell + 1);
     }
     c.strokeStyle = P.hair; c.strokeRect(ox, oy, S, S);
-    /* The mesh spans 0 → 2π on both axes: Γ sits at the corners, X at the
-       edge midpoints and M at the centre. The labels previously assumed a
-       −π → π mesh, which placed every one of them a full π out. */
+
     c.strokeStyle = P.hair2; c.beginPath();
     c.moveTo(ox + S / 2, oy); c.lineTo(ox + S / 2, oy + S);
     c.moveTo(ox, oy + S / 2); c.lineTo(ox + S, oy + S / 2); c.stroke();
@@ -703,9 +515,7 @@ function initChi() {
     if (!chiMap || chiRow < NQ) return;
     const L = 44, R = 12, TT = 24, B = 26, PW = w - L - R, PH = h - TT - B, M = NQ - 1;
     const at = (i, j) => chiMap[j * NQ + i], c0 = M / 2, path = [];
-    /* The q-mesh runs 0 → 2π, so index 0 is Γ, index c0 is π and index M
-       is 2π ≡ Γ. The high-symmetry path is therefore
-       Γ(0,0) → X(c0,0) → M(c0,c0) → Γ(0,0), not a walk from the centre. */
+
     for (let n = 0; n <= c0; n++) path.push(at(n, 0));
     for (let n = 1; n <= c0; n++) path.push(at(c0, n));
     for (let n = 1; n <= c0; n++) path.push(at(c0 - n, c0 - n));
@@ -769,17 +579,10 @@ function initChi() {
       if (chiRow < NQ) { chiJob = requestAnimationFrame(step); return; }
       chiJob = null;
       if (runBtn) { runBtn.classList.remove("busy"); runBtn.removeAttribute("aria-busy"); }
-      /* index → wavevector, in units of π: the mesh spans 0 → 2π, so
-         index i carries q = 2π i /(NQ−1). Values past π are folded back
-         into the first zone for reporting. */
+
       const M = NQ - 1, c0 = M / 2;
       const qOf = i => { const u = 2 * i / M; return u > 1 ? u - 2 : u; };
-      /* With intraband terms and unit matrix elements, χ₀ tends to the
-         density of states at E_F as q → 0, so Γ can hold the global
-         maximum while the nesting feature is a separate, finite-q one.
-         The readout therefore reports the largest maximum away from a
-         small-|q| neighbourhood, which is the quantity the model makes
-         a claim about. */
+
       let best = -1e9, bi = c0, bj = 0;
       for (let j = 0; j < NQ; j++) for (let i = 0; i < NQ; i++) {
         const qx = qOf(i), qy = qOf(j);
@@ -825,7 +628,6 @@ function initChi() {
   autoStart(chiStart, el("chi"));
 }
 
-/* ═══ PLATE III — Ising portfolio, graded by enumeration ═══════ */
 const NA = 10, A_PEN = 6.0;
 const H_RET = [.42, .31, .55, .18, .47, .26, .63, .22, .38, .50];
 const SIG = (() => {
@@ -970,7 +772,6 @@ function initAnneal() {
   autoStart(run, el("anneal"));
 }
 
-/* ═══ PLATE IV — moiré ═════════════════════════════════════════ */
 const A1 = [1, 0], A2 = [.5, Math.sqrt(3) / 2], BAS = [[0, 0], [1.5 / 3, (Math.sqrt(3) / 2) / 3]];
 function moireVecs(d) {
   const t = d * PI / 180, c = Math.cos(t), s = Math.sin(t), det = 2 - 2 * c;
@@ -984,16 +785,14 @@ function initMoire() {
     const { c, w, h } = fit(el("moire"), MOBILE ? 0.92 : 0.58);
     const th = +el("th").value, a_nm = +el("aa").value;
     const [L1, L2] = moireVecs(th), lam = Math.hypot(L1[0], L1[1]);
-    /* show about one and a half superlattice periods, bounded so the dot
-       count stays in the hundreds and each atom remains resolvable */
+
     const HALF = Math.min(Math.max(0.80 * lam, 6), 22);
     const S = Math.min(w, h) - 40, ox = w / 2, oy = h / 2, sc = S / (2 * HALF);
     const cs = Math.cos(th * PI / 180), sn = Math.sin(th * PI / 180), R = Math.ceil(HALF * 1.6);
     const rad = Math.max(1.1, sc * 0.16);
     c.save(); c.beginPath(); c.rect((w - S) / 2, (h - S) / 2, S, S); c.clip();
     for (let layer = 0; layer < 2; layer++) {
-      /* fixed layer filled, twisted layer outlined: the two sublattices
-         stay distinguishable where they overlap */
+
       c.fillStyle = layer ? P.b2 : P.b1;
       c.strokeStyle = P.b2; c.lineWidth = Math.max(0.8, rad * 0.5);
       c.globalAlpha = layer ? .92 : .62;
@@ -1022,8 +821,7 @@ function initMoire() {
       c.font = MONO(9); c.fillStyle = col; c.textAlign = "left"; c.textBaseline = "bottom";
       c.fillText(label, x0, y - 5);
     };
-    /* the 1 nm bar is set by the lattice constant alone, so moving a
-       rescales the figure against a fixed physical length */
+
     bar(y0 - 17, Math.min((1 / a_nm) * sc, S - 32), "1 nm", P.soft);
     bar(y0, Math.min(lam * sc, S - 32),
         "λ = " + lam.toFixed(1) + " a = " + (lam * a_nm).toFixed(2) + " nm", P.ink);
@@ -1040,8 +838,7 @@ function initMoire() {
   const paint = () => {
     if (q) return;
     q = true;
-    /* the latch is released in a finally, so one bad frame cannot leave
-       the figure permanently unresponsive to its controls */
+
     requestAnimationFrame(() => { try { draw(); } finally { q = false; } });
   };
   ["th", "aa"].forEach(id => el(id).addEventListener("input", paint));
@@ -1050,13 +847,6 @@ function initMoire() {
   paint();
 }
 
-/* ═══ PLATE V — 2D Ising, checkerboard Metropolis on the GPU ═══
-   H = −J Σ s_i s_j − Σ h_i s_i, J = 1. T_c = 2/ln(1+√2) ≈ 2.269.
-   Held below T_c the system coarsens: a few large domains with
-   smooth, slowly moving walls, rather than critical noise. The
-   parity split means an updating site's neighbours are frozen,
-   so detailed balance survives the parallelism.
-   ═════════════════════════════════════════════════════════════ */
 const TC = 2.0 / Math.log(1.0 + Math.SQRT2);
 const IS_VS = `#version 300 es
 layout(location=0) in vec2 aPos;
@@ -1148,8 +938,7 @@ function initIsing() {
   function allocate() {
     const dpr = Math.min(devicePixelRatio || 1, 2);
     const cssW = Math.max(260, pane.clientWidth);
-    /* same uniform height as every other plate — see .pane canvas, and
-       the same hidden-view caveat as fit() */
+
     let cssH = Math.round(canvas.getBoundingClientRect().height);
     if (cssH < 40) {
       cssH = Math.round(cssW * (MOBILE ? 0.78 : 0.42));
@@ -1160,8 +949,7 @@ function initIsing() {
     const aspect = canvas.width / Math.max(canvas.height, 1);
     gridH = GRID_H;
     gridW = 2 * Math.max(32, Math.round(gridH * aspect / 2));
-    /* seed with large blocks, not noise — the plate opens onto calm,
-       already-formed domains instead of a chaotic quench */
+
     const BLOCK = 34;
     const cw = Math.ceil(gridW / BLOCK), ch = Math.ceil(gridH / BLOCK);
     const coarse = new Uint8Array(cw * ch);
@@ -1232,9 +1020,7 @@ function initIsing() {
 
   let passCount = 0, frameCount = 0, tick = 0, visible = true;
   const resetTrajectory = () => { passCount = 0; tick = 0; };
-  /* One Metropolis pass per nine frames (~6.7 passes/s at 60 Hz). Fast
-     enough to equilibrate while the caption is read, slow enough that an
-     individual domain wall can be followed by eye. */
+
   const FRAMES_PER_PASS = 9;
   const READ_EVERY = matchMedia("(pointer: coarse)").matches ? 90 : 30;
   let pixels = new Uint8Array(0);
@@ -1271,9 +1057,6 @@ function initIsing() {
     paintLattice();
   }
 
-  /* One frame of the lattice at the current palette. Split out of the
-     loop so a theme change can repaint a plate the loop is not running
-     for — see the REDRAW hook below. */
   function paintLattice() {
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
     gl.viewport(0, 0, canvas.width, canvas.height);
@@ -1282,9 +1065,7 @@ function initIsing() {
     gl.uniform1i(uD.state, 0);
     gl.uniform2f(uD.res, canvas.width, canvas.height);
     gl.uniform2f(uD.mouseCss, mouse.cx, mouse.cy);
-    /* spins down take the paper, spins up the vermilion, walls a
-       deepened vermilion — maximum separation between the two phases at
-       a glance, and it has to follow the scheme rather than assume white */
+
     const dn = P.rgbPaper, up = P.rgbB2, acc = lerpRGB(P.rgbB2, P.rgbInk, 0.45);
     gl.uniform3f(uD.dn, dn[0] / 255, dn[1] / 255, dn[2] / 255);
     gl.uniform3f(uD.up, up[0] / 255, up[1] / 255, up[2] / 255);
@@ -1295,18 +1076,7 @@ function initIsing() {
   let resizeTimer;
   const refit = () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(allocate, 200); };
   addEventListener("resize", refit);
-  /* the lattice reallocates when its container gets a size, so the plate
-     is never left at the placeholder 300×150 after a view switch.
 
-     The second half is the palette. This plate is the only one whose
-     colours live in GPU uniforms written by the render loop, and that
-     loop is gated on `visible` — so a plate sitting in a hidden view (in
-     the phone shell, four views out of five at any moment) keeps its old
-     pixels through a theme change and still shows them when its tab is
-     finally opened. That is what made one toggle look like it only
-     applied to the page you were on. Painting one frame here, from the
-     freshly read palette and regardless of visibility, means a single
-     toggle reaches every view at once. */
   REDRAW.push(() => {
     if (pane.clientWidth > 2 && Math.abs(pane.clientWidth * Math.min(devicePixelRatio || 1, 2) - canvas.width) > 8) allocate();
     if (canvas.width > 2) paintLattice();
@@ -1322,7 +1092,6 @@ function initIsing() {
   });
 }
 
-/* ═══ RECORD — publications / timeline ════════════════════════ */
 const PROFILE = {
   publications: [
     { key: "2025 · Peer-reviewed",
@@ -1376,10 +1145,7 @@ const PROFILE = {
 };
 function esc(t) { const d = document.createElement("div"); d.textContent = t; return d.innerHTML; }
 function initRecord() {
-  /* Each crest is a drawn placeholder with the real image stacked over
-     it. A PNG with any transparency let the placeholder's lettering read
-     through as stray text, so the placeholder is removed the moment the
-     image is known to have loaded (and kept if it never does). */
+
   document.querySelectorAll(".edu-crest img").forEach(img => {
     const drop = () => { const svg = img.parentElement.querySelector("svg"); if (svg) svg.remove(); };
     if (img.complete && img.naturalWidth > 0) drop();
@@ -1413,7 +1179,7 @@ function initRecord() {
       if (pane) { pane.setAttribute("aria-labelledby", "tab-" + b.dataset.tab); pane.hidden = !on; }
       b.id = "tab-" + b.dataset.tab;
     });
-    /* arrow keys move between tabs, as the tablist pattern requires */
+
     bar.addEventListener("keydown", e => {
       const i = btns.indexOf(document.activeElement);
       if (i < 0) return;
@@ -1441,10 +1207,6 @@ function initRecord() {
   });
 }
 
-/* ═══ hover/tap definitions ═══════════════════════════════════
-   Hover and keyboard focus are handled in CSS. Touch has neither,
-   so a tap toggles the tooltip and any outside tap closes it.
-   ═════════════════════════════════════════════════════════════ */
 function initTerms() {
   document.addEventListener("click", e => {
     const t = e.target.closest(".term");
@@ -1453,235 +1215,6 @@ function initTerms() {
   });
 }
 
-/* ═══ TELEMETRY — dot-matrix visitor map (Vercel KV backend) ═══
-   Land mask: 128×56 equirectangular grid, lat +72 → −56,
-   precomputed from a public land dataset and packed as hex.
-   ═════════════════════════════════════════════════════════════ */
-const TELEMETRY_ENDPOINT = "https://asheth-github-io.vercel.app/api/telemetry";
-const LAND_HEX = "00C003E2FC03FF00000010FBFFFDFD8087FFFE61A707FC0007F90FEFFFFFFFFF65FFFFFF83C7F00007F5FFFFFFFFFFFF01FFFFFF6383C0C00EFBFFFFFFFFFFFF07FFFFFE0C0180003CFFFFFFFFFFFF7C0383FFFC0E0000003E7FFFFFFFFFFA4000407FFF07C000021E7FFFFFFFFF80C004007FFFEFE0000701FFFFFFFFFF01C000003FFFEFF00005BFFFFFFFFFFFE00000001FFFFFE000007FFFFFFFFFFFC000000007FFFF180003FFFFFFFFFFFFC00000000FFFFFE00000FFE7FFFFFFFF800000000FFFFE0000058BC3FFFFFFFF300000000FFFFC00000785F9FFFFFFFC000000000FFFF8000007813FFFFFFFCC0000000007FFF80000007037FFFFFFE44000000003FFF0000003F007FFFFFFE08000000003FFE0000007F98FFFFFFFE20000000000FF2000000FFFFFBFFFFFE00000000001780000001FFFF79FFFFFE00000000000F80000001FFFF7C0FFFFC00000000000383000003FFFFBF87FFF800000000000188000003FFFFBF83E7C0000000000001D8A80003FFFFDF03C3C000000000000050000003FFFFDE0385C00000000000000C000003FFFFF80181E100000000000004100003FFFFE0010061800000000000035C0001FFFFFC01814000000000000000FE0000FFFFFC008104800000000000007FC00043FFF800028400000000000000FFC00001FFF000018C00000000000010FFC00001FFE000019C00000000000001FFF00001FFC000009A0C000000000001FFFE0000FFC00000400F000000000000FFFF00007FC000007007000000000000FFFE00007FC000000082800000000000FFFE00007FC0000000202000000000007FFC0000FFC4000000320000000000003FFC0000FFCC000000FB0100000000001FFC0000FF8C000001FF0000000000001FFC00007F08000003FF8200000000001FF800007F9800000FFFC000000000001FE000007F0800000FFFE000000000001FE000007F00000007FFC000000000001FC000003E00000007FFE000000000001FC000001C00000007DFC000000000003F800000100000000407C000000000003F0000000000000000038000000000003E0000000000000000000020000000003C000000000000000001806000000000380000000000000000000080000000007000000000000000000001800000000078000000000000000000000000000000300000000000000000000000000000000000000000000000000000000000000018000000000000000000000";
-const MAP_W = 128, MAP_H = 56, LAT_TOP = 72, LAT_BOT = -56;
-function landAt(i, j) {
-  const bit = j * MAP_W + i, nib = parseInt(LAND_HEX[bit >> 2], 16);
-  return (nib >> (3 - (bit & 3))) & 1;
-}
-const lonLatToXY = (lon, lat, w, h) =>
-  [((lon + 180) / 360) * w, ((LAT_TOP - lat) / (LAT_TOP - LAT_BOT)) * h];
-const COUNTRY_POS = {
-  US: [-98, 39], CA: [-106, 56], MX: [-102, 23], BR: [-52, -10], AR: [-64, -34],
-  CL: [-71, -33], CO: [-73, 4], PE: [-76, -10], GB: [-2, 54], IE: [-8, 53],
-  FR: [2, 46], DE: [10, 51], NL: [5, 52], BE: [4.5, 50.8], CH: [8, 47],
-  AT: [14, 47.5], ES: [-4, 40], PT: [-8, 39.5], IT: [12.5, 42], SE: [15, 62],
-  NO: [9, 61], DK: [10, 56], FI: [26, 62], PL: [19, 52], CZ: [15.5, 49.8],
-  GR: [22, 39], TR: [35, 39], RU: [44, 56], UA: [32, 49], RO: [25, 46],
-  HU: [19, 47], IN: [78, 22], CN: [110, 32], JP: [138, 36], KR: [128, 36.5],
-  SG: [103.8, 1.35], MY: [102, 3.5], TH: [101, 15], VN: [107, 16],
-  ID: [113, -2], PH: [122, 12], AU: [134, -25], NZ: [173, -41],
-  ZA: [25, -29], NG: [8, 9], EG: [30, 26], KE: [37.8, 0.5], MA: [-6, 32],
-  SA: [45, 24], AE: [54, 24], IL: [35, 31.5], PK: [70, 30], BD: [90, 24],
-  LK: [80.7, 7.5], TW: [121, 23.7], HK: [114.2, 22.3],
-};
-function initTelemetry() {
-  const canvas = el("mapCanvas");
-  if (!canvas) return;
-  const ctx = canvas.getContext("2d");
-  const dpr = Math.min(devicePixelRatio || 1, 2);
-  let visitor = null, countries = [], W = 0, H = 0;
-  const base = document.createElement("canvas");
-
-  function buildBase() {
-    /* in the mobile shell the contact view is display:none until its tab
-       is chosen, so the parent measures zero. Building a 0×0 base and
-       then drawing it throws, so measurement is the gate: bail out and
-       let the tab switch (which fires redrawAll) build it for real. */
-    const cssW = Math.min(canvas.parentElement.clientWidth, 860);
-    if (cssW < 2) { W = H = 0; return false; }
-    W = Math.floor(cssW * dpr);
-    H = Math.floor(W * (MAP_H / MAP_W));
-    canvas.width = W; canvas.height = H;
-    canvas.style.height = H / dpr + "px";
-    base.width = W; base.height = H;
-    const b = base.getContext("2d");
-    const sx = W / MAP_W, sy = H / MAP_H, r = Math.max(0.8, sx * 0.22);
-    b.clearRect(0, 0, W, H);
-    b.fillStyle = P.soft; b.globalAlpha = .5;
-    for (let j = 0; j < MAP_H; j++) for (let i = 0; i < MAP_W; i++) if (landAt(i, j)) {
-      b.beginPath(); b.arc((i + 0.5) * sx, (j + 0.5) * sy, r, 0, 6.2832); b.fill();
-    }
-    b.globalAlpha = 1;
-    /* every country that has ever visited: a badge whose radius grows
-       ~log(count) so 1 and 500 both read. Drawn into the static base
-       so the animation loop stays cheap. */
-    for (const { code, count } of countries) {
-      const pos = COUNTRY_POS[code];
-      if (!pos) continue;
-      const [cx, cy] = lonLatToXY(pos[0], pos[1], W, H);
-      const label = count > 999 ? "1k+" : String(count);
-      const br = sx * (1.15 + 0.45 * Math.log10(1 + count));
-      b.fillStyle = P.paper;
-      b.beginPath(); b.arc(cx, cy, br, 0, 6.2832); b.fill();
-      b.strokeStyle = P.b2; b.lineWidth = Math.max(1, 0.14 * br);
-      b.beginPath(); b.arc(cx, cy, br, 0, 6.2832); b.stroke();
-      const fs = br * (label.length > 2 ? 0.85 : 1.1);
-      b.font = `500 ${fs}px "JetBrains Mono", monospace`;
-      b.textAlign = "center"; b.textBaseline = "middle";
-      b.fillStyle = P.b2;
-      b.fillText(label, cx, cy + 0.05 * fs);
-    }
-    return true;
-  }
-  let t0 = performance.now(), visible = false, rafId = null;
-
-  /* ── the current visitor ──────────────────────────────────────────
-     A single ring expanding once every 1.8s read as a generic "ping".
-     This is a wave packet instead: RIPPLES crests launched from the
-     source at even intervals, each fading as it spreads, so the source
-     reads as continuously emitting rather than blinking. The envelope
-     is sin(πφ)·(1−φ) — zero amplitude at launch and at the horizon, a
-     maximum in between — which is what stops the crests appearing out
-     of nowhere at the centre. A stationary halo and a crosshair fix the
-     position itself, since the crests alone leave the eye guessing
-     where the origin was. */
-  const RIPPLES = 3, PERIOD = 2600, REACH = 26;
-  function drawFrame(now) {
-    if (!W || !H) { rafId = null; return; }
-    ctx.clearRect(0, 0, W, H);
-    ctx.drawImage(base, 0, 0);
-    if (visitor) {
-      const [vx, vy] = visitor;
-      const u = dpr * 0.6;
-      const t = REDUCE ? 0.45 : ((now - t0) / PERIOD) % 1;
-
-      ctx.save();
-      ctx.lineCap = "round";
-      for (let k = 0; k < (REDUCE ? 1 : RIPPLES); k++) {
-        const phase = (t + k / RIPPLES) % 1;
-        const amp = Math.sin(Math.PI * phase) * (1 - phase);
-        if (amp <= 0.01) continue;
-        ctx.strokeStyle = P.b1;
-        ctx.globalAlpha = 0.75 * amp;
-        ctx.lineWidth = (1.5 - 0.7 * phase) * dpr;
-        ctx.beginPath();
-        ctx.arc(vx, vy, (3 + REACH * phase) * u, 0, 6.2832);
-        ctx.stroke();
-      }
-
-      /* halo, then core: the source sits above its own wake */
-      ctx.globalAlpha = 0.16;
-      ctx.fillStyle = P.b1;
-      ctx.beginPath(); ctx.arc(vx, vy, 6.5 * u, 0, 6.2832); ctx.fill();
-
-      /* crosshair — four ticks clear of the core, so the position is
-         legible even where the land mask is dense */
-      ctx.globalAlpha = 0.55;
-      ctx.strokeStyle = P.b1;
-      ctx.lineWidth = 1 * dpr;
-      const gap = 4.5 * u, arm = 8 * u;
-      ctx.beginPath();
-      ctx.moveTo(vx - arm, vy); ctx.lineTo(vx - gap, vy);
-      ctx.moveTo(vx + gap, vy); ctx.lineTo(vx + arm, vy);
-      ctx.moveTo(vx, vy - arm); ctx.lineTo(vx, vy - gap);
-      ctx.moveTo(vx, vy + gap); ctx.lineTo(vx, vy + arm);
-      ctx.stroke();
-
-      ctx.globalAlpha = 1;
-      ctx.fillStyle = P.paper;
-      ctx.beginPath(); ctx.arc(vx, vy, 3.1 * u, 0, 6.2832); ctx.fill();
-      ctx.fillStyle = P.b1;
-      ctx.beginPath(); ctx.arc(vx, vy, 2.2 * u, 0, 6.2832); ctx.fill();
-      ctx.restore();
-    }
-    if (visible && !REDUCE && visitor) rafId = requestAnimationFrame(drawFrame);
-    else rafId = null;
-  }
-  const kick = () => { if (!rafId) rafId = requestAnimationFrame(drawFrame); };
-  const relocate = geo => {
-    if (geo && Number.isFinite(geo.lon) && Number.isFinite(geo.lat) && W)
-      visitor = lonLatToXY(geo.lon, geo.lat, W, H);
-  };
-  new IntersectionObserver(en => { visible = en[0].isIntersecting; if (visible) kick(); },
-    { threshold: 0.1 }).observe(canvas);
-  /* geo is stored as lon/lat and only projected at draw time, so a
-     resize or a late first measurement re-places the pulse correctly */
-  let lastGeo = null;
-  buildBase(); kick();
-  sizeWatch(canvas.parentElement);
-  addEventListener("resize", () => { if (buildBase()) { relocate(lastGeo); kick(); } });
-  REDRAW.push(() => { if (buildBase()) { relocate(lastGeo); kick(); } });
-
-  /* First call POSTs to register this visit — exactly once per browser
-     session (sessionStorage guard), so reloads and polls never inflate
-     counts. Subsequent GETs are read-only. */
-  /* ── readout ──────────────────────────────────────────────────────
-     Counts arrive as a list of per-country totals, so the two headline
-     numbers are derived here rather than sent. They tick up to their
-     value the first time the strip is seen: a number that lands by
-     counting reads as measured, and this one is. */
-  const REGION = (() => {
-    try { return new Intl.DisplayNames([document.documentElement.lang || "en"], { type: "region" }); }
-    catch (e) { return null; }
-  })();
-  const shown = {};
-  function odometer(node, to) {
-    if (!node) return;
-    const from = shown[node.id] || 0;
-    shown[node.id] = to;
-    if (REDUCE || to === from || to > 5000) { node.textContent = to.toLocaleString(); return; }
-    const start = performance.now(), dur = Math.min(900, 260 + Math.abs(to - from) * 8);
-    const step = now => {
-      const k = Math.min(1, (now - start) / dur);
-      /* ease-out: fast enough to feel like a readout settling, not a
-         slot machine */
-      const v = Math.round(from + (to - from) * (1 - Math.pow(1 - k, 3)));
-      node.textContent = v.toLocaleString();
-      if (k < 1) requestAnimationFrame(step);
-    };
-    requestAnimationFrame(step);
-  }
-  let statsSeen = false;
-  const statsEl = el("tstats");
-  if (statsEl) new IntersectionObserver(en => {
-    if (en[0].isIntersecting) { statsSeen = true; paintStats(); }
-  }, { threshold: 0.3 }).observe(statsEl);
-
-  function paintStats() {
-    if (!statsSeen) return;
-    const total = countries.reduce((a, c) => a + (c.count || 0), 0);
-    odometer(el("tVisits"), total);
-    odometer(el("tCountries"), countries.length);
-    const here = el("tHere");
-    if (!here) return;
-    if (lastGeo) {
-      const cc = (lastGeo.country || lastGeo.code || "").toUpperCase();
-      const city = lastGeo.city || "";
-      const name = cc && REGION ? (() => { try { return REGION.of(cc); } catch (e) { return cc; } })() : cc;
-      here.textContent = [city, name].filter(Boolean).join(", ") || "somewhere on Earth";
-    } else here.textContent = "locating…";
-  }
-
-  async function fetchTelemetry(registerHit = false) {
-    try {
-      const res = await fetch(TELEMETRY_ENDPOINT, { method: registerHit ? "POST" : "GET" });
-      const data = await res.json();
-      if (data.countries && Array.isArray(data.countries)) { countries = data.countries; buildBase(); kick(); }
-      if (data.current) { lastGeo = data.current; relocate(lastGeo); kick(); }
-      paintStats();
-    } catch (e) {
-      /* The endpoint being down is an operational detail, not something
-         to report to a reader. The map is drawn from the local land
-         mask and stands on its own, so a failed fetch simply leaves the
-         badges unpopulated and says nothing. */
-    }
-  }
-  const HIT_KEY = "telemetry-hit";
-  const already = sessionStorage.getItem(HIT_KEY) === "1";
-  if (!already) sessionStorage.setItem(HIT_KEY, "1");
-  fetchTelemetry(!already);
-  /* poll only while the tab is visible; refresh immediately on return */
-  setInterval(() => { if (!document.hidden) fetchTelemetry(false); }, 30000);
-  document.addEventListener("visibilitychange", () => { if (!document.hidden) fetchTelemetry(false); });
-}
-
-/* ═══ QUANTUM PORTFOLIO — in-place launch ═════════════════════ */
 function initAppLaunch() {
   const overlay = el("appOverlay"), frame = el("appFrame");
   const openBtn = el("launchAppBtn"), linkBtn = el("launchAppLink"), closeBtn = el("appCloseBtn");
@@ -1698,8 +1231,7 @@ function initAppLaunch() {
   };
   const open = () => {
     if (!frame.getAttribute("src")) {
-      /* deferred until first open so the instrument's own scripts and
-         canvases cost nothing to a visitor who never launches it */
+
       frame.src = "portfolio.html";
     }
     lastFocus = document.activeElement;
@@ -1721,31 +1253,22 @@ function initAppLaunch() {
   document.addEventListener("keydown", e => { if (e.key === "Escape" && !overlay.hidden) close(); });
 }
 
-/* ═══ chrome — progress, rail, section counter ════════════════ */
-function initChrome() {
-  const pct = el("pct"), cnt = el("secCount");
+function initRail() {
   const links = [...document.querySelectorAll(".rail a")];
-  if (!links.length && !pct) return;
+  if (!links.length) return;
   const secs = links.map(a => document.querySelector(a.getAttribute("href")));
-  const total = String(links.length).padStart(2, "0");
   function up() {
-    const f = scrollY / (document.body.scrollHeight - innerHeight || 1);
-    if (pct) pct.textContent = String(Math.round(Math.min(1, Math.max(0, f)) * 100)).padStart(3, "0") + "%";
     let cur = 0;
     secs.forEach((s, i) => { if (s && s.getBoundingClientRect().top < innerHeight * .45) cur = i; });
     links.forEach((a, i) => a.classList.toggle("on", i === cur));
-    if (cnt) cnt.textContent = String(cur + 1).padStart(2, "0") + " / " + total;
   }
   addEventListener("scroll", up, { passive: true });
   up();
 }
 
-/* ═══ slider a11y — announce the formatted value, not the raw one ═ */
 function initSliderA11y() {
   document.querySelectorAll('input[type="range"]').forEach(input => {
-    /* WebKit has no ::-moz-range-progress equivalent, so the filled
-       portion of the track is a gradient stop driven from here. Firefox
-       paints its own progress pseudo-element and ignores --fill. */
+
     const paint = () => {
       const min = +input.min || 0;
       const max = input.max === "" ? 100 : +input.max;
@@ -1763,12 +1286,9 @@ function initSliderA11y() {
   });
 }
 
-/* ══ boot ═════════════════════════════════════════════════════ */
 function boot() {
   if (el("year")) el("year").textContent = new Date().getFullYear();
   initTheme();
-  initLoader();
-  initReveal();
   initAmbient();
   initFermi();
   initChi();
@@ -1777,9 +1297,8 @@ function boot() {
   initIsing();
   initRecord();
   initTerms();
-  initTelemetry();
   initAppLaunch();
-  initChrome();
+  initRail();
   initSliderA11y();
   let rt;
   addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(redrawAll, 180); });
