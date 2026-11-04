@@ -382,6 +382,7 @@ function initAmbient() {
     VH = 0.00 + 0.14 * sm(0.38, 0.68, f);
     FADE = 1.00 - 0.92 * sm(0.12, 0.36, f);
     active = y < vh * 3.6;
+    cv.style.visibility = active ? "" : "hidden";
     steps = LO; moving = performance.now();
   }
   addEventListener("scroll", onScroll, { passive: true }); onScroll();
@@ -1390,6 +1391,22 @@ function initRecord() {
    so a tap toggles the tooltip and any outside tap closes it.
    ═════════════════════════════════════════════════════════════ */
 function initTerms() {
+  const terms = [...document.querySelectorAll(".term")];
+  const place = () => {
+    const vw = document.documentElement.clientWidth, edge = 12;
+    const w = Math.min(320, vw * 0.72);
+    terms.forEach(t => {
+      const r = t.getBoundingClientRect();
+      if (!r.width) return;
+      const left = r.left + r.width / 2 - w / 2;
+      const shift = Math.min(Math.max(left, edge), vw - edge - w) - left;
+      t.style.setProperty("--tip-dx", Math.round(shift) + "px");
+    });
+  };
+  place();
+  addEventListener("resize", place);
+  terms.forEach(t => { t.addEventListener("pointerenter", place); t.addEventListener("focus", place); });
+  REDRAW.push(place);
   document.addEventListener("click", e => {
     const t = e.target.closest(".term");
     document.querySelectorAll(".term.open").forEach(o => { if (o !== t) o.classList.remove("open"); });
@@ -1437,12 +1454,14 @@ function initTelemetry() {
        is chosen, so the parent measures zero. Building a 0×0 base and
        then drawing it throws, so measurement is the gate: bail out and
        let the tab switch (which fires redrawAll) build it for real. */
-    const cssW = Math.min(canvas.parentElement.clientWidth, 860);
+    canvas.style.width = "100%";
+    const cssW = Math.min(canvas.clientWidth, 860);
     if (cssW < 2) { W = H = 0; return false; }
     W = Math.floor(cssW * dpr);
     H = Math.floor(W * (MAP_H / MAP_W));
     canvas.width = W; canvas.height = H;
     canvas.style.height = H / dpr + "px";
+    canvas.style.width = cssW + "px";
     base.width = W; base.height = H;
     const b = base.getContext("2d");
     const sx = W / MAP_W, sy = H / MAP_H, r = Math.max(0.8, sx * 0.22);
