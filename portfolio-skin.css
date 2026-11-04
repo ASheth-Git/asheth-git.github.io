@@ -20,16 +20,16 @@
 
 :root{
   /* ── surface and ink ─────────────────────────────────────────── */
-  --bg:#F7F7F8; --bg-2:#F0F0F2; --surface:#FFFFFF; --surface-2:#F4F4F6;
-  --ink:#0B0B0D; --ink-2:#2A2A30; --muted:#5D5D68; --faint:#8A8A95;
-  --line:rgba(11,11,13,.11); --line-2:rgba(11,11,13,.06);
+  --bg:#F6F7F7; --bg-2:#EEF0F1; --surface:#FFFFFF; --surface-2:#F2F4F4;
+  --ink:#0C0F10; --ink-2:#283034; --muted:#586268; --faint:#879297;
+  --line:rgba(12,15,16,.11); --line-2:rgba(12,15,16,.06);
   --sink:rgba(14,15,17,.04);
-  --red:#C93A1E; --green:#1F7A4C;
+  --red:#C53D2B; --green:#1F7A4C;
 
   /* the band colours of the site: Ni-blue carries every accent */
-  --accent:#1F4FE0; --accent-2:#1A3FB4; --accent-hot:#4A72FF;
-  --accent-soft:rgba(20,54,232,.08);
-  --ramp:linear-gradient(90deg,#1F4FE0 0%,#8FA4F5 42%,#F7F7F8 62%,#C93A1E 100%);
+  --accent:#0B7A72; --accent-2:#08605A; --accent-hot:#14A396;
+  --accent-soft:rgba(11,122,114,.08);
+  --ramp:linear-gradient(90deg,#0B7A72 0%,#7FC7BF 42%,#F6F7F7 62%,#C53D2B 100%);
 
   /* ── type: the site's ramp, same clamps, nothing under 12px ──── */
   --ff-display:"Instrument Sans",system-ui,-apple-system,sans-serif;
@@ -52,14 +52,14 @@
 }
 
 html[data-theme="dark"]{
-  --bg:#09090B; --bg-2:#0D0D10; --surface:#111114; --surface-2:#17171B;
-  --ink:#F5F5F7; --ink-2:#D4D4D9; --muted:#9F9FAA; --faint:#6E6E78;
-  --line:rgba(245,245,247,.13); --line-2:rgba(245,245,247,.07);
-  --sink:rgba(245,245,247,.045);
-  --accent:#7D97FF; --accent-2:#5F7CF0; --accent-hot:#A9BBFF;
-  --accent-soft:rgba(123,147,255,.12);
-  --red:#FF6E4F; --green:#4FBF88;
-  --ramp:linear-gradient(90deg,#7D97FF 0%,#A9BBFF 42%,#111114 62%,#FF6E4F 100%);
+  --bg:#0A0C0D; --bg-2:#0E1112; --surface:#121517; --surface-2:#181C1E;
+  --ink:#F3F6F7; --ink-2:#D2D9DC; --muted:#98A3A9; --faint:#6B767C;
+  --line:rgba(243,246,247,.13); --line-2:rgba(243,246,247,.07);
+  --sink:rgba(243,246,247,.045);
+  --accent:#33C9B8; --accent-2:#22A596; --accent-hot:#7FE3D7;
+  --accent-soft:rgba(51,201,184,.12);
+  --red:#FF7B68; --green:#4FBF88;
+  --ramp:linear-gradient(90deg,#33C9B8 0%,#7FE3D7 42%,#121517 62%,#FF7B68 100%);
   color-scheme:dark;
 }
 
@@ -68,13 +68,13 @@ html[data-theme="dark"]{
    portfolio.html only ever writes an explicit theme. */
 @media(prefers-color-scheme:dark){
   html:not([data-theme="light"]){
-    --bg:#09090B; --bg-2:#0D0D10; --surface:#111114; --surface-2:#17171B;
-    --ink:#F5F5F7; --ink-2:#D4D4D9; --muted:#9F9FAA; --faint:#6E6E78;
-    --line:rgba(245,245,247,.13); --line-2:rgba(245,245,247,.07);
-    --sink:rgba(245,245,247,.045);
-    --accent:#7D97FF; --accent-2:#5F7CF0; --accent-hot:#A9BBFF;
-    --accent-soft:rgba(123,147,255,.12);
-    --red:#FF6E4F; --green:#4FBF88;
+    --bg:#0A0C0D; --bg-2:#0E1112; --surface:#121517; --surface-2:#181C1E;
+    --ink:#F3F6F7; --ink-2:#D2D9DC; --muted:#98A3A9; --faint:#6B767C;
+    --line:rgba(243,246,247,.13); --line-2:rgba(243,246,247,.07);
+    --sink:rgba(243,246,247,.045);
+    --accent:#33C9B8; --accent-2:#22A596; --accent-hot:#7FE3D7;
+    --accent-soft:rgba(51,201,184,.12);
+    --red:#FF7B68; --green:#4FBF88;
     color-scheme:dark;
   }
 }
@@ -182,11 +182,11 @@ body canvas{background:var(--surface)}
    the travelled portion filled, and a ring thumb rather than a dot */
 input[type=range]{-webkit-appearance:none;appearance:none;
   height:20px;background:transparent;cursor:ew-resize}
-input[type=range]::-webkit-slider-runnable-track{height:3px;border-radius:2px;
+input[type=range]::-webkit-slider-runnable-track{height:3px;border-radius:var(--radius);
   background:linear-gradient(to right,var(--accent) 0,var(--accent) calc(var(--fill,0)*100%),
     var(--line) calc(var(--fill,0)*100%),var(--line) 100%)}
-input[type=range]::-moz-range-track{height:3px;border-radius:2px;background:var(--line)}
-input[type=range]::-moz-range-progress{height:3px;border-radius:2px;background:var(--accent)}
+input[type=range]::-moz-range-track{height:3px;border-radius:var(--radius);background:var(--line)}
+input[type=range]::-moz-range-progress{height:3px;border-radius:var(--radius);background:var(--accent)}
 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;
   width:16px;height:16px;margin-top:-6.5px;border-radius:50%;
   background:var(--surface);border:2px solid var(--ink);box-shadow:var(--shadow);

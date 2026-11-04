@@ -345,8 +345,8 @@ void main(){
   float ds=(tf-tn)/float(uSteps);
   float jit=fract(sin(dot(gl_FragCoord.xy,vec2(12.9898,78.233)))*43758.5453);
   float t=tn+ds*jit;
-  vec3 SIG_D=vec3(1.00,0.62,0.05);   /* leaves blue      */
-  vec3 SIG_R=vec3(0.06,0.55,1.00);   /* leaves vermilion */
+  vec3 SIG_D=vec3(1.00,0.21,0.24);   /* leaves teal      */
+  vec3 SIG_R=vec3(0.05,0.60,0.75);   /* leaves coral     */
   vec3 SIG_W=vec3(0.85,0.85,0.85);   /* neutral wireframe */
   const float eta=0.055;
   vec3 tau=vec3(0.0);
@@ -1648,6 +1648,11 @@ function initTelemetry() {
 
   function paintStats() {
     if (!statsSeen) return;
+    if (!loaded && statsEl && statsEl.classList.contains("offline")) {
+      for (const id of ["tVisits", "tCountries"]) { const n = el(id); if (n) n.textContent = "—"; }
+      const h = el("tHere"); if (h) h.textContent = "unavailable";
+      return;
+    }
     const total = Math.max(serverTotal, countries.reduce((a, c) => a + (c.count || 0), 0));
     odometer(el("tVisits"), total);
     odometer(el("tCountries"), countries.length);
@@ -1663,19 +1668,31 @@ function initTelemetry() {
 
   async function fetchTelemetry(registerHit = false) {
     try {
-      const res = await fetch(TELEMETRY_ENDPOINT, { method: registerHit ? "POST" : "GET" });
-      if (!res.ok) return;
+      const res = await fetch(TELEMETRY_ENDPOINT, { method: registerHit ? "POST" : "GET",
+        signal: AbortSignal.timeout ? AbortSignal.timeout(8000) : undefined });
+      if (!res.ok) { offline(); return; }
       const data = await res.json();
       if (Number.isFinite(data.total)) serverTotal = data.total;
       if (data.countries && Array.isArray(data.countries)) { countries = data.countries; buildBase(); kick(); }
       if (data.current) { lastGeo = data.current; relocate(lastGeo); kick(); }
+      loaded = true;
+      if (statsEl) statsEl.classList.remove("offline");
       paintStats();
     } catch (e) {
+      offline();
       /* The endpoint being down is an operational detail, not something
          to report to a reader. The map is drawn from the local land
          mask and stands on its own, so a failed fetch simply leaves the
          badges unpopulated and says nothing. */
     }
+  }
+  /* the counter never answered: replace the loading text with a plain
+     statement rather than leaving "locating…" up indefinitely */
+  let loaded = false;
+  function offline() {
+    if (loaded || !statsEl) return;
+    statsEl.classList.add("offline");
+    paintStats();
   }
   const HIT_KEY = "telemetry-hit";
   const already = sessionStorage.getItem(HIT_KEY) === "1";

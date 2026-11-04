@@ -286,7 +286,7 @@ function drawTrace(trace) {
   /* fallback is the site's Ni-blue, not the app's retired teal — it only
      fires if the skin failed to load, and should still look intentional */
   ctx.strokeStyle = getComputedStyle(document.documentElement)
-    .getPropertyValue("--accent").trim() || "#1F4FE0";
+    .getPropertyValue("--accent").trim() || "#0B7A72";
   ctx.lineWidth = 1.3 * dpr;
   ctx.stroke();
 }
