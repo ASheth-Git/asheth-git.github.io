@@ -64,13 +64,13 @@ sub, sup { line-height: 0; }
   display: flex; align-items: center; gap: 1.2rem;
   padding: 0.8rem 1.6rem;
   background: rgba(4, 7, 12, 0.85);
-  backdrop-filter: saturate(150%) blur(12px);
-  -webkit-backdrop-filter: saturate(150%) blur(12px);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
   border-bottom: 1px solid var(--line);
 }
 .brand {
   font-family: var(--ff-display); font-weight: 700;
-  letter-spacing: 0.08em; font-size: 0.95rem;
+  letter-spacing: 0; font-size: 0.95rem;
   display: inline-flex; align-items: center; gap: 10px;
 }
 .brand::before {
@@ -79,7 +79,7 @@ sub, sup { line-height: 0; }
   box-shadow: 0 0 0 4px var(--accent-soft);
 }
 .mode-badge {
-  font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase;
+  font-size: 0.62rem; letter-spacing: 0; text-transform: none;
   font-weight: 500;
   color: var(--accent); background: var(--accent-soft);
   border: 1px solid var(--line); border-radius: 999px;
@@ -89,7 +89,7 @@ sub, sup { line-height: 0; }
 .topbar-status {
   margin-left: auto;
   display: flex; align-items: center; gap: 0.45rem;
-  font-size: 0.68rem; color: var(--muted); letter-spacing: 0.08em;
+  font-size: 0.68rem; color: var(--muted); letter-spacing: 0;
 }
 .status-dot {
   width: 8px; height: 8px; border-radius: 50%;
@@ -118,8 +118,8 @@ sub, sup { line-height: 0; }
 .rack { min-width: 0; }
 .rack-head {
   font-family: var(--ff-mono);
-  color: var(--accent); font-size: 0.62rem; letter-spacing: 0.14em;
-  text-transform: uppercase; font-weight: 500;
+  color: var(--accent); font-size: 0.62rem; letter-spacing: 0;
+  text-transform: none; font-weight: 500;
   margin-bottom: 0.65rem;
   padding-bottom: 0.45rem;
   border-bottom: 1px solid var(--line);
@@ -195,7 +195,7 @@ input[type="range"]::-moz-range-thumb {
 .btn {
   display: block; width: 100%;
   font-family: var(--ff-mono); font-size: 0.72rem;
-  letter-spacing: 0.05em; text-transform: uppercase;
+  letter-spacing: 0; text-transform: none;
   padding: 0.75rem 1rem; border-radius: 10px;
   border: 1px solid var(--line);
   cursor: pointer; background: var(--surface); color: var(--ink);
@@ -221,8 +221,8 @@ input[type="range"]::-moz-range-thumb {
 .sidebar-foot {
   margin-top: auto; padding-top: 1rem;
   font-family: var(--ff-mono);
-  color: var(--faint); font-size: 0.6rem; letter-spacing: 0.14em;
-  text-transform: uppercase;
+  color: var(--faint); font-size: 0.6rem; letter-spacing: 0;
+  text-transform: none;
 }
 
 /* ---------------- MAIN ---------------- */
@@ -265,7 +265,7 @@ input[type="range"]::-moz-range-thumb {
 .card-label {
   font-family: var(--ff-mono);
   color: var(--muted); font-size: 0.6rem;
-  letter-spacing: 0.1em; text-transform: uppercase;
+  letter-spacing: 0; text-transform: none;
 }
 .card-value {
   font-family: var(--ff-display); font-weight: 700;
@@ -276,7 +276,7 @@ input[type="range"]::-moz-range-thumb {
 .card-value.warn { color: var(--red); }
 .card-sub {
   font-family: var(--ff-mono);
-  color: var(--faint); font-size: 0.58rem; letter-spacing: 0.06em;
+  color: var(--faint); font-size: 0.58rem; letter-spacing: 0;
 }
 
 /* panels */
@@ -353,7 +353,7 @@ input[type="range"]::-moz-range-thumb {
   text-align: left;
   font-family: var(--ff-mono);
   color: var(--faint);
-  font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase;
+  font-weight: 500; letter-spacing: 0; text-transform: none;
   font-size: 0.6rem;
   padding: 0.3rem 0.6rem 0.5rem 0;
   border-bottom: 2px solid var(--line);

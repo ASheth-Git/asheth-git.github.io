@@ -24,12 +24,12 @@
   --ink:#0E0F11; --ink-2:#22262C; --muted:#5C6169; --faint:#8A9099;
   --line:rgba(14,15,17,.13); --line-2:rgba(14,15,17,.07);
   --sink:rgba(14,15,17,.04);
-  --red:#E2431F; --green:#1F7A4C;
+  --red:#C0532F; --green:#1F7A4C;
 
   /* the band colours of the site: Ni-blue carries every accent */
-  --accent:#1436E8; --accent-2:#0F27A6; --accent-hot:#4E6BFF;
+  --accent:#2F4BB0; --accent-2:#263D90; --accent-hot:#5E74C4;
   --accent-soft:rgba(20,54,232,.08);
-  --ramp:linear-gradient(90deg,#1436E8 0%,#7C8AF0 42%,#F8F8F6 62%,#E2431F 100%);
+  --ramp:linear-gradient(90deg,#2F4BB0 0%,#8C98D0 42%,#F8F8F6 62%,#C0532F 100%);
 
   /* ── type: the site's ramp, same clamps, nothing under 12px ──── */
   --ff-display:"Instrument Sans",system-ui,-apple-system,sans-serif;
@@ -56,10 +56,10 @@ html[data-theme="dark"]{
   --ink:#F1F1ED; --ink-2:#D3D5D8; --muted:#8C9199; --faint:#6A7078;
   --line:rgba(241,241,237,.20); --line-2:rgba(241,241,237,.10);
   --sink:rgba(241,241,237,.05);
-  --accent:#7B93FF; --accent-2:#5A73E8; --accent-hot:#A3B4FF;
+  --accent:#93A2D6; --accent-2:#6F82C2; --accent-hot:#B3BEE3;
   --accent-soft:rgba(123,147,255,.12);
-  --red:#FF7F58; --green:#4FBF88;
-  --ramp:linear-gradient(90deg,#7B93FF 0%,#A3B4FF 42%,#111214 62%,#FF7F58 100%);
+  --red:#DE937A; --green:#4FBF88;
+  --ramp:linear-gradient(90deg,#93A2D6 0%,#B3BEE3 42%,#111214 62%,#DE937A 100%);
   color-scheme:dark;
 }
 
@@ -72,9 +72,9 @@ html[data-theme="dark"]{
     --ink:#F1F1ED; --ink-2:#D3D5D8; --muted:#8C9199; --faint:#6A7078;
     --line:rgba(241,241,237,.20); --line-2:rgba(241,241,237,.10);
     --sink:rgba(241,241,237,.05);
-    --accent:#7B93FF; --accent-2:#5A73E8; --accent-hot:#A3B4FF;
+    --accent:#93A2D6; --accent-2:#6F82C2; --accent-hot:#B3BEE3;
     --accent-soft:rgba(123,147,255,.12);
-    --red:#FF7F58; --green:#4FBF88;
+    --red:#DE937A; --green:#4FBF88;
     color-scheme:dark;
   }
 }
@@ -111,13 +111,13 @@ html.theme-swap *::before,html.theme-swap *::after{
 .brand{font-family:var(--ff-display);font-weight:600;
   font-size:var(--t-small);letter-spacing:-.01em;color:var(--ink)}
 .mode-badge{font-family:var(--ff-mono);font-size:var(--t-micro);
-  letter-spacing:.1em;white-space:nowrap;border:1px solid var(--line);
+  letter-spacing:0;white-space:nowrap;border:1px solid var(--line);
   color:var(--accent);background:var(--accent-soft)}
 .topbar-status{font-family:var(--ff-mono);font-size:var(--t-micro);
-  letter-spacing:.08em;color:var(--muted)}
+  letter-spacing:0;color:var(--muted)}
 /* the app's own scheme toggle, matching the one in the site's bar */
-.tgl{font-family:var(--ff-mono);font-size:var(--t-micro);letter-spacing:.1em;
-  text-transform:uppercase;background:transparent;border:1px solid var(--line);
+.tgl{font-family:var(--ff-mono);font-size:var(--t-micro);letter-spacing:0;
+  text-transform:none;background:transparent;border:1px solid var(--line);
   color:var(--muted);padding:var(--s1) var(--s2);min-height:32px;cursor:pointer;
   border-radius:var(--radius);box-shadow:none;
   transition:color var(--d-fast) var(--ease),border-color var(--d-fast) var(--ease)}
@@ -138,11 +138,11 @@ body canvas{background:var(--surface)}
 #sidebar{background:var(--surface-2);border-right:1px solid var(--line);
   font-size:var(--t-mono)}
 .rack-head{font-family:var(--ff-mono);color:var(--muted);
-  font-size:var(--t-micro);letter-spacing:.14em;font-weight:500;
+  font-size:var(--t-micro);letter-spacing:0;font-weight:500;
   border-bottom:1px solid var(--line)}
 .rack-note{color:var(--faint);font-size:var(--t-micro);font-family:var(--ff-mono)}
 .sidebar-foot{font-family:var(--ff-mono);color:var(--faint);
-  font-size:var(--t-micro);letter-spacing:.14em}
+  font-size:var(--t-micro);letter-spacing:0}
 #universeInput,.date-row input{font-family:var(--ff-mono);font-size:var(--t-mono);
   color:var(--ink);background:var(--surface);border:1px solid var(--line);
   min-height:38px;padding:var(--s2) var(--s3)}
@@ -158,7 +158,7 @@ body canvas{background:var(--surface)}
 .chip.active{background:var(--ink);color:var(--bg);border-color:var(--ink);font-weight:500}
 
 .btn{font-family:var(--ff-mono);font-size:var(--t-label);font-weight:500;
-  letter-spacing:.1em;text-transform:uppercase;
+  letter-spacing:0;text-transform:none;
   min-height:44px;padding:var(--s2) var(--s5);
   background:transparent;color:var(--ink);border:1px solid var(--line);
   box-shadow:none;
@@ -205,12 +205,12 @@ input[type=range]:focus-visible::-webkit-slider-thumb{
 .card:hover{transform:none;box-shadow:none;border-color:var(--ink)}
 .physics-text{font-family:var(--ff-body);font-size:var(--t-small);color:var(--ink-2)}
 .card-label{font-family:var(--ff-mono);color:var(--muted);
-  font-size:var(--t-micro);letter-spacing:.1em}
+  font-size:var(--t-micro);letter-spacing:0}
 .card-value{font-family:var(--ff-display);font-weight:600;color:var(--accent);
   font-variant-numeric:tabular-nums;letter-spacing:-.01em}
 .card-value.warn{color:var(--red)}
 .card-sub{font-family:var(--ff-mono);color:var(--faint);
-  font-size:var(--t-micro);letter-spacing:.06em}
+  font-size:var(--t-micro);letter-spacing:0}
 .panel-title{font-family:var(--ff-display);font-weight:500;
   font-size:var(--t-small);color:var(--ink)}
 .panel-read{font-family:var(--ff-mono);font-size:var(--t-micro);color:var(--muted)}
@@ -228,7 +228,7 @@ input[type=range]:focus-visible::-webkit-slider-thumb{
 
 #assetTable{font-size:var(--t-mono)}
 #assetTable th{font-family:var(--ff-mono);color:var(--muted);font-weight:500;
-  font-size:var(--t-micro);letter-spacing:.1em;border-bottom:1px solid var(--line)}
+  font-size:var(--t-micro);letter-spacing:0;border-bottom:1px solid var(--line)}
 #assetTable td{border-bottom:1px solid var(--line-2);color:var(--ink-2)}
 #assetTable tbody tr:hover td{background:var(--sink)}
 #assetTable td:first-child{font-family:var(--ff-mono);color:var(--accent);font-weight:500}

@@ -182,49 +182,14 @@ function initTheme() {
   });
 }
 
-/* ══ loader: spin glyphs resolving into the full name ══════════ */
+/* ══ loader: the name, shown briefly, then faded out ═════════ */
 function initLoader() {
   const box = el("loadName");
   if (!box) return;
-  const name = "ALPESH SHETH, PhD", glyphs = "↑↓↑↓↕⇅", tick = el("loadTick");
-  const cells = [...name].map(ch => {
-    const s = document.createElement("span");
-    if (ch === " ") s.className = "sp";
-    else if (ch === ",") s.className = "pn";
-    s.textContent = ch === " " ? "\u00A0" : ch;
-    box.appendChild(s);
-    return { s, ch };
-  });
-  if (REDUCE) { el("load").classList.add("done"); return; }
-  const rnd = makeRNG(seedOf("loader"));
-  /* Driven by elapsed time, not by a tick count: a throttled or
-     coalesced timer would otherwise stretch the splash indefinitely and
-     hold the page hostage. Progress is a fraction of a fixed 950ms
-     budget, and each cell resolves at a fraction of that run — so the
-     reveal reads the same on a fast machine and a throttled tab, and
-     works for a name of any length. */
-  const DUR = 950, N = Math.max(cells.length - 1, 1);
-  const settle = () => { cells.forEach(o => { o.s.textContent = o.ch === " " ? "\u00A0" : o.ch; }); };
-  const t0 = performance.now();
-  (function step(now) {
-    const p = Math.min(1, (now - t0) / DUR);
-    cells.forEach((o, i) => {
-      if (o.ch === " ") return;
-      const at = 0.26 + 0.60 * i / N;
-      o.s.textContent = p > at ? o.ch : glyphs[(rnd() * glyphs.length) | 0];
-    });
-    if (tick) tick.innerHTML = "annealing · T/T<sub>c</sub> = " + (3.6 - 2.7 * p).toFixed(2);
-    if (p < 1) { requestAnimationFrame(step); return; }
-    settle();
-    el("load").classList.add("done");
-  })(t0);
-  /* last resort: if rAF never runs (background tab on open), the splash
-     still clears rather than covering the page forever */
-  setTimeout(() => {
-    if (el("load").classList.contains("done")) return;
-    settle();
-    el("load").classList.add("done");
-  }, DUR + 1200);
+  box.textContent = "Alpesh SHETH, PhD";
+  const done = () => el("load").classList.add("done");
+  if (REDUCE) { done(); return; }
+  setTimeout(done, 420);
 }
 
 /* ══ flow animation ═══════════════════════════════════════════ */
@@ -233,28 +198,6 @@ function initReveal() {
      The stylesheet gates it on this class, which means a blocked or broken
      script leaves the page fully legible instead of blank. */
   document.documentElement.classList.add("js");
-  document.querySelectorAll(".split").forEach(e => {
-    const words = e.textContent.split(" ").filter(w => w.length);
-    e.textContent = "";
-    words.forEach((word, wi) => {
-      const wrap = document.createElement("span");
-      wrap.className = "wd";
-      for (const c of word) {
-        const s = document.createElement("span");
-        s.className = "ch";
-        s.textContent = c;
-        wrap.appendChild(s);
-      }
-      e.appendChild(wrap);
-      if (wi < words.length - 1) {
-        const sp = document.createElement("span");
-        sp.className = "ch sp";
-        sp.innerHTML = "&nbsp;";
-        e.appendChild(sp);
-      }
-    });
-    [...e.querySelectorAll(".ch")].forEach((c, i) => c.style.transitionDelay = (i * 22) + "ms");
-  });
   const targets = [...document.querySelectorAll(".split,.rise,hr.rule")];
   const io = new IntersectionObserver(es => es.forEach(e => {
     if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
@@ -396,6 +339,7 @@ void main(){
   vec3 col = lum > 0.5
     ? uPaper*trans
     : uPaper + opacity*trans*vec3(1.75);
+  col = mix(vec3(dot(col, vec3(0.299,0.587,0.114))), col, 0.45);
   frag=vec4(col,1.0);
 }`;
 
@@ -436,7 +380,7 @@ function initAmbient() {
     const f = Math.min(1, y / (vh * 3.1));
     MU = -1.10 + 0.80 * sm(0.10, 0.45, f);
     VH = 0.00 + 0.14 * sm(0.38, 0.68, f);
-    FADE = 1.00 - 0.90 * sm(0.66, 1.00, f);
+    FADE = 1.00 - 0.92 * sm(0.12, 0.36, f);
     active = y < vh * 3.6;
     steps = LO; moving = performance.now();
   }
@@ -1727,14 +1671,14 @@ function initChrome() {
   const links = [...document.querySelectorAll(".rail a")];
   if (!links.length && !pct) return;
   const secs = links.map(a => document.querySelector(a.getAttribute("href")));
-  const total = String(links.length).padStart(2, "0");
+  const total = links.length;
   function up() {
     const f = scrollY / (document.body.scrollHeight - innerHeight || 1);
-    if (pct) pct.textContent = String(Math.round(Math.min(1, Math.max(0, f)) * 100)).padStart(3, "0") + "%";
+    if (pct) pct.textContent = Math.round(Math.min(1, Math.max(0, f)) * 100) + "%";
     let cur = 0;
     secs.forEach((s, i) => { if (s && s.getBoundingClientRect().top < innerHeight * .45) cur = i; });
     links.forEach((a, i) => a.classList.toggle("on", i === cur));
-    if (cnt) cnt.textContent = String(cur + 1).padStart(2, "0") + " / " + total;
+    if (cnt) cnt.textContent = (cur + 1) + " / " + total;
   }
   addEventListener("scroll", up, { passive: true });
   up();
