@@ -97,8 +97,8 @@
 
 
 <link rel="stylesheet" href="style.css">
-<link rel="icon" href="data:image/svg+xml,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'&gt;&lt;rect width='32' height='32' fill='%230B0C0E'/&gt;&lt;circle cx='16' cy='16' r='7' fill='none' stroke='%2393A2D6' stroke-width='2'/&gt;&lt;circle cx='16' cy='16' r='2.5' fill='%23DE937A'/&gt;&lt;/svg&gt;" media="(prefers-color-scheme: dark)">
-<link rel="icon" href="data:image/svg+xml,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'&gt;&lt;rect width='32' height='32' fill='%23F8F8F6'/&gt;&lt;circle cx='16' cy='16' r='7' fill='none' stroke='%232F4BB0' stroke-width='2'/&gt;&lt;circle cx='16' cy='16' r='2.5' fill='%23C0532F'/&gt;&lt;/svg&gt;">
+<link rel="icon" href="data:image/svg+xml,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'&gt;&lt;rect width='32' height='32' fill='%2312110F'/&gt;&lt;circle cx='16' cy='16' r='7' fill='none' stroke='%2393A9E6' stroke-width='2'/&gt;&lt;circle cx='16' cy='16' r='2.5' fill='%23E39C73'/&gt;&lt;/svg&gt;" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="data:image/svg+xml,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'&gt;&lt;rect width='32' height='32' fill='%23F4F0E8'/&gt;&lt;circle cx='16' cy='16' r='7' fill='none' stroke='%232B4896' stroke-width='2'/&gt;&lt;circle cx='16' cy='16' r='2.5' fill='%23A84F27'/&gt;&lt;/svg&gt;">
 <script>
   /* theme resolved before first paint so the scheme never flashes.
      Dark is the default: the plates are emissive figures — spectral
@@ -195,13 +195,13 @@
     <p class="sub rise">Computational condensed matter physics · Many-body theory</p>
     <h1 class="split">Alpesh SHETH, PhD</h1>
     <div class="lead rise">
-     <p>I am a postdoctoral researcher at INMA (CSIC – Universidad de Zaragoza), working on machine learning for quantum many-body simulation. I develop rigorous, predictive computational models of quantum materials and validate them against experimental data. My doctoral research focused on the infinite-layer nickelates: a family of superconductors that are structural and electronic analogues to cuprates, yet exhibit divergent macroscopic behavior. I demonstrated that this discrepancy is driven by a secondary electronic band unique to the nickelate system. I implement these simulations using Python, C++, and Fortran, deployed across GPU architectures and high-performance computing (HPC) clusters.</p>
+     <p>I am a postdoctoral researcher at INMA (CSIC – Universidad de Zaragoza), where I work on machine learning for quantum many-body simulation. I build computational models of quantum materials and test them against experiment. My PhD was on the infinite-layer nickelates, superconductors that resemble the cuprates in structure and electronic make-up but behave differently; I showed that the difference comes from a second electronic band that the cuprates lack. I write the simulations in Python, C++ and Fortran and run them on GPUs and high-performance computing (HPC) clusters.</p>
     </div>
     <div class="meta rise">
       <div>Now<strong>Postdoc · INMA, Zaragoza</strong></div>
       <div>Methods<strong>Tight-binding · DFT · VMC · neural quantum states</strong></div>
       <div>PhD<strong>Bordeaux 2025 · JPCM <b>37</b>, 125703</strong></div>
-      <div>On this page<strong>Five models, run as you read</strong></div>
+      <div>On this page<strong>Five interactive simulations</strong></div>
     </div>
     <div class="herocta rise">
       <a class="btn" href="#s2">Open the simulations</a>
@@ -216,10 +216,10 @@
     <p class="eyebrow rise"><b>01</b><span>Research</span></p>
     <h2 class="split">Research</h2>
     <div class="lead rise">
-      <p>My PhD research, supervised by Sébastien Burdin at the Laboratoire Ondes et Matière d'Aquitaine (CNRS, Université de Bordeaux) and defended in November 2025, focused on the infinite-layer nickelates \(R\mathrm{NiO_2}\). Discovered to <span class="term" tabindex="0" data-def="Electrical conduction with no resistive loss, below a material-specific critical temperature.">superconduct</span> in 2019, these compounds are structural and electronic analogues to copper-oxide superconductors. However, experimental observations deviate significantly from the standard one-band cuprate model.</p>
-      <p>To address this discrepancy, I developed a two-band model: the primary nickel \(3d_{x^2-y^2}\) band hybridized with a secondary interstitial band. This second band conducts current across specific regions of the phase diagram, granting the <span class="term" tabindex="0" data-def="The boundary in momentum space between filled and empty electron states. Transport, magnetism and superconductivity are all governed by the states sitting closest to it.">Fermi surface</span> a high sensitivity to applied pressure and oxygen stoichiometry—degrees of freedom fundamentally absent in one-band descriptions. Crucially, a single set of parameters within this model captures the physics of both the \(R\mathrm{NiO_3}\) and \(R\mathrm{NiO_2}\) families.</p>
-      <p>This framework yields a directly testable prediction: the characteristic charge/spin ordering wavevector of the electrons is not rigidly pinned by the crystal lattice, as previously assumed, but varies continuously with doping and pressure. This shift can be verified via scattering experiments. Simulation 2 (scroll below) allows you to adjust these physical controls and observe the peak displacement in real time. Published in <a class="inline" href="https://doi.org/10.1088/1361-648X/ada908">J. Phys.: Condens. Matter <b>37</b>, 125703 (2025)</a>; preprint <a class="inline" href="https://arxiv.org/abs/2407.16042">arXiv:2407.16042</a>; <a class="inline" href="https://theses.hal.science/tel-05502836">thesis (open access)</a>.</p>
-      <p>As a postdoctoral researcher at INMA in Zaragoza, within the ML-QSIM project, I now apply this analytical framework to a broader class of computationally heavy problems governed by similar mechanics: high-dimensional state spaces driven by a tunable control parameter, leading to a critical threshold where macroscopic behavior shifts. Concretely, this includes neural networks used to represent many-body quantum states, <em>ab initio</em> predictions of battery aging, and mapping combinatorial optimization problems onto statistical physics models. Each simulation below isolates and visualizes the critical threshold for these respective systems.</p>
+      <p>My PhD, supervised by Sébastien Burdin at the Laboratoire Ondes et Matière d'Aquitaine (CNRS, Université de Bordeaux) and defended in November 2025, was on the infinite-layer nickelates \(R\mathrm{NiO_2}\). They were found to <span class="term" tabindex="0" data-def="Electrical conduction with no resistive loss, below a material-specific critical temperature.">superconduct</span> in 2019 and are close structural and electronic relatives of the copper-oxide superconductors, yet experiments on them do not fit the one-band model that describes the cuprates.</p>
+      <p>I built a two-band model instead: the nickel \(3d_{x^2-y^2}\) band, hybridised with a second, interstitial band. In parts of the phase diagram this second band carries current, which makes the <span class="term" tabindex="0" data-def="The boundary in momentum space between filled and empty electron states. Transport, magnetism and superconductivity are all governed by the states sitting closest to it.">Fermi surface</span> sensitive to pressure and to oxygen stoichiometry, two handles that a one-band description does not have. A single set of parameters describes both the \(R\mathrm{NiO_3}\) and \(R\mathrm{NiO_2}\) families.</p>
+      <p>The model makes a prediction that can be tested directly: the wavevector at which charge or spin order sets in is not fixed by the lattice, as had been assumed, but moves continuously with doping and pressure, which scattering experiments can check. Simulation 2 below lets you move those controls and watch the peak shift. Published in <a class="inline" href="https://doi.org/10.1088/1361-648X/ada908">J. Phys.: Condens. Matter <b>37</b>, 125703 (2025)</a>; preprint <a class="inline" href="https://arxiv.org/abs/2407.16042">arXiv:2407.16042</a>; <a class="inline" href="https://theses.hal.science/tel-05502836">thesis (open access)</a>.</p>
+      <p>At INMA in Zaragoza, within the ML-QSIM project, I apply the same approach to other problems with the same structure: a very large space of states, one control parameter, and a threshold where the collective behaviour changes. That covers neural networks that represent many-body quantum states, <em>ab initio</em> predictions of battery ageing, and combinatorial optimisation problems mapped onto statistical-physics models. Each simulation below shows one such threshold.</p>
     </div>
 
     <hr class="rule" style="margin:2.4rem 0 0">
@@ -337,7 +337,7 @@
   <div class="wrap">
     <p class="eyebrow rise"><b>04</b><span>Simulation 3 · Optimisation</span></p>
     <h2 class="split">Portfolio selection as an Ising ground state</h2>
-    <p class="lead rise">Choosing which assets to hold is the same mathematics as finding the lowest-energy arrangement of a magnet. Holding or not holding becomes spin up or spin down; expected return becomes a magnetic field on each site; the risk of holding two correlated assets becomes a coupling between them. With ten assets there are only 1024 possibilities, so every one can be checked and the true best answer is known. That matters: benchmarks of quantum-inspired solvers usually compare against another approximate method. Here the solver is scored against the proven optimum, and the gap to it is the only number worth reporting.</p>
+    <p class="lead rise">Choosing which assets to hold is the same mathematics as finding the lowest-energy arrangement of a magnet. Holding or not holding becomes spin up or spin down; expected return becomes a magnetic field on each site; the risk of holding two correlated assets becomes a coupling between them. With ten assets there are only 1024 possibilities, so every one can be checked and the true best answer is known. This matters because benchmarks of quantum-inspired solvers usually compare against another approximate method. Here the solver is scored against the proven optimum, and the remaining gap is the number to report.</p>
 
     <div class="plate rise">
       <div class="panes">
@@ -428,7 +428,7 @@
   <div class="wrap">
     <p class="eyebrow rise"><b>06</b><span>Simulation 5 · Criticality</span></p>
     <h2 class="split">The two-dimensional Ising model</h2>
-    <p class="lead rise">The standard textbook model of a phase transition: a grid of magnets, each preferring to point the same way as its neighbours. Vermilion is up, white is down. Below the critical temperature they lock into large domains that drift slowly; above it, order breaks down and the pattern turns to noise. This is the cleanest demonstration of a threshold there is, which is why it anchors this page. It runs on your GPU. Hold a pointer over the lattice to pull the magnets one way; tap or click to push the other.</p>
+    <p class="lead rise">The standard textbook model of a phase transition: a grid of magnets, each preferring to point the same way as its neighbours. Vermilion is up, white is down. Below the critical temperature they lock into large domains that drift slowly; above it, order breaks down and the pattern turns to noise. It is the clearest example of a threshold, and the reference point for the rest of the page. It runs on your GPU. Hold a pointer over the lattice to pull the magnets one way; tap or click to push the other.</p>
 
     <div class="plate rise">
       <div class="panes">
@@ -470,7 +470,7 @@
   <div class="wrap">
     <p class="eyebrow rise"><b>07</b><span>Summary</span></p>
     <h2 class="split">Models, control parameters, and checks</h2>
-    <p class="lead rise">Five of these seven rows are the simulations above; two are still in progress. The last column says what each model was checked against, which is what makes the rest verifiable.</p>
+    <p class="lead rise">Five of the seven rows are the simulations above; the other two are work in progress. The last column lists what each model was checked against.</p>
     <div class="ledwrap rise">
       <table>
         <thead><tr><th>System</th><th>Reduced to</th><th>Control parameter</th><th>Threshold</th><th>Validated against</th></tr></thead>
@@ -494,12 +494,12 @@
   <div class="wrap">
     <p class="eyebrow rise"><b>08</b><span>Method</span></p>
     <h2 class="split">Method</h2>
-    <p class="lead rise">Every model above was built in the same four steps, in that order. The order matters more than any single technique: most of the work is in the first step, and most of the mistakes are caught in the last.</p>
+    <p class="lead rise">Each model above was built in the same four steps. Most of the effort goes into the first, and most of the errors are caught in the last.</p>
     <div class="steps rise">
-      <div class="step"><span class="n">01</span><h3>Reduce</h3><p>Identify the minimal set of moving parts that still produces the behaviour — two bands for a nickelate, holdings and correlations for a portfolio. This step sets the ceiling on everything after it: the reduction decides what the computation is able to tell you.</p></div>
-      <div class="step"><span class="n">02</span><h3>Formulate</h3><p>Write it in a form that established mathematics already knows how to attack — an energy function, a landscape to minimise. Then what you can say about the answer is a result, not just a number the code returned.</p></div>
+      <div class="step"><span class="n">01</span><h3>Reduce</h3><p>Find the smallest set of ingredients that still produces the behaviour: two bands for a nickelate, holdings and correlations for a portfolio. This choice limits everything that follows, since the computation can only answer what the reduced model contains.</p></div>
+      <div class="step"><span class="n">02</span><h3>Formulate</h3><p>Write the problem in a form that existing mathematical tools can handle, such as an energy function to minimise. Statements about the answer are then results, not just numbers the code returned.</p></div>
       <div class="step"><span class="n">03</span><h3>Compute</h3><p>Vectorise the inner loops, move the expensive parts onto GPUs or the cluster, and check against cases with known exact answers before running anything large.</p></div>
-      <div class="step"><span class="n">04</span><h3>Validate</h3><p>Compare against experiment, independent data, or an exact solution — specifically against data the model was not built to reproduce. Where prediction and measurement diverge, the discrepancy identifies precisely which assumption to revisit.</p></div>
+      <div class="step"><span class="n">04</span><h3>Validate</h3><p>Compare against experiment, independent data or an exact solution, preferably data the model was not fitted to. Where prediction and measurement disagree, the disagreement points to the assumption to revisit.</p></div>
     </div>
   </div>
 </section>
@@ -512,7 +512,7 @@
       <h2 class="split">Publications and training</h2>
       <a class="btn ghost" href="Alpesh_Sheth_CV.pdf" download="">Download PDF</a>
     </div>
-    <p class="lead rise">One peer-reviewed paper, an open-access thesis, a preprint, and the positions behind them. The thesis and both preprints are free to read.</p>
+    <p class="lead rise">One peer-reviewed paper, an open-access thesis and a preprint, with the positions behind them. The thesis and both arXiv preprints are free to read.</p>
     <div class="cv rise">
       <div class="cvtabs" role="tablist">
         <button class="on" role="tab" data-tab="timeline">Timeline</button>
@@ -608,12 +608,12 @@
   <div class="wrap">
     <p class="eyebrow rise"><b>10</b><span>What is next</span></p>
     <h2 class="split">Where the work is going</h2>
-    <p class="lead rise">Four active threads. Each has the same shape as the work above — a large space of possibilities, one dial, a threshold worth finding. For each I have said what remains to be established.</p>
+    <p class="lead rise">Four ongoing projects, each with a note on what still has to be established.</p>
     <div class="tiles rise">
       <div><span class="tag">Active</span><h3>Neural-network quantum states</h3><p>Writing a quantum state down explicitly costs twice as much memory for every particle added, which puts the practical reach at a few tens of particles. A neural network can represent the state compactly instead, trained by Monte Carlo and checked against <span class="term" tabindex="0" data-def="Exact numerical solution of a small quantum system by direct diagonalisation of its Hamiltonian; used as a reference for approximate methods.">exact answers</span> wherever those are still computable. This is my main line of work at INMA, within the ML-QSIM project, with particular attention to diagnosing sampler quality, so that an energy that looks converged can be trusted. Open directions: frustrated magnets, fermions in two dimensions, finite temperature, real-time dynamics, and neutral-atom hardware.</p></div>
-      <div><span class="tag">Validating</span><h3>Ab initio battery modelling</h3><p>Quantities computed from first-principles chemistry — how easily lithium moves, how much a site holds, what voltage results — fed as priors into the <span class="term" tabindex="0" data-def="Doyle–Fuller–Newman: the standard continuum model of a lithium-ion cell, treating porous electrodes and electrolyte transport.">Doyle–Fuller–Newman</span> cell model, the standard engineering description of a battery. Where that model and real cycling data disagree systematically, the disagreement is the signal, and it becomes the target for predicting cell lifetime.</p></div>
+      <div><span class="tag">Validating</span><h3>Ab initio battery modelling</h3><p>Quantities computed from first-principles chemistry — how easily lithium moves, how much a site holds, what voltage results — fed as priors into the <span class="term" tabindex="0" data-def="Doyle–Fuller–Newman: the standard continuum model of a lithium-ion cell, treating porous electrodes and electrolyte transport.">Doyle–Fuller–Newman</span> cell model, the standard engineering description of a battery. Where the model and measured cycling data disagree systematically, that residual is what I aim to predict, as a route to cell lifetime.</p></div>
       <div><span class="tag">Measuring</span><h3>Benchmarking quantum-inspired optimisation</h3><p>Classical and quantum-inspired solvers run on identical problems, under one metric, against exact baselines — so that a reported speed-up reflects the solver and not a quietly changed convention. <a href="#s4" id="launchAppLink">Simulation 3 is the public version.</a></p></div>
-      <div><span class="tag">Formulating</span><h3>Statistical physics of market microstructure</h3><p>An order book is a large number of agents each making a buy-or-sell decision, pushed far from equilibrium — formally close to a spin system. Whether the sudden shifts in market behaviour can be described in <span class="term" tabindex="0" data-def="A qualitative change in the collective state of a system, driven by the alignment of many local interactions.">the same language as phase transitions</span> is an open question, and establishing the answer either way is the useful result.</p></div>
+      <div><span class="tag">Formulating</span><h3>Statistical physics of market microstructure</h3><p>An order book is a large number of agents each making a buy-or-sell decision, pushed far from equilibrium — formally close to a spin system. Whether the sudden shifts in market behaviour can be described in <span class="term" tabindex="0" data-def="A qualitative change in the collective state of a system, driven by the alignment of many local interactions.">the same language as phase transitions</span> is an open question; either answer would be useful.</p></div>
     </div>
   </div>
 </section>
@@ -623,7 +623,7 @@
   <div class="wrap">
     <p class="eyebrow rise"><b>11</b><span>Contact</span></p>
     <h2 class="split">Contact</h2>
-     <p class="lead rise"> If you are wrestling with a complex system that stubbornly resists being reduced to its mathematical essentials, or a critical threshold currently hiding in the noise, I would like to hear about it. Email is the most reliable way to reach me. I am based in Zaragoza, Spain.</p>
+     <p class="lead rise"> If you have a problem that might suit this kind of modelling, or would like to discuss any of the work here, I would be glad to hear from you. Email is the most reliable way to reach me. I am based in Zaragoza, Spain.</p>
     <ul class="links rise">
       <li><a href="mailto:alpeshsheth.phy@gmail.com">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 5.5A1.5 1.5 0 0 1 3.5 4h17A1.5 1.5 0 0 1 22 5.5v13a1.5 1.5 0 0 1-1.5 1.5h-17A1.5 1.5 0 0 1 2 18.5v-13Zm2 .7v12.3h16V6.2l-7.5 6a1 1 0 0 1-1.25 0L4 6.2Zm1.9-.7 6.1 4.9L18.1 5.5H5.9Z"></path></svg>

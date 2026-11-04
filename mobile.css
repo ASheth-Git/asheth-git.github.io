@@ -263,3 +263,9 @@ body.app:not([data-view="home"]) #bz{opacity:0}
 .view .steps{margin-top:var(--s5)}
 .view .skills{margin-top:var(--s5);gap:var(--s5)}
 .view .ledwrap,.view .cv,.view .links,.view .tiles{margin-top:var(--s5)}
+
+@media(prefers-reduced-motion:no-preference){
+  .view.on{animation:view-in 340ms var(--ease) both}
+  @keyframes view-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .tabs button{transition:color 260ms var(--ease)}
+}

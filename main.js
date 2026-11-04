@@ -174,7 +174,17 @@ function initTheme() {
   themeLabel();
   const btn = el("themeBtn");
   if (btn) btn.addEventListener("click", () => {
-    applyTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark", true);
+    const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+    if (REDUCE || !document.startViewTransition) { applyTheme(next, true); return; }
+    const r = btn.getBoundingClientRect();
+    const x = r.left + r.width / 2, y = r.top + r.height / 2;
+    const reach = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+    const t = document.startViewTransition(() => applyTheme(next, true));
+    t.ready.then(() => {
+      document.documentElement.animate(
+        { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${reach}px at ${x}px ${y}px)`] },
+        { duration: 680, easing: "cubic-bezier(.65,0,.35,1)", pseudoElement: "::view-transition-new(root)" });
+    }).catch(() => {});
   });
   /* a change made in another tab is still this visitor's choice */
   addEventListener("storage", e => {
@@ -199,6 +209,9 @@ function initReveal() {
      script leaves the page fully legible instead of blank. */
   document.documentElement.classList.add("js");
   const targets = [...document.querySelectorAll(".split,.rise,hr.rule")];
+  document.querySelectorAll("section .wrap, .view .pad, .ahero").forEach(w => {
+    [...w.querySelectorAll(".split,.rise")].forEach((e, i) => e.style.setProperty("--i", Math.min(i, 6)));
+  });
   const io = new IntersectionObserver(es => es.forEach(e => {
     if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
   }), { threshold: .15, rootMargin: "0px 0px -6% 0px" });
@@ -1446,7 +1459,7 @@ function initTelemetry() {
   if (!canvas) return;
   const ctx = canvas.getContext("2d");
   const dpr = Math.min(devicePixelRatio || 1, 2);
-  let visitor = null, countries = [], W = 0, H = 0;
+  let visitor = null, countries = [], serverTotal = 0, W = 0, H = 0;
   const base = document.createElement("canvas");
 
   function buildBase() {
@@ -1608,7 +1621,7 @@ function initTelemetry() {
 
   function paintStats() {
     if (!statsSeen) return;
-    const total = countries.reduce((a, c) => a + (c.count || 0), 0);
+    const total = Math.max(serverTotal, countries.reduce((a, c) => a + (c.count || 0), 0));
     odometer(el("tVisits"), total);
     odometer(el("tCountries"), countries.length);
     const here = el("tHere");
@@ -1624,7 +1637,9 @@ function initTelemetry() {
   async function fetchTelemetry(registerHit = false) {
     try {
       const res = await fetch(TELEMETRY_ENDPOINT, { method: registerHit ? "POST" : "GET" });
+      if (!res.ok) return;
       const data = await res.json();
+      if (Number.isFinite(data.total)) serverTotal = data.total;
       if (data.countries && Array.isArray(data.countries)) { countries = data.countries; buildBase(); kick(); }
       if (data.current) { lastGeo = data.current; relocate(lastGeo); kick(); }
       paintStats();
@@ -1686,7 +1701,7 @@ function initAppLaunch() {
 
 /* ═══ chrome — progress, rail, section counter ════════════════ */
 function initChrome() {
-  const pct = el("pct"), cnt = el("secCount");
+  const pct = el("pct"), cnt = el("secCount"), bar = document.querySelector(".top");
   const links = [...document.querySelectorAll(".rail a")];
   if (!links.length && !pct) return;
   const secs = links.map(a => document.querySelector(a.getAttribute("href")));
@@ -1694,6 +1709,7 @@ function initChrome() {
   function up() {
     const f = scrollY / (document.body.scrollHeight - innerHeight || 1);
     if (pct) pct.textContent = Math.round(Math.min(1, Math.max(0, f)) * 100) + "%";
+    if (bar) bar.style.setProperty("--progress", Math.min(1, Math.max(0, f)).toFixed(4));
     let cur = 0;
     secs.forEach((s, i) => { if (s && s.getBoundingClientRect().top < innerHeight * .45) cur = i; });
     links.forEach((a, i) => a.classList.toggle("on", i === cur));
@@ -1726,6 +1742,41 @@ function initSliderA11y() {
   });
 }
 
+/* ══ motion: indicators and readouts that follow the page's state ══ */
+function initMotion() {
+  /* CV tabs: a marker slides to the selected tab */
+  document.querySelectorAll(".cvtabs").forEach(bar => {
+    const place = () => {
+      const on = bar.querySelector('[aria-selected="true"]') || bar.querySelector(".on");
+      if (!on || !on.offsetWidth) return;
+      bar.style.setProperty("--tab-x", on.offsetLeft + "px");
+      bar.style.setProperty("--tab-w", on.offsetWidth + "px");
+      if (!bar.classList.contains("has-marker")) bar.classList.add("has-marker");
+    };
+    bar.querySelectorAll("button").forEach(b => new MutationObserver(place).observe(b, { attributes: true, attributeFilter: ["aria-selected", "class"] }));
+    addEventListener("resize", place);
+    REDRAW.push(place);
+    place();
+  });
+  if (REDUCE) return;
+  /* readouts: a value that changes flashes once, like an instrument settling */
+  const tick = node => {
+    node.classList.remove("tick");
+    void node.offsetWidth;
+    node.classList.add("tick");
+  };
+  const watch = [...document.querySelectorAll(".state b, .tstat .tv")];
+  const mo = new MutationObserver(recs => {
+    const seen = new Set();
+    recs.forEach(r => {
+      const n = r.target.nodeType === 3 ? r.target.parentElement : r.target;
+      const host = n && n.closest(".state b, .tstat .tv");
+      if (host && !seen.has(host)) { seen.add(host); tick(host); }
+    });
+  });
+  watch.forEach(n => mo.observe(n, { childList: true, characterData: true, subtree: true }));
+}
+
 /* ══ boot ═════════════════════════════════════════════════════ */
 function boot() {
   if (el("year")) el("year").textContent = new Date().getFullYear();
@@ -1744,6 +1795,7 @@ function boot() {
   initAppLaunch();
   initChrome();
   initSliderA11y();
+  initMotion();
   let rt;
   addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(redrawAll, 180); });
 }

@@ -1,10 +1,15 @@
 {
   "name": "alpesh-sheth-portfolio",
   "version": "1.0.0",
-  "description": "Computational condensed matter physicist portfolio with live telemetry",
+  "description": "Personal academic website of Alpesh Sheth, with a small visitor-counter function",
   "private": true,
   "scripts": {
-    "dev": "vercel dev"
+    "dev": "vercel dev",
+    "test": "node --test tests/telemetry.test.js"
   },
-  "dependencies": {}
+  "dependencies": {},
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  }
 }

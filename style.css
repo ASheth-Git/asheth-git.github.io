@@ -7,10 +7,11 @@
    ═══════════════════════════════════════════════════════════════ */
 
 :root{
-  --paper:#F8F8F6; --panel:#FCFCFB; --ink:#0E0F11; --body-ink:#22262C; --soft:#5C6169;
-  --hair:rgba(14,15,17,.13); --hair-2:rgba(14,15,17,.07); --sink:rgba(14,15,17,.04);
-  --b1:#2F4BB0;                 /* Ni d(x²−y²) / d(z²) character */
-  --b2:#C0532F;                 /* rare-earth interlayer band    */
+  --paper:#F4F0E8; --panel:#FAF7F1; --ink:#1C1A17; --body-ink:#2E2B26; --soft:#69635A;
+  --hair:rgba(28,26,23,.14); --hair-2:rgba(28,26,23,.07); --sink:rgba(28,26,23,.045);
+  --brass:#8A6414;                /* interface accent: focus, selection, progress */
+  --b1:#2B4896;                 /* Ni d(x²−y²) / d(z²) character */
+  --b2:#A84F27;                 /* rare-earth interlayer band    */
   --ui:"Instrument Sans",system-ui,-apple-system,sans-serif;
   --body:"Newsreader",Georgia,serif;
   --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
@@ -70,18 +71,18 @@
   --scheme:light;
 }
 html[data-theme="dark"]{
-  --paper:#0B0C0E; --panel:#111214; --ink:#F1F1ED; --body-ink:#D3D5D8; --soft:#8C9199;
-  --hair:rgba(241,241,237,.20); --hair-2:rgba(241,241,237,.10); --sink:rgba(241,241,237,.05);
-  --b1:#93A2D6; --b2:#DE937A;
+  --paper:#12110F; --panel:#1A1916; --ink:#EFEAE1; --body-ink:#D9D3C8; --soft:#9E978C;
+  --hair:rgba(239,234,225,.17); --hair-2:rgba(239,234,225,.09); --sink:rgba(239,234,225,.05);
+  --b1:#93A9E6; --b2:#E39C73; --brass:#D8B36B;
   --panel-glass:var(--panel);
   --paper-glass:var(--paper);
   --scheme:dark;
 }
 @media(prefers-color-scheme:dark){
   html:not([data-theme="light"]){
-    --paper:#0B0C0E; --panel:#111214; --ink:#F1F1ED; --body-ink:#D3D5D8; --soft:#8C9199;
-    --hair:rgba(241,241,237,.20); --hair-2:rgba(241,241,237,.10); --sink:rgba(241,241,237,.05);
-    --b1:#93A2D6; --b2:#DE937A;
+    --paper:#12110F; --panel:#1A1916; --ink:#EFEAE1; --body-ink:#D9D3C8; --soft:#9E978C;
+    --hair:rgba(239,234,225,.17); --hair-2:rgba(239,234,225,.09); --sink:rgba(239,234,225,.05);
+    --b1:#93A9E6; --b2:#E39C73; --brass:#D8B36B;
     --panel-glass:var(--panel);
     --paper-glass:var(--paper);
     --scheme:dark;
@@ -400,7 +401,7 @@ button,a.btn{display:inline-flex;align-items:center;justify-content:center;gap:v
   transition:background var(--d-fast) var(--ease),color var(--d-fast) var(--ease),
     border-color var(--d-fast) var(--ease),box-shadow var(--d-fast) var(--ease),
     transform var(--d-fast) var(--ease)}
-button:hover,a.btn:hover{background:var(--b1);border-color:var(--b1);color:#fff;
+button:hover,a.btn:hover{background:var(--b1);border-color:var(--b1);color:var(--paper);
   box-shadow:0 2px 10px -4px color-mix(in oklab,var(--b1) 60%,transparent)}
 button:active,a.btn:active{transform:translateY(1px);box-shadow:none}
 button.ghost,a.btn.ghost{background:transparent;color:var(--ink);border-color:var(--hair);
@@ -425,7 +426,7 @@ button.busy::after{content:"";position:absolute;inset:0;margin:auto;width:12px;h
 .bar i{display:block;height:100%;width:0;background:var(--b1);transition:width var(--d-fast) linear}
 
 /* ══ hover/tap definitions ════════════════════════════════════ */
-.term{border-bottom:1px dotted var(--b1);cursor:help;position:relative;display:inline-block}
+.term{text-decoration:underline dotted var(--b1);text-decoration-thickness:1px;text-underline-offset:3px;cursor:help;position:relative;display:inline-block}
 .term:focus{outline:none}
 .term::after{content:attr(data-def);position:absolute;left:50%;bottom:calc(100% + var(--s2));
   transform:translateX(calc(-50% + var(--tip-dx,0px))) translateY(4px);width:min(20rem,72vw);background:var(--ink);
@@ -716,3 +717,98 @@ footer.site{padding-left:max(var(--pad),calc((100% - 84rem) / 2));
 @media(orientation:portrait) and (min-width:700px){
   .hero{min-height:auto;padding-top:clamp(6rem,10vh,8rem);padding-bottom:clamp(3.5rem,6vh,5rem)}
 }
+
+/* ══ colour details ═══════════════════════════════════════════ */
+::selection{background:color-mix(in oklab,var(--brass) 32%,transparent);color:var(--ink)}
+:focus-visible{outline-color:var(--brass)}
+.term:focus-visible{outline-color:var(--brass)}
+html{scrollbar-color:color-mix(in oklab,var(--soft) 55%,transparent) var(--paper)}
+input[type=range]{accent-color:var(--b1)}
+
+/* ══ motion ═══════════════════════════════════════════════════
+   Each movement reports something: a figure being scanned in, a value
+   settling, a threshold detected, the reader's position. Everything here
+   is skipped for visitors who ask for reduced motion. */
+::view-transition-old(root),::view-transition-new(root){animation:none;mix-blend-mode:normal}
+::view-transition-old(root){z-index:1}
+::view-transition-new(root){z-index:2}
+
+/* reading progress: a brass hairline along the bottom of the top bar */
+.top::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;
+  background:var(--brass);transform-origin:left;transform:scaleX(var(--progress,0));opacity:.85}
+
+/* CV tabs: sliding marker */
+.cvtabs{position:relative}
+.cvtabs.has-marker::after{content:"";position:absolute;left:0;bottom:-1px;height:2px;
+  width:var(--tab-w,0);transform:translateX(var(--tab-x,0));background:var(--brass);pointer-events:none}
+
+/* readouts and flags */
+.state b,.tstat .tv{transition:color 600ms var(--ease)}
+.flag{transition:opacity var(--d-fast) var(--ease),transform 260ms var(--ease)}
+
+@media(prefers-reduced-motion:no-preference){
+  /* blocks enter in reading order, a short step apart */
+  html.js .rise{transform:translateY(12px);
+    transition:opacity 700ms var(--ease),transform 900ms var(--ease);
+    transition-delay:calc(var(--i,0) * 70ms)}
+  html.js .rise.in{transform:none}
+
+  /* the hero name comes into focus rather than sliding in */
+  html.js .hero h1.split{filter:blur(12px);transform:scale(1.012);
+    transition:opacity 900ms var(--ease),filter 1100ms var(--ease),transform 1300ms var(--ease)}
+  html.js .hero h1.split.in{filter:none;transform:none}
+  html.js .hero .meta{border-top-color:transparent;position:relative}
+  html.js .hero .meta::before{content:"";position:absolute;left:0;right:0;top:-1px;height:1px;
+    background:var(--hair);transform-origin:left;transform:scaleX(0);
+    transition:transform 1200ms var(--ease) calc(var(--i,0) * 70ms + 150ms)}
+  html.js .hero .meta.in::before{transform:scaleX(1)}
+
+  /* figures are scanned in left to right behind a brass line */
+  html.js .plate.rise .panes{position:relative;clip-path:inset(0 100% 0 0);
+    transition:clip-path 1150ms cubic-bezier(.65,0,.35,1) calc(var(--i,0) * 70ms + 120ms)}
+  html.js .plate.rise.in .panes{clip-path:inset(0 0 0 0)}
+  html.js .plate.rise .panes::after{content:"";position:absolute;top:0;bottom:0;left:0;width:2px;
+    background:var(--brass);box-shadow:0 0 18px 3px color-mix(in oklab,var(--brass) 60%,transparent);
+    opacity:0;pointer-events:none;z-index:3}
+  html.js .plate.rise.in .panes::after{
+    animation:scan-pos 1150ms cubic-bezier(.65,0,.35,1) calc(var(--i,0) * 70ms + 120ms) both,
+              scan-fade 1150ms linear calc(var(--i,0) * 70ms + 120ms) both}
+  @keyframes scan-pos{from{left:0}to{left:calc(100% - 3px)}}
+  @keyframes scan-fade{0%{opacity:0}6%{opacity:1}90%{opacity:1}100%{opacity:0}}
+
+  /* links draw their underline; primary buttons fill from the left */
+  a.inline{background:linear-gradient(var(--b1),var(--b1)) 0 100% / 0 1px no-repeat;
+    transition:background-size 420ms var(--ease),color var(--d-fast) var(--ease)}
+  a.inline:hover{background-size:100% 1px}
+  .herocta a.btn:not(.ghost),.row button:not(.ghost):not(.raw){
+    background-image:linear-gradient(var(--b1),var(--b1));background-size:0 100%;
+    background-repeat:no-repeat;background-position:0 0;
+    transition:background-size 420ms var(--ease),color 260ms var(--ease),border-color 260ms var(--ease),transform var(--d-fast) var(--ease)}
+  .herocta a.btn:not(.ghost):hover,.row button:not(.ghost):not(.raw):hover{
+    background-color:var(--ink);background-image:linear-gradient(var(--b1),var(--b1));
+    background-size:100% 100%;background-repeat:no-repeat}
+  .cvtabs.has-marker::after{transition:transform 460ms var(--ease),width 460ms var(--ease)}
+  .cvpane.on{animation:pane-in 380ms var(--ease) both}
+  @keyframes pane-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  /* a changed readout flashes brass and settles */
+  .state b.tick,.tstat .tv.tick{animation:tick 900ms var(--ease)}
+  @keyframes tick{0%{color:var(--brass)}100%{color:var(--ink)}}
+  /* a threshold being crossed pings once */
+  .flag.on{animation:ping 900ms var(--ease)}
+  @keyframes ping{0%{transform:scale(.92);box-shadow:0 0 0 0 color-mix(in oklab,var(--b2) 55%,transparent)}
+    60%{transform:none}100%{box-shadow:0 0 0 9px transparent}}
+
+  /* project tiles: an accent rule grows down the edge on hover */
+  .tiles>div{position:relative}
+  .tiles>div::before{content:"";position:absolute;left:-1px;top:0;bottom:0;width:2px;background:var(--b1);
+    transform:scaleY(0);transform-origin:top;transition:transform 520ms var(--ease)}
+  .tiles>div:hover::before{transform:scaleY(1)}
+  /* contact cards: the icon steps forward */
+  .links svg{transition:transform 320ms var(--ease),opacity 320ms var(--ease)}
+  .links a:hover svg{transform:translateX(3px);opacity:1}
+  /* definitions open from their word */
+  .term::after{transform-origin:50% 100%}
+  .rail a{transition:color 320ms var(--ease),opacity 320ms var(--ease)}
+}
+@media print{.panes{clip-path:none!important}.hero h1{filter:none!important}.top::after{display:none}}
