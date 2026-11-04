@@ -20,16 +20,16 @@
 
 :root{
   /* ── surface and ink ─────────────────────────────────────────── */
-  --bg:#F4F0E8; --bg-2:#EFEAE0; --surface:#FAF7F1; --surface-2:#F3EEE5;
-  --ink:#1C1A17; --ink-2:#2E2B26; --muted:#69635A; --faint:#8C857A;
-  --line:rgba(28,26,23,.14); --line-2:rgba(28,26,23,.07);
+  --bg:#F7F7F8; --bg-2:#F0F0F2; --surface:#FFFFFF; --surface-2:#F4F4F6;
+  --ink:#0B0B0D; --ink-2:#2A2A30; --muted:#5D5D68; --faint:#8A8A95;
+  --line:rgba(11,11,13,.11); --line-2:rgba(11,11,13,.06);
   --sink:rgba(14,15,17,.04);
-  --red:#A84F27; --green:#1F7A4C;
+  --red:#C93A1E; --green:#1F7A4C;
 
   /* the band colours of the site: Ni-blue carries every accent */
-  --accent:#2B4896; --accent-2:#223B7C; --accent-hot:#4F68B4;
+  --accent:#1F4FE0; --accent-2:#1A3FB4; --accent-hot:#4A72FF;
   --accent-soft:rgba(20,54,232,.08);
-  --ramp:linear-gradient(90deg,#2B4896 0%,#8C9BCB 42%,#F4F0E8 62%,#A84F27 100%);
+  --ramp:linear-gradient(90deg,#1F4FE0 0%,#8FA4F5 42%,#F7F7F8 62%,#C93A1E 100%);
 
   /* ── type: the site's ramp, same clamps, nothing under 12px ──── */
   --ff-display:"Instrument Sans",system-ui,-apple-system,sans-serif;
@@ -52,14 +52,14 @@
 }
 
 html[data-theme="dark"]{
-  --bg:#12110F; --bg-2:#151412; --surface:#1A1916; --surface-2:#201F1B;
-  --ink:#EFEAE1; --ink-2:#D9D3C8; --muted:#9E978C; --faint:#756F66;
-  --line:rgba(239,234,225,.17); --line-2:rgba(239,234,225,.09);
-  --sink:rgba(239,234,225,.05);
-  --accent:#93A9E6; --accent-2:#7389C8; --accent-hot:#B6C5EE;
+  --bg:#09090B; --bg-2:#0D0D10; --surface:#111114; --surface-2:#17171B;
+  --ink:#F5F5F7; --ink-2:#D4D4D9; --muted:#9F9FAA; --faint:#6E6E78;
+  --line:rgba(245,245,247,.13); --line-2:rgba(245,245,247,.07);
+  --sink:rgba(245,245,247,.045);
+  --accent:#7D97FF; --accent-2:#5F7CF0; --accent-hot:#A9BBFF;
   --accent-soft:rgba(123,147,255,.12);
-  --red:#E39C73; --green:#4FBF88;
-  --ramp:linear-gradient(90deg,#93A9E6 0%,#B6C5EE 42%,#1A1916 62%,#E39C73 100%);
+  --red:#FF6E4F; --green:#4FBF88;
+  --ramp:linear-gradient(90deg,#7D97FF 0%,#A9BBFF 42%,#111114 62%,#FF6E4F 100%);
   color-scheme:dark;
 }
 
@@ -68,13 +68,13 @@ html[data-theme="dark"]{
    portfolio.html only ever writes an explicit theme. */
 @media(prefers-color-scheme:dark){
   html:not([data-theme="light"]){
-    --bg:#12110F; --bg-2:#151412; --surface:#1A1916; --surface-2:#201F1B;
-    --ink:#EFEAE1; --ink-2:#D9D3C8; --muted:#9E978C; --faint:#756F66;
-    --line:rgba(239,234,225,.17); --line-2:rgba(239,234,225,.09);
-    --sink:rgba(239,234,225,.05);
-    --accent:#93A9E6; --accent-2:#7389C8; --accent-hot:#B6C5EE;
+    --bg:#09090B; --bg-2:#0D0D10; --surface:#111114; --surface-2:#17171B;
+    --ink:#F5F5F7; --ink-2:#D4D4D9; --muted:#9F9FAA; --faint:#6E6E78;
+    --line:rgba(245,245,247,.13); --line-2:rgba(245,245,247,.07);
+    --sink:rgba(245,245,247,.045);
+    --accent:#7D97FF; --accent-2:#5F7CF0; --accent-hot:#A9BBFF;
     --accent-soft:rgba(123,147,255,.12);
-    --red:#E39C73; --green:#4FBF88;
+    --red:#FF6E4F; --green:#4FBF88;
     color-scheme:dark;
   }
 }

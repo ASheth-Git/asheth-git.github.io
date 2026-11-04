@@ -149,24 +149,26 @@ function applyTheme(next, persist) {
      different times: the page background (no transition, snaps), the
      chrome (180ms colour transitions), and the canvases (repainted from
      JS). Left alone they tear — the paper goes dark while the plates are
-     still light and the buttons crossfade behind both. Suppressing
-     transitions for the duration collapses all three into a single
-     paint, which reads as an instant, deliberate switch. */
-  root.classList.add("theme-swap");
+     still light and the buttons crossfade behind both. Completing the
+     transitions in place collapses all three into a single paint, which
+     reads as an instant, deliberate switch. */
   root.dataset.theme = next;
   if (persist) { try { localStorage.setItem("as-theme", next); } catch (e) {} }
   themeLabel();
   readPalette();
-  /* synchronous, not rAF: the canvases must carry the new palette in the
-     same frame the CSS variables change in. Every plate repaints here,
-     including the ones sitting in a hidden view of the phone shell. */
+  /* synchronous, so the canvases carry the new palette in the same frame
+     as the CSS. Every plate repaints here, including hidden phone views. */
   redrawAll();
-  /* force the style flush while transitions are still off, then hand
-     them back a frame later so ordinary hover states keep animating */
-  void root.offsetWidth;
-  requestAnimationFrame(() => requestAnimationFrame(() => {
-    root.classList.remove("theme-swap");
-  }));
+  /* One style pass, then any colour transitions it started are completed
+     on the spot: the page, the chrome and the figures change together.
+     (Toggling a transition-killing class instead forced a second
+     whole-document style pass two frames later.) */
+  if (document.getAnimations) {
+    getComputedStyle(root).color;
+    for (const a of document.getAnimations()) {
+      if (typeof CSSTransition !== "undefined" && a instanceof CSSTransition) a.finish();
+    }
+  }
   publishTheme();
 }
 
@@ -174,17 +176,7 @@ function initTheme() {
   themeLabel();
   const btn = el("themeBtn");
   if (btn) btn.addEventListener("click", () => {
-    const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
-    if (REDUCE || !document.startViewTransition) { applyTheme(next, true); return; }
-    const r = btn.getBoundingClientRect();
-    const x = r.left + r.width / 2, y = r.top + r.height / 2;
-    const reach = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
-    const t = document.startViewTransition(() => applyTheme(next, true));
-    t.ready.then(() => {
-      document.documentElement.animate(
-        { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${reach}px at ${x}px ${y}px)`] },
-        { duration: 680, easing: "cubic-bezier(.65,0,.35,1)", pseudoElement: "::view-transition-new(root)" });
-    }).catch(() => {});
+    applyTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark", true);
   });
   /* a change made in another tab is still this visitor's choice */
   addEventListener("storage", e => {
@@ -192,14 +184,49 @@ function initTheme() {
   });
 }
 
-/* ══ loader: the name, shown briefly, then faded out ═════════ */
+/* ══ loader: spin glyphs resolving into the full name ══════════ */
 function initLoader() {
   const box = el("loadName");
   if (!box) return;
-  box.textContent = "Alpesh SHETH, PhD";
-  const done = () => el("load").classList.add("done");
-  if (REDUCE) { done(); return; }
-  setTimeout(done, 420);
+  const name = "ALPESH SHETH, PhD", glyphs = "↑↓↑↓↕⇅", tick = el("loadTick");
+  const cells = [...name].map(ch => {
+    const s = document.createElement("span");
+    if (ch === " ") s.className = "sp";
+    else if (ch === ",") s.className = "pn";
+    s.textContent = ch === " " ? "\u00A0" : ch;
+    box.appendChild(s);
+    return { s, ch };
+  });
+  if (REDUCE) { el("load").classList.add("done"); return; }
+  const rnd = makeRNG(seedOf("loader"));
+  /* Driven by elapsed time, not by a tick count: a throttled or
+     coalesced timer would otherwise stretch the splash indefinitely and
+     hold the page hostage. Progress is a fraction of a fixed 950ms
+     budget, and each cell resolves at a fraction of that run — so the
+     reveal reads the same on a fast machine and a throttled tab, and
+     works for a name of any length. */
+  const DUR = 950, N = Math.max(cells.length - 1, 1);
+  const settle = () => { cells.forEach(o => { o.s.textContent = o.ch === " " ? "\u00A0" : o.ch; }); };
+  const t0 = performance.now();
+  (function step(now) {
+    const p = Math.min(1, (now - t0) / DUR);
+    cells.forEach((o, i) => {
+      if (o.ch === " ") return;
+      const at = 0.26 + 0.60 * i / N;
+      o.s.textContent = p > at ? o.ch : glyphs[(rnd() * glyphs.length) | 0];
+    });
+    if (tick) tick.innerHTML = "annealing · T/T<sub>c</sub> = " + (3.6 - 2.7 * p).toFixed(2);
+    if (p < 1) { requestAnimationFrame(step); return; }
+    settle();
+    el("load").classList.add("done");
+  })(t0);
+  /* last resort: if rAF never runs (background tab on open), the splash
+     still clears rather than covering the page forever */
+  setTimeout(() => {
+    if (el("load").classList.contains("done")) return;
+    settle();
+    el("load").classList.add("done");
+  }, DUR + 1200);
 }
 
 /* ══ flow animation ═══════════════════════════════════════════ */
@@ -352,7 +379,7 @@ void main(){
   vec3 col = lum > 0.5
     ? uPaper*trans
     : uPaper + opacity*trans*vec3(1.75);
-  col = mix(vec3(dot(col, vec3(0.299,0.587,0.114))), col, 0.45);
+  col = mix(vec3(dot(col, vec3(0.299,0.587,0.114))), col, 0.85);
   frag=vec4(col,1.0);
 }`;
 

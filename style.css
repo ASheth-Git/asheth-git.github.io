@@ -7,11 +7,11 @@
    ═══════════════════════════════════════════════════════════════ */
 
 :root{
-  --paper:#F4F0E8; --panel:#FAF7F1; --ink:#1C1A17; --body-ink:#2E2B26; --soft:#69635A;
-  --hair:rgba(28,26,23,.14); --hair-2:rgba(28,26,23,.07); --sink:rgba(28,26,23,.045);
-  --brass:#8A6414;                /* interface accent: focus, selection, progress */
-  --b1:#2B4896;                 /* Ni d(x²−y²) / d(z²) character */
-  --b2:#A84F27;                 /* rare-earth interlayer band    */
+  --paper:#F7F7F8; --panel:#FFFFFF; --ink:#0B0B0D; --body-ink:#2A2A30; --soft:#5D5D68;
+  --hair:rgba(11,11,13,.11); --hair-2:rgba(11,11,13,.06); --sink:rgba(11,11,13,.035);
+  --accent:#1F4FE0;              /* interface accent: focus, selection, progress */
+  --b1:#1F4FE0;                 /* Ni d(x²−y²) / d(z²) character */
+  --b2:#C93A1E;                 /* rare-earth interlayer band    */
   --ui:"Instrument Sans",system-ui,-apple-system,sans-serif;
   --body:"Newsreader",Georgia,serif;
   --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
@@ -71,18 +71,18 @@
   --scheme:light;
 }
 html[data-theme="dark"]{
-  --paper:#12110F; --panel:#1A1916; --ink:#EFEAE1; --body-ink:#D9D3C8; --soft:#9E978C;
-  --hair:rgba(239,234,225,.17); --hair-2:rgba(239,234,225,.09); --sink:rgba(239,234,225,.05);
-  --b1:#93A9E6; --b2:#E39C73; --brass:#D8B36B;
+  --paper:#09090B; --panel:#111114; --ink:#F5F5F7; --body-ink:#D4D4D9; --soft:#9F9FAA;
+  --hair:rgba(245,245,247,.13); --hair-2:rgba(245,245,247,.07); --sink:rgba(245,245,247,.045);
+  --b1:#7D97FF; --b2:#FF6E4F; --accent:#7D97FF;
   --panel-glass:var(--panel);
   --paper-glass:var(--paper);
   --scheme:dark;
 }
 @media(prefers-color-scheme:dark){
   html:not([data-theme="light"]){
-    --paper:#12110F; --panel:#1A1916; --ink:#EFEAE1; --body-ink:#D9D3C8; --soft:#9E978C;
-    --hair:rgba(239,234,225,.17); --hair-2:rgba(239,234,225,.09); --sink:rgba(239,234,225,.05);
-    --b1:#93A9E6; --b2:#E39C73; --brass:#D8B36B;
+    --paper:#09090B; --panel:#111114; --ink:#F5F5F7; --body-ink:#D4D4D9; --soft:#9F9FAA;
+    --hair:rgba(245,245,247,.13); --hair-2:rgba(245,245,247,.07); --sink:rgba(245,245,247,.045);
+    --b1:#7D97FF; --b2:#FF6E4F; --accent:#7D97FF;
     --panel-glass:var(--panel);
     --paper-glass:var(--paper);
     --scheme:dark;
@@ -130,8 +130,8 @@ img{max-width:100%;display:block}
 /* punctuation hugs the preceding letter — a monospaced cell around the
    comma reads as a space before it */
 #load .nm span.pn{min-width:0}
-#load .tick{display:none;font-style:italic;font-family:var(--body);font-size:var(--t-small);letter-spacing:0;
-  color:var(--soft);text-align:center;margin-top:var(--s5);text-transform:none}
+#load .tick{font-family:var(--mono);font-size:var(--t-label);letter-spacing:.18em;
+  color:var(--soft);text-align:center;margin-top:var(--s5);text-transform:uppercase}
 
 /* ══ ambient hero render ══════════════════════════════════════ */
 #bz{position:fixed;inset:0;width:100%;height:100%;z-index:0;display:block;pointer-events:none}
@@ -719,9 +719,9 @@ footer.site{padding-left:max(var(--pad),calc((100% - 84rem) / 2));
 }
 
 /* ══ colour details ═══════════════════════════════════════════ */
-::selection{background:color-mix(in oklab,var(--brass) 32%,transparent);color:var(--ink)}
-:focus-visible{outline-color:var(--brass)}
-.term:focus-visible{outline-color:var(--brass)}
+::selection{background:color-mix(in oklab,var(--accent) 32%,transparent);color:var(--ink)}
+:focus-visible{outline-color:var(--accent)}
+.term:focus-visible{outline-color:var(--accent)}
 html{scrollbar-color:color-mix(in oklab,var(--soft) 55%,transparent) var(--paper)}
 input[type=range]{accent-color:var(--b1)}
 
@@ -733,14 +733,14 @@ input[type=range]{accent-color:var(--b1)}
 ::view-transition-old(root){z-index:1}
 ::view-transition-new(root){z-index:2}
 
-/* reading progress: a brass hairline along the bottom of the top bar */
+/* reading progress: a accent hairline along the bottom of the top bar */
 .top::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;
-  background:var(--brass);transform-origin:left;transform:scaleX(var(--progress,0));opacity:.85}
+  background:var(--accent);transform-origin:left;transform:scaleX(var(--progress,0));opacity:.85}
 
 /* CV tabs: sliding marker */
 .cvtabs{position:relative}
 .cvtabs.has-marker::after{content:"";position:absolute;left:0;bottom:-1px;height:2px;
-  width:var(--tab-w,0);transform:translateX(var(--tab-x,0));background:var(--brass);pointer-events:none}
+  width:var(--tab-w,0);transform:translateX(var(--tab-x,0));background:var(--accent);pointer-events:none}
 
 /* readouts and flags */
 .state b,.tstat .tv{transition:color 600ms var(--ease)}
@@ -763,12 +763,12 @@ input[type=range]{accent-color:var(--b1)}
     transition:transform 1200ms var(--ease) calc(var(--i,0) * 70ms + 150ms)}
   html.js .hero .meta.in::before{transform:scaleX(1)}
 
-  /* figures are scanned in left to right behind a brass line */
+  /* figures are scanned in left to right behind a accent line */
   html.js .plate.rise .panes{position:relative;clip-path:inset(0 100% 0 0);
     transition:clip-path 1150ms cubic-bezier(.65,0,.35,1) calc(var(--i,0) * 70ms + 120ms)}
   html.js .plate.rise.in .panes{clip-path:inset(0 0 0 0)}
   html.js .plate.rise .panes::after{content:"";position:absolute;top:0;bottom:0;left:0;width:2px;
-    background:var(--brass);box-shadow:0 0 18px 3px color-mix(in oklab,var(--brass) 60%,transparent);
+    background:var(--accent);box-shadow:0 0 18px 3px color-mix(in oklab,var(--accent) 60%,transparent);
     opacity:0;pointer-events:none;z-index:3}
   html.js .plate.rise.in .panes::after{
     animation:scan-pos 1150ms cubic-bezier(.65,0,.35,1) calc(var(--i,0) * 70ms + 120ms) both,
@@ -791,9 +791,9 @@ input[type=range]{accent-color:var(--b1)}
   .cvpane.on{animation:pane-in 380ms var(--ease) both}
   @keyframes pane-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 
-  /* a changed readout flashes brass and settles */
+  /* a changed readout flashes accent and settles */
   .state b.tick,.tstat .tv.tick{animation:tick 900ms var(--ease)}
-  @keyframes tick{0%{color:var(--brass)}100%{color:var(--ink)}}
+  @keyframes tick{0%{color:var(--accent)}100%{color:var(--ink)}}
   /* a threshold being crossed pings once */
   .flag.on{animation:ping 900ms var(--ease)}
   @keyframes ping{0%{transform:scale(.92);box-shadow:0 0 0 0 color-mix(in oklab,var(--b2) 55%,transparent)}
